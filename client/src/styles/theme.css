@@ -49,8 +49,8 @@ body { background: #faf8f7; }
 .progress-ring { stroke: var(--pink); }
 .ring-leaf { color: var(--pink-dark); background: #fce8ee; }
 .loader { border-color: #f5e3e9; border-top-color: var(--pink); }
-.access-screen { background: radial-gradient(ellipse at 18% 14%, #e2f1e2 0, transparent 36%), radial-gradient(ellipse at 90% 88%, #e5f2e5 0, transparent 38%), #f7f8f4; }
-.access-illustration { border-color: #d7e9d6; background: #edf6eb; }
+.access-screen { background: radial-gradient(ellipse at 18% 14%, #e2f1e2 0, transparent 36%), radial-gradient(ellipse at 90% 88%, #f8e5eb 0, transparent 38%), #f7f8f4; }
+.access-illustration { border-color: #f0d8e0; background: #fff0f4; }
 .button-primary { background: var(--green); }
 .button-primary:hover { background: var(--green-dark); }
 .study-unit-button:hover { background: #fff4f7; }

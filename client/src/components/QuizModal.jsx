@@ -38,7 +38,7 @@ export default function QuizModal({ lesson, onClose, onSubmit }) {
 
   return <div className="modal-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget && !result) onClose(); }}>
     <section className="quiz-modal" role="dialog" aria-modal="true" aria-labelledby="quiz-title">
-      <div className="quiz-top"><span className="quiz-brand"><span>n+</span> nursepath</span><button className="modal-close" onClick={onClose} aria-label="Close lesson"><Icon name="close" size={20} /></button></div>
+      <div className="quiz-top"><span className="quiz-brand"><span>n+</span> nurselys</span><button className="modal-close" onClick={onClose} aria-label="Close lesson"><Icon name="close" size={20} /></button></div>
       {result ? <div className="quiz-result"><div className="result-art">{result.correct === result.total ? "🌟" : "🌱"}</div><div className="section-kicker">LESSON COMPLETE</div><h2>{result.correct === result.total ? "A perfect round!" : "Look at you learning."}</h2><p>You got <strong>{result.correct} of {result.total}</strong> questions right. Every practice round makes you stronger.</p><div className="earned-xp">✳ &nbsp;+{result.earnedXp} XP</div><button className="button button-primary" onClick={onClose}>Back to my path <Icon name="arrow" size={17} /></button></div> : <>
         <div className="quiz-progress-heading"><span>{lesson.category}</span><span>Question {questionIndex + 1} of {lesson.questions.length}</span></div>
         <div className="quiz-progress-track"><span style={{ width: `${((questionIndex + 1) / lesson.questions.length) * 100}%` }} /></div>

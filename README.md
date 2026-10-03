@@ -1,6 +1,6 @@
-# NursePath
+# Nurselys
 
-A gamified nursing study companion for a fourth-year nursing student. NursePath combines short practice lessons, flashcards, XP and streak tracking, study progress, and a MongoDB-backed to-do list.
+A gamified nursing study companion for a fourth-year nursing student. Nurselys combines short practice lessons, flashcards, XP and streak tracking, study progress, and a MongoDB-backed to-do list.
 
 ## Requirements
 
@@ -38,7 +38,7 @@ The Express server serves the built React app and API on port 4000.
 
 ## Deploy
 
-NursePath can be deployed with the Vercel frontend, a Render Node.js API, and MongoDB Atlas. The Vercel `/api/*` function proxies requests to Render so the access-session cookie stays first-party on the website domain.
+Nurselys can be deployed with the Vercel frontend, a Render Node.js API, and MongoDB Atlas. The Vercel `/api/*` function proxies requests to Render so the access-session cookie stays first-party on the website domain.
 
 1. Create a MongoDB Atlas database and copy its connection string. Keep the database password private.
 2. Push this project to a GitHub repository you control. Do not add `.env` or deployment secrets to Git.

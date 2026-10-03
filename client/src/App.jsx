@@ -191,7 +191,7 @@ function App() {
         <form className="access-card" onSubmit={unlockSite}>
           <a className="brand access-brand" href="#" onClick={(event) => event.preventDefault()}>
             <span className="brand-mark">n<span>+</span></span>
-            <span className="brand-name">nurse<span>path</span></span>
+            <span className="brand-name">nurse<span>lys</span></span>
           </a>
           <div className="access-illustration" aria-hidden="true">🔐</div>
           <div className="section-kicker">Hulaan mo ano password</div>
@@ -268,7 +268,7 @@ function App() {
       <aside className="sidebar">
         <a className="brand" href="#" onClick={(event) => event.preventDefault()}>
           <span className="brand-mark">n<span>+</span></span>
-          <span className="brand-name">nurse<span>path</span></span>
+          <span className="brand-name">nurse<span>lys</span></span>
         </a>
         <div className="nav-label">YOUR SPACE</div>
         <nav className="main-nav" aria-label="Main navigation">

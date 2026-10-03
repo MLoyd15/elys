@@ -47,7 +47,7 @@ export default function StudyRoom({ guides, loading, error, initialSlug, readGui
         <header className="study-room-header">
           <a className="brand study-brand" href="#" onClick={(event) => event.preventDefault()}>
             <span className="brand-mark">n<span>+</span></span>
-            <span className="brand-name">nurse<span>path</span></span>
+            <span className="brand-name">nurse<span>lys</span></span>
           </a>
           <div className="study-room-title-block">
             <span className="section-kicker">ELYS'S STUDY SPACE</span>
