@@ -27,7 +27,18 @@ export default async function handler(request, response) {
   }
 
   const incomingUrl = new URL(request.url || "/", "https://nursepath.local");
-  const upstreamUrl = new URL(`${incomingUrl.pathname}${incomingUrl.search}`, apiUrl);
+  let targetUrl = `${incomingUrl.pathname}${incomingUrl.search}`;
+  if (incomingUrl.pathname === "/api/proxy") {
+    targetUrl = incomingUrl.searchParams.get("path") || "";
+    if (!targetUrl.startsWith("/api/")) {
+      return response.status(400).json({ error: "The API proxy path is invalid." });
+    }
+  }
+
+  const upstreamUrl = new URL(targetUrl, apiUrl);
+  if (upstreamUrl.origin !== apiUrl.origin || !upstreamUrl.pathname.startsWith("/api/")) {
+    return response.status(400).json({ error: "The API proxy path is invalid." });
+  }
   const headers = new Headers();
 
   for (const [name, value] of Object.entries(request.headers)) {

@@ -1,5 +1,6 @@
 export async function api(path, options = {}) {
-  const response = await fetch(`/api${path}`, {
+  const target = `/api${path}`;
+  const response = await fetch(`/api/proxy?path=${encodeURIComponent(target)}`, {
     ...options,
     headers: { "Content-Type": "application/json", ...options.headers },
   });
