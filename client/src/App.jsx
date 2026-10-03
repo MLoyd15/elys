@@ -194,7 +194,7 @@ function App() {
             <span className="brand-name">nurse<span>path</span></span>
           </a>
           <div className="access-illustration" aria-hidden="true">🔐</div>
-          <div className="section-kicker">A LITTLE SPACE JUST FOR YOU</div>
+          <div className="section-kicker">Hulaan mo ano password</div>
           <h1>Welcome, Elys.</h1>
           <p>Enter your access code to open your study space.</p>
           <label className="access-label" htmlFor="access-code">ACCESS CODE</label>
@@ -213,7 +213,7 @@ function App() {
           <button className="button button-primary access-submit" type="submit" disabled={!accessCode || unlocking}>
             {unlocking ? "Unlocking…" : "Open my study space"} {!unlocking && <Icon name="arrow" size={17} />}
           </button>
-          <span className="access-footnote">Made with love, for the nurse you’re becoming <span>✳</span></span>
+          <span className="access-footnote">Testing lang <span>✳</span></span>
         </form>
       </main>
     );
@@ -312,7 +312,7 @@ function App() {
           <div className="sidebar-note">
             <div className="note-spark"><Icon name="spark" size={17} /></div>
             <p>Road to topnotcher!</p>
-            <span>One day at a time. 💚</span>
+            <span>kaya mo to love💚</span>
           </div>
           <button className="profile">
             <span className="avatar">E</span>
