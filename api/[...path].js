@@ -51,7 +51,13 @@ export default async function handler(request, response) {
 
     response.statusCode = upstreamResponse.status;
     for (const [name, value] of upstreamResponse.headers) {
-      if (name.toLowerCase() !== "set-cookie" && !HOP_BY_HOP_HEADERS.has(name.toLowerCase())) {
+      const lowerName = name.toLowerCase();
+      if (
+        lowerName !== "set-cookie" &&
+        lowerName !== "content-encoding" &&
+        lowerName !== "content-length" &&
+        !HOP_BY_HOP_HEADERS.has(lowerName)
+      ) {
         response.setHeader(name, value);
       }
     }
