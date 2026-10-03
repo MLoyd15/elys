@@ -1,0 +1,178 @@
+export const lessonCatalog = [
+  {
+    slug: "medication-safety",
+    title: "Medication safety",
+    category: "Fundamentals",
+    icon: "💊",
+    color: "lavender",
+    duration: "8 min",
+    description: "Build confidence with the rights of medication administration.",
+    questions: [
+      {
+        prompt: "A nurse is preparing to administer a medication. Which action best verifies the right patient?",
+        options: [
+          "Ask the patient to state their full name and date of birth",
+          "Ask the patient if they recognize the medication",
+          "Check the room number against the medication record",
+          "Ask a family member to identify the patient",
+        ],
+        answer: 0,
+        explanation: "Use two approved patient identifiers, such as full name and date of birth. Room numbers are not identifiers.",
+      },
+      {
+        prompt: "A patient says, “I’ve never taken this pill before.” What should the nurse do first?",
+        options: [
+          "Document the statement and continue",
+          "Pause and verify the medication order before giving it",
+          "Ask another patient whether it looks familiar",
+          "Tell the patient it is probably a generic brand",
+        ],
+        answer: 1,
+        explanation: "A question or concern is a reason to pause and verify the order and medication before administration.",
+      },
+      {
+        prompt: "Which practice helps reduce medication administration errors?",
+        options: [
+          "Prepare medications for several patients at once",
+          "Rely on the medication’s color to identify it",
+          "Minimize interruptions while preparing medications",
+          "Skip barcode scanning when the unit is busy",
+        ],
+        answer: 2,
+        explanation: "Reducing interruptions during preparation supports careful checking and helps prevent errors.",
+      },
+    ],
+  },
+  {
+    slug: "vital-signs",
+    title: "Vital signs & assessment",
+    category: "Fundamentals",
+    icon: "🩺",
+    color: "mint",
+    duration: "10 min",
+    description: "Notice meaningful changes and strengthen your assessment routine.",
+    questions: [
+      {
+        prompt: "A patient's blood pressure is unexpectedly different from their baseline. What is the best first step?",
+        options: [
+          "Document it and check again tomorrow",
+          "Assess the patient and repeat the measurement using correct technique",
+          "Assume the equipment is faulty",
+          "Immediately give a medication to lower it",
+        ],
+        answer: 1,
+        explanation: "Assess the patient first, then verify an unexpected measurement with proper technique and escalate per protocol.",
+      },
+      {
+        prompt: "Which finding is most useful when evaluating a patient's breathing?",
+        options: [
+          "Respiratory rate alone",
+          "Skin temperature alone",
+          "Rate, effort, oxygenation, and the patient's reported symptoms",
+          "Whether the patient is able to speak at all",
+        ],
+        answer: 2,
+        explanation: "Respiratory assessment is more complete when it includes rate, work of breathing, oxygenation, and symptoms.",
+      },
+      {
+        prompt: "Why should vital signs be compared with a patient's previous readings?",
+        options: [
+          "Trends can reveal change earlier than a single reading",
+          "Previous readings make a current assessment unnecessary",
+          "It avoids having to report abnormal values",
+          "It replaces the need to ask the patient how they feel",
+        ],
+        answer: 0,
+        explanation: "A trend provides context and can make a change in the patient's condition easier to recognize.",
+      },
+    ],
+  },
+  {
+    slug: "maternal-newborn",
+    title: "Maternal & newborn",
+    category: "Maternal-newborn",
+    icon: "🤱",
+    color: "peach",
+    duration: "12 min",
+    description: "Review postpartum checks and the first moments of newborn care.",
+    questions: [
+      {
+        prompt: "During a postpartum assessment, which observation should be reported promptly?",
+        options: [
+          "The patient asks for help repositioning",
+          "A boggy uterus with increased vaginal bleeding",
+          "The newborn has a brief sneeze",
+          "The patient requests a drink of water",
+        ],
+        answer: 1,
+        explanation: "A boggy uterus with increased bleeding may indicate postpartum hemorrhage and requires prompt assessment and intervention.",
+      },
+      {
+        prompt: "What is an important priority for a stable newborn immediately after birth?",
+        options: [
+          "Maintain warmth and support skin-to-skin contact when appropriate",
+          "Delay drying until after the first feeding",
+          "Bathe the newborn right away",
+          "Separate the newborn from the parent for routine observation",
+        ],
+        answer: 0,
+        explanation: "Preventing heat loss is essential. Drying and skin-to-skin contact support newborn temperature regulation when clinically appropriate.",
+      },
+      {
+        prompt: "A postpartum patient reports a severe headache and blurred vision. What should the nurse do?",
+        options: [
+          "Reassure them that this is expected after delivery",
+          "Encourage sleep and reassess at the next routine check",
+          "Assess promptly and notify the appropriate clinician",
+          "Offer a snack before continuing the assessment",
+        ],
+        answer: 2,
+        explanation: "A severe headache with visual changes can signal a serious postpartum complication and needs prompt evaluation.",
+      },
+    ],
+  },
+  {
+    slug: "pediatric-priorities",
+    title: "Pediatric priorities",
+    category: "Pediatrics",
+    icon: "🧸",
+    color: "sky",
+    duration: "9 min",
+    description: "Practice family-centered assessment and safe care for children.",
+    questions: [
+      {
+        prompt: "Which approach can help a nurse obtain an accurate respiratory rate from a young child?",
+        options: [
+          "Count after the child has settled, before disturbing them",
+          "Ask the child to count breaths out loud",
+          "Count only after the child has been crying",
+          "Estimate based on the child's age",
+        ],
+        answer: 0,
+        explanation: "Observe a calm child before other assessment steps that may change their breathing pattern.",
+      },
+      {
+        prompt: "A child is prescribed a medication dose based on weight. What should the nurse verify?",
+        options: [
+          "The child's weight is recent and the dose is within the recommended range",
+          "The dose matches the adult dose divided by two",
+          "The parent agrees that the amount looks right",
+          "The medication has the same color as last time",
+        ],
+        answer: 0,
+        explanation: "Weight-based medication calculations require an accurate current weight and a dose check against the recommended range.",
+      },
+      {
+        prompt: "Which action best supports family-centered pediatric care?",
+        options: [
+          "Exclude caregivers from routine teaching",
+          "Invite caregivers to participate in care and teaching when appropriate",
+          "Use only technical language to save time",
+          "Ask the child to make every care decision alone",
+        ],
+        answer: 1,
+        explanation: "Partnering with caregivers in an age-appropriate way supports understanding and continuity of care.",
+      },
+    ],
+  },
+];
