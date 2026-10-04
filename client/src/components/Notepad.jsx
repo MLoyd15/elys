@@ -26,6 +26,10 @@ export default function Notepad({ active }) {
   const [creating, setCreating] = useState(false);
   const [creatingFolder, setCreatingFolder] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [draggedNoteId, setDraggedNoteId] = useState("");
+  const [dropTargetFolderId, setDropTargetFolderId] = useState("");
+  const [movingNoteId, setMovingNoteId] = useState("");
+  const [folderFeedback, setFolderFeedback] = useState(null);
   const selectedNote = notes.find((note) => note.id === selectedNoteId);
   const hasUnsavedChanges = Boolean(
     selectedNote && (
@@ -102,6 +106,72 @@ export default function Notepad({ active }) {
     } finally {
       setCreatingFolder(false);
     }
+  }
+
+  async function moveNoteToFolder(noteId, folderId) {
+    const note = notes.find((item) => item.id === noteId);
+    if (!note || movingNoteId) return;
+    if ((note.folderId || "") === folderId) {
+      setFolderFeedback({ message: "That note is already in this folder.", isError: false });
+      return;
+    }
+
+    const isSelectedNote = note.id === selectedNoteId;
+    const nextTitle = isSelectedNote ? title.trim() : note.title;
+    const nextContent = isSelectedNote ? content : note.content;
+    setMovingNoteId(note.id);
+    setFolderFeedback("");
+    try {
+      const movedNote = await api(`/notes/${note.id}`, {
+        method: "PATCH",
+        body: JSON.stringify({ title: nextTitle, content: nextContent, folderId: folderId || null }),
+      });
+      setNotes((current) => current.map((item) => item.id === movedNote.id ? movedNote : item));
+      if (isSelectedNote) {
+        setTitle(movedNote.title);
+        setContent(movedNote.content);
+        setNoteFolderId(movedNote.folderId || "");
+      }
+      if (isSelectedNote && activeFolderId !== "all") setActiveFolderId(folderId || "unfiled");
+      const folderName = folders.find((folder) => folder.id === folderId)?.name;
+      setFolderFeedback({
+        message: `Moved “${movedNote.title}” to ${folderName ? `“${folderName}”` : "Unfiled"}.`,
+        isError: false,
+      });
+    } catch (error) {
+      setFolderFeedback({
+        message: error.message || "Could not move that note. Please try again.",
+        isError: true,
+      });
+    } finally {
+      setMovingNoteId("");
+      setDraggedNoteId("");
+      setDropTargetFolderId("");
+    }
+  }
+
+  function handleNoteDragStart(event, note) {
+    event.dataTransfer.effectAllowed = "move";
+    event.dataTransfer.setData("text/plain", note.id);
+    setDraggedNoteId(note.id);
+    setFolderFeedback("");
+  }
+
+  function allowFolderDrop(event, folderId) {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = "move";
+    setDropTargetFolderId(folderId);
+  }
+
+  function leaveFolderDrop(event) {
+    if (!event.currentTarget.contains(event.relatedTarget)) setDropTargetFolderId("");
+  }
+
+  function dropNoteOnFolder(event, folderId) {
+    event.preventDefault();
+    const noteId = event.dataTransfer.getData("text/plain") || draggedNoteId;
+    setDropTargetFolderId("");
+    if (noteId) void moveNoteToFolder(noteId, folderId);
   }
 
   function selectFolder(folderId) {
@@ -189,11 +259,24 @@ export default function Notepad({ active }) {
           <button className={`notes-folder-item ${activeFolderId === "all" ? "selected" : ""}`} onClick={() => selectFolder("all")}>
             <span>All notes</span><span>{notes.length}</span>
           </button>
-          <button className={`notes-folder-item ${activeFolderId === "unfiled" ? "selected" : ""}`} onClick={() => selectFolder("unfiled")}>
+          <button
+            className={`notes-folder-item ${activeFolderId === "unfiled" ? "selected" : ""} ${dropTargetFolderId === "unfiled" ? "drop-target" : ""}`}
+            onClick={() => selectFolder("unfiled")}
+            onDragOver={(event) => allowFolderDrop(event, "unfiled")}
+            onDragLeave={leaveFolderDrop}
+            onDrop={(event) => dropNoteOnFolder(event, "")}
+          >
             <span>Unfiled</span><span>{notes.filter((note) => !note.folderId).length}</span>
           </button>
           {folders.map((folder) => (
-            <button key={folder.id} className={`notes-folder-item ${activeFolderId === folder.id ? "selected" : ""}`} onClick={() => selectFolder(folder.id)}>
+            <button
+              key={folder.id}
+              className={`notes-folder-item ${activeFolderId === folder.id ? "selected" : ""} ${dropTargetFolderId === folder.id ? "drop-target" : ""}`}
+              onClick={() => selectFolder(folder.id)}
+              onDragOver={(event) => allowFolderDrop(event, folder.id)}
+              onDragLeave={leaveFolderDrop}
+              onDrop={(event) => dropNoteOnFolder(event, folder.id)}
+            >
               <span>📁 {folder.name}</span><span>{notes.filter((note) => note.folderId === folder.id).length}</span>
             </button>
           ))}
@@ -210,6 +293,12 @@ export default function Notepad({ active }) {
             {creatingFolder ? "…" : <Icon name="plus" size={15} />}
           </button>
         </form>
+        <p className="notes-folder-hint">Drag a note onto a folder, or choose a folder in the editor.</p>
+        {folderFeedback && (
+          <div className={`notes-folder-feedback ${folderFeedback.isError ? "error" : ""}`} role={folderFeedback.isError ? "alert" : "status"} aria-live="polite">
+            {folderFeedback.message}
+          </div>
+        )}
         {saveError && !selectedNote && <div className="notes-error" role="alert">{saveError}</div>}
         {visibleNotes.length === 0 ? (
           <div className="notes-empty-list"><span>✎</span><p>{notes.length ? "No notes in this folder yet." : "Your notes will show up here. Create one to get started."}</p></div>
@@ -218,11 +307,19 @@ export default function Notepad({ active }) {
             {visibleNotes.map((note) => (
               <button
                 key={note.id}
-                className={`note-list-item ${note.id === selectedNoteId ? "selected" : ""}`}
+                className={`note-list-item ${note.id === selectedNoteId ? "selected" : ""} ${note.id === draggedNoteId ? "dragging" : ""}`}
                 onClick={() => selectNote(note)}
+                draggable
+                onDragStart={(event) => handleNoteDragStart(event, note)}
+                onDragEnd={() => {
+                  setDraggedNoteId("");
+                  setDropTargetFolderId("");
+                }}
+                title="Drag this note onto a folder to move it"
+                aria-label={`${note.title}. Drag to a folder to move.`}
               >
                 <strong>{note.title}</strong>
-                <span>{note.content.trim().replace(/\s+/g, " ").slice(0, 74) || "No note text yet"}</span>
+                <span>{movingNoteId === note.id ? "Moving…" : note.content.trim().replace(/\s+/g, " ").slice(0, 74) || "No note text yet"}</span>
               </button>
             ))}
           </div>
