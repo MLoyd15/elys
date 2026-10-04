@@ -1,3 +1,10 @@
+const DEFAULT_MODEL = "gemini-3.1-flash-lite";
+const TOTAL_BUDGET_MS = 90_000;
+const ATTEMPT_TIMEOUT_MS = 45_000;
+const MIN_ATTEMPT_MS = 3_000;
+const MAX_ATTEMPTS_PER_MODEL = 3;
+const RETRYABLE_STATUSES = new Set([500, 502, 503, 504]);
+
 const studyMaterialSchema = {
   type: "OBJECT",
   properties: {
@@ -60,18 +67,60 @@ function createError(message, status) {
   return error;
 }
 
+function mapFailure(status) {
+  if (status === 429) return createError("Gemini is busy or the API quota has been reached. Please try again later.", 429);
+  if (status === 503) return createError("Gemini is temporarily experiencing high demand. Please wait a minute and try generating again.", 503);
+  if (status === 504) return createError("Study generation took too long. Please try again.", 504);
+  return createError("Gemini could not generate study materials. Check the server configuration and try again.", 502);
+}
+
+function backoffDelay(attempt, retryAfterHeader) {
+  const retryAfter = Number(retryAfterHeader);
+  if (Number.isFinite(retryAfter) && retryAfter > 0) return Math.min(retryAfter, 5) * 1000;
+  return 1000 * 2 ** attempt + Math.random() * 500;
+}
+
+function compactText(text) {
+  return text
+    .replace(/[\uFFFD\uE000-\uF8FF\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, "")
+    .replace(/[^\S\n]+/g, " ")
+    .replace(/ ?\n ?/g, "\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
+function extractText(result, model) {
+  const candidate = result.candidates?.[0];
+  const usage = result.usageMetadata;
+  if (usage) {
+    console.log(`Gemini ${model} tokens: in=${usage.promptTokenCount} out=${usage.candidatesTokenCount}`);
+  }
+  if (candidate?.finishReason === "MAX_TOKENS") {
+    throw createError("The generated study materials were cut off. Try a shorter PDF.", 502);
+  }
+  const generatedText = candidate?.content?.parts?.map((part) => part.text || "").join("");
+  if (!generatedText) {
+    throw createError("Gemini returned no study materials. Try a PDF with more selectable text.", 502);
+  }
+  return generatedText;
+}
+
 export async function generateStudyMaterials({ fileName, text }) {
-  if (!process.env.GEMINI_API_KEY) {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) {
     throw createError("PDF study generation is not configured. Add GEMINI_API_KEY to the server environment.", 503);
   }
 
-  const model = process.env.GEMINI_MODEL || "gemini-3.8-flash";
-  const requestUrl = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(process.env.GEMINI_API_KEY)}`;
-  const requestBody = {
+  const models = [...new Set(
+    [process.env.GEMINI_MODEL || DEFAULT_MODEL, process.env.GEMINI_FALLBACK_MODEL]
+      .map((model) => model?.trim())
+      .filter(Boolean),
+  )];
+  const body = JSON.stringify({
     systemInstruction,
     contents: [{
       role: "user",
-      parts: [{ text: `Source: ${fileName}\n\nDocument text:\n${text}` }],
+      parts: [{ text: `Source: ${fileName}\n\nDocument text:\n${compactText(text)}` }],
     }],
     generationConfig: {
       responseMimeType: "application/json",
@@ -79,55 +128,52 @@ export async function generateStudyMaterials({ fileName, text }) {
       maxOutputTokens: 8192,
       temperature: 0.3,
     },
-  };
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 90000);
-  let geminiResponse;
+  });
+  const deadline = Date.now() + TOTAL_BUDGET_MS;
+  let lastFailure = 502;
 
-  try {
-    for (let attempt = 0; attempt < 3; attempt += 1) {
-      geminiResponse = await fetch(requestUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        signal: controller.signal,
-        body: JSON.stringify(requestBody),
-      });
-      if (geminiResponse.status !== 503 || attempt === 2) break;
+  for (const model of models) {
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`;
 
-      const retryAfter = Number(geminiResponse.headers.get("retry-after"));
-      const retryDelay = Number.isFinite(retryAfter) && retryAfter > 0
-        ? Math.min(retryAfter, 5) * 1000
-        : (attempt + 1) * 1000;
-      await new Promise((resolveDelay) => setTimeout(resolveDelay, retryDelay));
+    for (let attempt = 0; attempt < MAX_ATTEMPTS_PER_MODEL; attempt += 1) {
+      const remaining = deadline - Date.now();
+      if (remaining < MIN_ATTEMPT_MS) throw mapFailure(504);
+      const isLastAttempt = attempt === MAX_ATTEMPTS_PER_MODEL - 1;
+
+      let geminiResponse;
+      try {
+        geminiResponse = await fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey },
+          body,
+          signal: AbortSignal.timeout(Math.min(remaining, ATTEMPT_TIMEOUT_MS)),
+        });
+      } catch (error) {
+        console.error(`Gemini ${model} request error: ${error.name}`);
+        lastFailure = error.name === "TimeoutError" ? 504 : 502;
+        if (!isLastAttempt) await new Promise((resolveDelay) => setTimeout(resolveDelay, backoffDelay(attempt)));
+        continue;
+      }
+
+      if (geminiResponse.ok) {
+        return extractText(await geminiResponse.json(), model);
+      }
+
+      const providerError = await geminiResponse.json().catch(() => ({}));
+      console.error(`Gemini ${model} failed (${geminiResponse.status}): ${providerError.error?.message || "no message"}`);
+      lastFailure = geminiResponse.status;
+
+      if (geminiResponse.status === 429 || geminiResponse.status === 404) break;
+      if (!RETRYABLE_STATUSES.has(geminiResponse.status)) throw mapFailure(geminiResponse.status);
+
+      if (!isLastAttempt) {
+        await new Promise((resolveDelay) => setTimeout(
+          resolveDelay,
+          backoffDelay(attempt, geminiResponse.headers.get("retry-after")),
+        ));
+      }
     }
-  } catch (error) {
-    if (error.name === "AbortError") {
-      throw createError("Study generation took too long. Please try again.", 504);
-    }
-    throw error;
-  } finally {
-    clearTimeout(timeout);
   }
 
-  if (!geminiResponse.ok) {
-    const providerError = await geminiResponse.json().catch(() => ({}));
-    const message = providerError.error?.message || "Gemini could not generate study materials.";
-    console.error(`Gemini request failed (${geminiResponse.status}): ${message}`);
-    if (geminiResponse.status === 429) {
-      throw createError("Gemini is busy or the API quota has been reached. Please try again later.", 429);
-    }
-    if (geminiResponse.status === 503) {
-      throw createError("Gemini is temporarily experiencing high demand. Please wait a minute and try generating again.", 503);
-    }
-    throw createError("Gemini could not generate study materials. Check the server configuration and try again.", 502);
-  }
-
-  const providerResult = await geminiResponse.json();
-  const generatedText = providerResult.candidates?.[0]?.content?.parts
-    ?.map((part) => part.text || "")
-    .join("");
-  if (!generatedText) {
-    throw createError("Gemini returned no study materials. Try a PDF with more selectable text.", 502);
-  }
-  return generatedText;
+  throw mapFailure(lastFailure);
 }
