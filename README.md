@@ -58,6 +58,17 @@ The Render free plan may sleep while idle, so the first request after a quiet pe
 - `client/src/api.js` provides the shared API request helper.
 - `client/src/styles.css` imports the ordered, feature-focused stylesheets from `client/src/styles/`.
 
+## Backend structure
+
+- `server/index.js` loads environment variables, connects to MongoDB, and starts the HTTP server.
+- `server/app.js` configures Express middleware, API routes, and static frontend serving.
+- `server/config/db.js` connects to MongoDB and seeds the lesson, flashcard, study-guide, and progress collections.
+- `server/models/` defines one Mongoose model per data schema.
+- `server/routes/` contains the auth, dashboard, lesson, flashcard, study-guide, task, and note endpoints.
+- `server/services/` contains Gemini generation and validation, plus shared quiz progress updates.
+- `server/middleware/` contains session enforcement and centralized error handling.
+- `server/utils/session.js` provides shared session-cookie and signature helpers.
+
 ## Included
 
 - Statistics-only Overview with CCN quiz completion, XP, weekly study time, streak, and per-unit review progress; learning path, quick quizzes, Study Room, flashcards, to-dos, and detailed progress are separate sidebar destinations
