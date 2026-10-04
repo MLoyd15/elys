@@ -2,6 +2,8 @@
 .page-title-row { margin: 13px 0 25px; }
 .page-title-row h1 { margin: 7px 0 5px; color: #2b3a31; font-family: var(--serif); font-size: 27px; font-weight: 800; letter-spacing: -.8px; }
 .page-title-row > p { margin: 0; color: #8b958c; font-size: 11px; }
+.page-footer { margin-top: 28px; padding: 16px 0 4px; border-top: 1px solid #f0e8eb; color: #929b93; font-size: 10px; line-height: 1.5; text-align: center; }
+.page-footer span { display: inline-block; margin-left: 4px; color: #d87594; }
 .overview-welcome { margin-bottom: 22px; }
 .overview-welcome h1 { font-size: 27px; }
 .overview-date-pill { display: inline-flex; align-items: center; gap: 7px; padding: 9px 12px; border: 1px solid #f0dce3; border-radius: 10px; color: #a94f6c; background: #fff5f7; font-size: 10px; font-weight: 700; }
