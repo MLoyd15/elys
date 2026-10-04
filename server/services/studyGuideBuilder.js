@@ -3,6 +3,7 @@ import { randomBytes } from "node:crypto";
 function createError(message, status) {
   const error = new Error(message);
   error.status = status;
+  error.expose = true;
   return error;
 }
 

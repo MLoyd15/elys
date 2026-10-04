@@ -2,11 +2,21 @@ import { useEffect, useState } from "react";
 import { api } from "../api.js";
 import { Icon } from "../icons.jsx";
 
+function notesInFolder(notes, folderId) {
+  if (folderId === "all") return notes;
+  if (folderId === "unfiled") return notes.filter((note) => !note.folderId);
+  return notes.filter((note) => note.folderId === folderId);
+}
+
 export default function Notepad({ active }) {
   const [notes, setNotes] = useState([]);
+  const [folders, setFolders] = useState([]);
+  const [activeFolderId, setActiveFolderId] = useState("all");
   const [selectedNoteId, setSelectedNoteId] = useState("");
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [noteFolderId, setNoteFolderId] = useState("");
+  const [newFolderName, setNewFolderName] = useState("");
   const [loaded, setLoaded] = useState(false);
   const [reloadToken, setReloadToken] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -14,24 +24,32 @@ export default function Notepad({ active }) {
   const [saveError, setSaveError] = useState("");
   const [saving, setSaving] = useState(false);
   const [creating, setCreating] = useState(false);
+  const [creatingFolder, setCreatingFolder] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const selectedNote = notes.find((note) => note.id === selectedNoteId);
   const hasUnsavedChanges = Boolean(
-    selectedNote && (title !== selectedNote.title || content !== selectedNote.content),
+    selectedNote && (
+      title !== selectedNote.title
+      || content !== selectedNote.content
+      || noteFolderId !== (selectedNote.folderId || "")
+    ),
   );
+  const visibleNotes = notesInFolder(notes, activeFolderId);
 
   useEffect(() => {
     if (!active || loaded) return;
     let cancelled = false;
     setLoading(true);
     setLoadError("");
-    api("/notes")
-      .then((loadedNotes) => {
+    Promise.all([api("/notes"), api("/notes/folders")])
+      .then(([loadedNotes, loadedFolders]) => {
         if (cancelled) return;
         setNotes(loadedNotes);
+        setFolders(loadedFolders);
         setSelectedNoteId(loadedNotes[0]?.id || "");
         setTitle(loadedNotes[0]?.title || "");
         setContent(loadedNotes[0]?.content || "");
+        setNoteFolderId(loadedNotes[0]?.folderId || "");
         setLoaded(true);
       })
       .catch((error) => {
@@ -50,16 +68,52 @@ export default function Notepad({ active }) {
     setCreating(true);
     setSaveError("");
     try {
-      const note = await api("/notes", { method: "POST", body: JSON.stringify({}) });
+      const folderId = activeFolderId !== "all" && activeFolderId !== "unfiled"
+        ? activeFolderId
+        : null;
+      const note = await api("/notes", { method: "POST", body: JSON.stringify({ folderId }) });
       setNotes((current) => [note, ...current]);
       setSelectedNoteId(note.id);
       setTitle(note.title);
       setContent(note.content);
+      setNoteFolderId(note.folderId || "");
     } catch (error) {
       setSaveError(error.message);
     } finally {
       setCreating(false);
     }
+  }
+
+  async function createFolder(event) {
+    event.preventDefault();
+    const name = newFolderName.trim();
+    if (!name) return;
+    setCreatingFolder(true);
+    setSaveError("");
+    try {
+      const folder = await api("/notes/folders", {
+        method: "POST",
+        body: JSON.stringify({ name }),
+      });
+      setFolders((current) => [...current, folder].sort((a, b) => a.name.localeCompare(b.name)));
+      setNewFolderName("");
+    } catch (error) {
+      setSaveError(error.message);
+    } finally {
+      setCreatingFolder(false);
+    }
+  }
+
+  function selectFolder(folderId) {
+    if (folderId === activeFolderId) return;
+    if (hasUnsavedChanges && !window.confirm("Discard your unsaved changes and switch folders?")) return;
+    const nextNote = notesInFolder(notes, folderId)[0];
+    setActiveFolderId(folderId);
+    setSelectedNoteId(nextNote?.id || "");
+    setTitle(nextNote?.title || "");
+    setContent(nextNote?.content || "");
+    setNoteFolderId(nextNote?.folderId || "");
+    setSaveError("");
   }
 
   function selectNote(note) {
@@ -68,6 +122,7 @@ export default function Notepad({ active }) {
     setSelectedNoteId(note.id);
     setTitle(note.title);
     setContent(note.content);
+    setNoteFolderId(note.folderId || "");
     setSaveError("");
   }
 
@@ -79,11 +134,15 @@ export default function Notepad({ active }) {
     try {
       const updatedNote = await api(`/notes/${selectedNote.id}`, {
         method: "PATCH",
-        body: JSON.stringify({ title: title.trim(), content }),
+        body: JSON.stringify({ title: title.trim(), content, folderId: noteFolderId || null }),
       });
       setNotes((current) => current.map((note) => note.id === updatedNote.id ? updatedNote : note));
       setTitle(updatedNote.title);
       setContent(updatedNote.content);
+      setNoteFolderId(updatedNote.folderId || "");
+      if (activeFolderId !== "all" && activeFolderId !== (updatedNote.folderId || "unfiled")) {
+        setActiveFolderId(updatedNote.folderId || "unfiled");
+      }
     } catch (error) {
       setSaveError(error.message);
     } finally {
@@ -98,10 +157,12 @@ export default function Notepad({ active }) {
     try {
       await api(`/notes/${selectedNote.id}`, { method: "DELETE" });
       const remainingNotes = notes.filter((note) => note.id !== selectedNote.id);
+      const nextNote = notesInFolder(remainingNotes, activeFolderId)[0];
       setNotes(remainingNotes);
-      setSelectedNoteId(remainingNotes[0]?.id || "");
-      setTitle(remainingNotes[0]?.title || "");
-      setContent(remainingNotes[0]?.content || "");
+      setSelectedNoteId(nextNote?.id || "");
+      setTitle(nextNote?.title || "");
+      setContent(nextNote?.content || "");
+      setNoteFolderId(nextNote?.folderId || "");
     } catch (error) {
       setSaveError(error.message);
     } finally {
@@ -124,12 +185,37 @@ export default function Notepad({ active }) {
             <Icon name="plus" size={18} />
           </button>
         </div>
+        <div className="notes-folder-list" aria-label="Note folders">
+          <button className={`notes-folder-item ${activeFolderId === "all" ? "selected" : ""}`} onClick={() => selectFolder("all")}>
+            <span>All notes</span><span>{notes.length}</span>
+          </button>
+          <button className={`notes-folder-item ${activeFolderId === "unfiled" ? "selected" : ""}`} onClick={() => selectFolder("unfiled")}>
+            <span>Unfiled</span><span>{notes.filter((note) => !note.folderId).length}</span>
+          </button>
+          {folders.map((folder) => (
+            <button key={folder.id} className={`notes-folder-item ${activeFolderId === folder.id ? "selected" : ""}`} onClick={() => selectFolder(folder.id)}>
+              <span>📁 {folder.name}</span><span>{notes.filter((note) => note.folderId === folder.id).length}</span>
+            </button>
+          ))}
+        </div>
+        <form className="notes-folder-form" onSubmit={createFolder}>
+          <input
+            aria-label="New folder name"
+            value={newFolderName}
+            maxLength={60}
+            onChange={(event) => setNewFolderName(event.target.value)}
+            placeholder="New folder name"
+          />
+          <button type="submit" className="notes-folder-add" disabled={creatingFolder || !newFolderName.trim()} aria-label="Create folder">
+            {creatingFolder ? "…" : <Icon name="plus" size={15} />}
+          </button>
+        </form>
         {saveError && !selectedNote && <div className="notes-error" role="alert">{saveError}</div>}
-        {notes.length === 0 ? (
-          <div className="notes-empty-list"><span>✎</span><p>Your notes will show up here. Create one to get started.</p></div>
+        {visibleNotes.length === 0 ? (
+          <div className="notes-empty-list"><span>✎</span><p>{notes.length ? "No notes in this folder yet." : "Your notes will show up here. Create one to get started."}</p></div>
         ) : (
           <div className="notes-list">
-            {notes.map((note) => (
+            {visibleNotes.map((note) => (
               <button
                 key={note.id}
                 className={`note-list-item ${note.id === selectedNoteId ? "selected" : ""}`}
@@ -159,6 +245,11 @@ export default function Notepad({ active }) {
                 </button>
               </div>
             </div>
+            <label className="visually-hidden" htmlFor="note-folder">Note folder</label>
+            <select id="note-folder" className="note-folder-select" value={noteFolderId} onChange={(event) => setNoteFolderId(event.target.value)}>
+              <option value="">Unfiled</option>
+              {folders.map((folder) => <option key={folder.id} value={folder.id}>{folder.name}</option>)}
+            </select>
             <label className="visually-hidden" htmlFor="note-title">Note title</label>
             <input
               id="note-title"

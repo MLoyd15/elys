@@ -64,6 +64,7 @@ const systemInstruction = {
 function createError(message, status) {
   const error = new Error(message);
   error.status = status;
+  error.expose = true;
   return error;
 }
 

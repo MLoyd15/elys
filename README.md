@@ -77,7 +77,7 @@ The Render free plan may sleep while idle, so the first request after a quiet pe
 - 73 flashcards, including 57 paraphrased CCN prelims cards across all six course units, with topic filters, flip-to-reveal answers, and session recall tracking
 - Server-checked quiz scores, XP, completed lessons, study time, and daily streak tracking
 - MongoDB-backed to-do list with add, complete, and delete actions
-- Personal Notepad page with MongoDB-backed create, edit, save, and delete for study notes
+- Personal Notepad page with MongoDB-backed notes, user-created folders, and note filing
 - Browser-based PDF text extraction with local file processing
 - Server-validated shared access code with an HttpOnly, signed session cookie
 - Responsive layout for desktop and mobile
