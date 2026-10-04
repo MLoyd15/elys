@@ -28,11 +28,12 @@ router.get("/", async (_request, response, next) => {
           description,
           completed: progress.completedLessons.includes(slug),
         })),
-      tasks: tasks.map(({ _id, title, completed, dueLabel }) => ({
+      tasks: tasks.map(({ _id, title, completed, dueLabel, dueDate }) => ({
         id: _id.toString(),
         title,
         completed,
         dueLabel,
+        dueDate: dueDate || "",
       })),
       progress: {
         xp: progress.xp,

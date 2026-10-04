@@ -45,7 +45,7 @@ body { background: #faf8f7; }
 .summary-check { background: var(--green); }
 .add-task-button { border-color: #f1dfe5; color: var(--pink-dark); }
 .add-task-button:hover { background: #fff4f7; }
-.add-task-form > button[type="submit"] { background: var(--green); }
+.task-form-fields > button[type="submit"] { background: var(--green); }
 .progress-ring { stroke: var(--pink); }
 .ring-leaf { color: var(--pink-dark); background: #fce8ee; }
 .loader { border-color: #f5e3e9; border-top-color: var(--pink); }
@@ -79,21 +79,21 @@ body { background: #faf8f7; }
 .selected .option-letter { border-color: #f1cad6; color: var(--pink-dark); background: #fce8ee; }
 .feedback-correct { color: var(--green-dark); background: #eff7ed; }
 .todo-card {
-  border-color: #cfe4d0;
-  background: linear-gradient(145deg, #f2f9f0, #e7f3e5);
-  box-shadow: 0 8px 24px rgb(59 117 73 / 6%);
+  border-color: #f0dce3;
+  background: #fff;
+  box-shadow: 0 8px 24px rgb(180 84 117 / 5%);
 }
-.todo-card .section-kicker { color: #588263; }
-.todo-card .todo-header h2 { color: #2f6240; }
-.todo-card .todo-total { color: #fff; background: #62a476; }
-.todo-card .task-row { border-bottom-color: #dcebd9; }
-.todo-card .task-check { border-color: #b8d2b7; background: #fafff8; }
+.todo-card .section-kicker { color: #a27484; }
+.todo-card .todo-header h2 { color: #704356; }
+.todo-card .todo-total { color: #a94f6c; background: #fce8ee; }
+.todo-card .task-row { border-bottom-color: #f1e7ea; }
+.todo-card .task-check { border-color: #e7d5dc; background: #fffafb; }
 .todo-card .task-check.checked { border-color: #4f9c71; color: #fff; background: #4f9c71; }
 .todo-card .task-delete:hover { color: #a94f6c; background: #fce8ee; }
 .todo-card .summary-check { background: #4f9c71; }
-.todo-card .add-task-button { border-color: #bcd8bd; color: #34754e; background: #fbfff9; }
-.todo-card .add-task-button:hover { background: #e5f2e3; }
-.todo-card .add-task-form > button[type="submit"] { background: #4f9c71; }
+.todo-card .add-task-button { border-color: #f1dfe5; color: #a94f6c; background: #fff; }
+.todo-card .add-task-button:hover { background: #fff4f7; }
+.todo-card .task-form-fields > button[type="submit"] { background: #4f9c71; }
 .progress-card {
   border-color: #f0d4de;
   background: linear-gradient(145deg, #fff6f8, #fbeaf0);

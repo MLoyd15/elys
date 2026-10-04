@@ -75,8 +75,8 @@ function App() {
     [],
   );
 
-  async function addTask(title) {
-    const task = await api("/tasks", { method: "POST", body: JSON.stringify({ title }) });
+  async function addTask(title, dueDate) {
+    const task = await api("/tasks", { method: "POST", body: JSON.stringify({ title, dueDate }) });
     setDashboard((current) => ({ ...current, tasks: [task, ...current.tasks] }));
   }
 

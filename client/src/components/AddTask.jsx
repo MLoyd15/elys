@@ -3,9 +3,17 @@ import { Icon } from "../icons.jsx";
 
 const MAX = 120;
 
+function localDateValue(date = new Date()) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
 export default function AddTask({ onAdd }) {
   const [adding, setAdding] = useState(false);
   const [title, setTitle] = useState("");
+  const [dueDate, setDueDate] = useState("");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const inputRef = useRef(null);
@@ -13,6 +21,7 @@ export default function AddTask({ onAdd }) {
   function close() {
     setAdding(false);
     setTitle("");
+    setDueDate("");
     setError("");
   }
 
@@ -23,8 +32,9 @@ export default function AddTask({ onAdd }) {
     setSaving(true);
     setError("");
     try {
-      await onAdd(clean);
+      await onAdd(clean, dueDate);
       setTitle("");
+      setDueDate("");
       // stay open so several tasks can be added quickly
       inputRef.current?.focus();
     } catch (saveError) {
@@ -50,32 +60,45 @@ export default function AddTask({ onAdd }) {
       onSubmit={submit}
       onKeyDown={(e) => e.key === "Escape" && close()}
     >
-      <input
-        ref={inputRef}
-        autoFocus
-        maxLength={MAX}
-        value={title}
-        onChange={(e) => {
-          setTitle(e.target.value);
-          if (error) setError("");
-        }}
-        placeholder="e.g. Review 20 pharmacology questions"
-        aria-label="New study goal"
-        aria-invalid={!!error}
-        disabled={saving}
-      />
-      <button type="submit" disabled={saving || !title.trim()}>
-        {saving ? "Adding…" : "Add"}
-      </button>
-      <button
-        type="button"
-        className="cancel-add"
-        onClick={close}
-        aria-label="Cancel"
-        title="Cancel (Esc)"
-      >
-        ×
-      </button>
+      <div className="task-form-fields">
+        <input
+          ref={inputRef}
+          autoFocus
+          maxLength={MAX}
+          value={title}
+          onChange={(e) => {
+            setTitle(e.target.value);
+            if (error) setError("");
+          }}
+          placeholder="e.g. Review 20 pharmacology questions"
+          aria-label="New study goal"
+          aria-invalid={!!error}
+          disabled={saving}
+        />
+        <label className="task-deadline-field">
+          <span>Deadline <small>(optional)</small></span>
+          <input
+            type="date"
+            value={dueDate}
+            min={localDateValue()}
+            onChange={(event) => setDueDate(event.target.value)}
+            aria-label="Task deadline"
+            disabled={saving}
+          />
+        </label>
+        <button type="submit" disabled={saving || !title.trim()}>
+          {saving ? "Adding…" : "Add task"}
+        </button>
+        <button
+          type="button"
+          className="cancel-add"
+          onClick={close}
+          aria-label="Cancel"
+          title="Cancel (Esc)"
+        >
+          ×
+        </button>
+      </div>
 
       <div className="task-form-meta">
         {error ? (

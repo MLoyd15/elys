@@ -5,6 +5,31 @@ import { Icon } from "../icons.jsx";
 
 const PdfToText = lazy(() => import("./PdfToText.jsx"));
 
+function getTaskDeadline(task) {
+  if (!task.dueDate) {
+    if (!task.dueLabel || task.dueLabel === "No deadline") return null;
+    return { label: task.dueLabel, tone: "" };
+  }
+
+  const today = new Date();
+  const todayValue = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const tomorrowValue = `${tomorrow.getFullYear()}-${String(tomorrow.getMonth() + 1).padStart(2, "0")}-${String(tomorrow.getDate()).padStart(2, "0")}`;
+  if (task.dueDate < todayValue) {
+    const dateLabel = new Intl.DateTimeFormat("en", { month: "short", day: "numeric" }).format(
+      new Date(`${task.dueDate}T00:00:00`),
+    );
+    return { label: `Overdue · ${dateLabel}`, tone: task.completed ? "" : "overdue" };
+  }
+  if (task.dueDate === todayValue) return { label: "Due today", tone: "soon" };
+  if (task.dueDate === tomorrowValue) return { label: "Due tomorrow", tone: "soon" };
+  const dateLabel = new Intl.DateTimeFormat("en", { month: "short", day: "numeric" }).format(
+    new Date(`${task.dueDate}T00:00:00`),
+  );
+  return { label: `Due ${dateLabel}`, tone: "" };
+}
+
 export default function DashboardPages({
   activeNav,
   todayLabel,
@@ -217,7 +242,9 @@ export default function DashboardPages({
                 <div className="empty-tasks"><span>🌱</span><p>Nothing on your list yet. Add a little goal to get started.</p></div>
               ) : (
                 <div className="task-list">
-                  {tasks.map((task) => (
+                  {tasks.map((task) => {
+                    const deadline = getTaskDeadline(task);
+                    return (
                     <div className={`task-row ${task.completed ? "task-complete" : ""}`} key={task.id}>
                       <button
                         className={`task-check ${task.completed ? "checked" : ""}`}
@@ -227,7 +254,11 @@ export default function DashboardPages({
                         {task.completed && "✓"}
                       </button>
                       <span className="task-title">{task.title}</span>
-                      <span className="task-due">{task.dueLabel}</span>
+                      {deadline ? (
+                        <span className={`task-due ${deadline.tone}`}>{deadline.label}</span>
+                      ) : (
+                        <span className="task-due no-deadline">No deadline</span>
+                      )}
                       <button
                         className="task-delete"
                         onClick={() => actions.removeTask(task.id)}
@@ -236,7 +267,8 @@ export default function DashboardPages({
                         <Icon name="trash" size={15} />
                       </button>
                     </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
               <div className="todo-summary">
