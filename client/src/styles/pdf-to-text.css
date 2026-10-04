@@ -13,6 +13,7 @@
 .pdf-result-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 3px; }
 .pdf-copy-button { display: inline-flex; align-items: center; gap: 6px; min-height: 33px; padding: 0 10px; color: #844d62; border: 1px solid #efdae2; background: #fffafb; font-size: 10px; }
 .pdf-copy-button:hover { background: #fff0f4; }
+.pdf-retry-button { justify-self: start; }
 .pdf-copy-status { color: #73927a; font-size: 10px; }
 .pdf-text-output { width: 100%; min-height: 370px; resize: vertical; padding: 15px; border: 1px solid #f1e7ea; border-radius: 10px; color: #536258; background: #fff; font-size: 12px; line-height: 1.8; }
 .pdf-text-output::placeholder { color: #a9b0a8; }

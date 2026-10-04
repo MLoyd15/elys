@@ -126,14 +126,15 @@ function App() {
     }
   }
 
-  async function openFlashcards(topic = "All topics") {
+  async function openFlashcards(topic = "All topics", studyGuideSlug = "") {
     setActiveNav("cards");
     setFlashcardTopic(topic);
     setFlashcardsOpen(true);
     setFlashcardsLoading(true);
     setFlashcardsError("");
     try {
-      setFlashcards(await api("/flashcards"));
+      const studyGuideFilter = studyGuideSlug ? `?studyGuide=${encodeURIComponent(studyGuideSlug)}` : "";
+      setFlashcards(await api(`/flashcards${studyGuideFilter}`));
     } catch (loadError) {
       setFlashcardsError(loadError.message);
     } finally {
@@ -148,6 +149,13 @@ function App() {
     if (studyGuides.length === 0 && !studyGuidesLoading) {
       loadStudyGuides();
     }
+  }
+
+  function openGeneratedStudyGuide(guide) {
+    setStudyGuides((current) => [guide, ...current.filter((item) => item.slug !== guide.slug)]);
+    setStudyRoomInitialSlug(guide.slug);
+    setActiveNav("study");
+    setStudyRoomOpen(true);
   }
 
   async function unlockSite(event) {
@@ -258,7 +266,7 @@ function App() {
     chart: "Progress",
   };
   const pageDescriptions = {
-    path: "Choose a CCN unit and open its reading guide.",
+    path: "Choose a study unit to open its reading guide, flashcards, and quiz.",
     quiz: "Practice with the same unit quizzes available in the Study Room.",
     check: "Keep track of your study tasks and plans.",
     notes: "Write down your own study notes and keep them in one place.",
@@ -358,7 +366,7 @@ function App() {
               reviewedGuideSlugs,
               nextGuideSlug,
             }}
-            actions={{ loadStudyGuides, openStudyRoom, startStudyGuideQuiz, addTask, toggleTask, removeTask }}
+            actions={{ loadStudyGuides, openStudyRoom, startStudyGuideQuiz, addTask, toggleTask, removeTask, onGeneratedStudyGuide: openGeneratedStudyGuide }}
           />
         </div>
       </main>
@@ -373,10 +381,10 @@ function App() {
         onGuideReviewed={(slug) => setReviewedGuideSlugs((current) => current.includes(slug) ? current : [...current, slug])}
         onClose={() => { setStudyRoomOpen(false); setActiveNav("home"); }}
         onStartQuiz={startStudyGuideQuiz}
-        onBrowseFlashcards={(topic) => {
+        onBrowseFlashcards={(topic, slug) => {
           setStudyRoomOpen(false);
           setActiveNav("cards");
-          openFlashcards(topic);
+          openFlashcards(topic, slug);
         }}
       />}
       {notice && <div className="toast" role="status">{notice}<button onClick={() => setNotice("")}><Icon name="close" size={16} /></button></div>}

@@ -113,7 +113,7 @@ export default function DashboardPages({
             <div>
               <div className="section-kicker">YOUR LEARNING PATH</div>
               <h2>Study it, then remember it</h2>
-              <p>Choose a CCN unit to open its reading guide, then review matching flashcards in the Study Room.</p>
+              <p>Choose a study unit to open its reading guide, then review its matching flashcards in the Study Room.</p>
             </div>
             <span className="path-progress-pill">{reviewedGuideCount} / {studyGuides.length || 6} reviewed</span>
           </div>
@@ -184,7 +184,7 @@ export default function DashboardPages({
                   </div>
                   <div className="lesson-category">{guide.topic}</div>
                   <h3>{guide.title}</h3>
-                  <p>Check your understanding with the Study Room quiz for this unit.</p>
+                  <p>Check your understanding with the 10-question Study Room quiz for this unit.</p>
                   <div className="lesson-footer">
                     <span><Icon name="clock" size={15} />10 questions</span>
                     <button
@@ -275,7 +275,7 @@ export default function DashboardPages({
                 <div><span className="stat-icon xp-mini">✳</span><strong>{progress.xp}</strong><small>Total XP</small></div>
                 <div><span className="stat-icon streak-mini">↗</span><strong>{progress.streak} days</strong><small>Current streak</small></div>
               </div>
-              <div className="progress-review-count">{completedReviewCount} of {reviewPathLength} CCN unit quizzes completed</div>
+              <div className="progress-review-count">{completedReviewCount} of {reviewPathLength} study-unit quizzes completed</div>
             </section>
           )}
         </div>
@@ -284,7 +284,7 @@ export default function DashboardPages({
       <Notepad active={activeNav === "notes"} />
       {activeNav === "pdf" && (
         <Suspense fallback={<div className="pdf-conversion-status" role="status">Loading PDF tools…</div>}>
-          <PdfToText />
+          <PdfToText onGenerated={actions.onGeneratedStudyGuide} />
         </Suspense>
       )}
       <footer className="page-footer">Made for the nurse you’re becoming <span>✳</span></footer>

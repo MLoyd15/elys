@@ -65,7 +65,7 @@ export default function StudyRoom({ guides, loading, error, initialSlug, readGui
         ) : (
           <div className="study-room-body">
             <aside className="study-unit-list" aria-label="Study units">
-              <span className="study-unit-label">YOUR CCN UNITS</span>
+              <span className="study-unit-label">YOUR STUDY UNITS</span>
               {guides.map((item, index) => (
                 <button
                   key={item.slug}
@@ -107,7 +107,7 @@ export default function StudyRoom({ guides, loading, error, initialSlug, readGui
                   <button className="study-step-button" onClick={() => moveGuide(-1)}>← Previous unit</button>
                   <div className="study-practice-actions">
                     <button className="study-quiz-button" onClick={() => onStartQuiz(guide.slug)}>Take quiz</button>
-                    <button className="study-flashcard-button" onClick={() => onBrowseFlashcards(guide.topic)}>Review flashcards</button>
+                    <button className="study-flashcard-button" onClick={() => onBrowseFlashcards(guide.topic, guide.slug)}>Review flashcards</button>
                   </div>
                   <button className={`button ${isRead ? "button-remembered" : "button-primary"}`} onClick={markRead}>
                     {isRead ? "Reviewed ✓" : "Mark read & continue"} <Icon name="arrow" size={16} />

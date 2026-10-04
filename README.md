@@ -16,16 +16,17 @@ A gamified nursing study companion for a fourth-year nursing student. Nurselys c
    ```
 
 2. Copy `.env.example` to `.env`, set `MONGODB_URI` to your MongoDB connection string, and choose a private `ACCESS_CODE`. Set `SESSION_SECRET` to a random secret of at least 32 characters; do not commit `.env`.
+3. To generate study materials from uploaded PDFs, create a Gemini API key in [Google AI Studio](https://aistudio.google.com/app/apikey) and set `GEMINI_API_KEY` in the server environment. Keep the key private; never put it in frontend code or commit it. `GEMINI_MODEL` defaults to `gemini-2.5-flash`.
 
-3. Start the API and React development server:
+4. Start the API and React development server:
 
    ```sh
    npm run dev
    ```
 
-4. Open the Vite URL shown in the terminal (normally `http://localhost:5173`).
+5. Open the Vite URL shown in the terminal (normally `http://localhost:5173`).
 
-The API runs on port 4000. On first connection, it inserts the sample lessons, a study progress record, and starter to-dos if the database is empty.
+The API runs on port 4000. On first connection, it inserts the sample lessons, a study progress record, and starter to-dos if the database is empty. When a PDF is selected, its selectable text is extracted in the browser and sent to Gemini; the resulting study guide, 12 flashcards, and 10-question quiz are saved in MongoDB and shared with app users. Scanned/image-only PDFs require OCR and are not supported. Do not upload confidential documents or patient identifiers.
 
 ## Production build
 
@@ -43,9 +44,10 @@ Nurselys can be deployed with the Vercel frontend, a Render Node.js API, and Mon
 1. Create a MongoDB Atlas database and copy its connection string. Keep the database password private.
 2. Push this project to a GitHub repository you control. Do not add `.env` or deployment secrets to Git.
 3. In Render, create a Blueprint from the repository and use `render.yaml`. Set `MONGODB_URI` to the Atlas connection string and `ACCESS_CODE` to the private code you want Elys to use. Render generates `SESSION_SECRET`.
-4. Once the Render service is live, copy its base URL (for example, `https://nursepath-api.onrender.com`).
-5. Import the same repository into Vercel with the project root as the root directory. Set the `API_URL` environment variable to the Render service's base URL, with no `/api` suffix. Deploy.
-6. Open the Vercel website URL and test unlocking, quizzes, tasks, and notes.
+4. In the Render service environment, set `GEMINI_API_KEY` to the key created in Google AI Studio. Optionally set `GEMINI_MODEL`; otherwise the API uses `gemini-2.5-flash`. Do not put the key in Vercel or any client-side setting.
+5. Once the Render service is live, copy its base URL (for example, `https://nursepath-api.onrender.com`).
+6. Import the same repository into Vercel with the project root as the root directory. Set the `API_URL` environment variable to the Render service's base URL, with no `/api` suffix. Deploy.
+7. Open the Vercel website URL and test unlocking, quizzes, tasks, notes, and PDF study generation.
 
 The Render free plan may sleep while idle, so the first request after a quiet period can take longer. Hosting providers may change their free-plan limits.
 

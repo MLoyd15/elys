@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { api } from "../api.js";
 import * as pdfjsLib from "pdfjs-dist";
 import pdfWorker from "pdfjs-dist/build/pdf.worker.min.mjs?url";
 import { Icon } from "../icons.jsx";
@@ -28,11 +29,12 @@ function extractPageText(items) {
   return text;
 }
 
-export default function PdfToText() {
+export default function PdfToText({ onGenerated }) {
   const [fileName, setFileName] = useState("");
   const [pageCount, setPageCount] = useState(0);
   const [text, setText] = useState("");
   const [loading, setLoading] = useState(false);
+  const [processingLabel, setProcessingLabel] = useState("");
   const [error, setError] = useState("");
   const [copyMessage, setCopyMessage] = useState("");
 
@@ -54,6 +56,7 @@ export default function PdfToText() {
 
     setFileName(file.name);
     setLoading(true);
+    setProcessingLabel("Extracting text from your PDF…");
     let loadingTask;
     let document;
     try {
@@ -68,9 +71,26 @@ export default function PdfToText() {
 
       const extractedText = pages.join("\n\n").trim();
       setPageCount(document.numPages);
+      await document.destroy();
+      document = null;
+      loadingTask = null;
       setText(extractedText);
       if (!extractedText) {
         setError("No selectable text was found. This PDF may contain scanned pages; OCR is not supported yet.");
+      } else if (extractedText.length > 100000) {
+        setError("This PDF has too much text to process at once. Try a shorter document (up to 100,000 characters).");
+      } else {
+        setProcessingLabel("Generating your study guide, flashcards, and quiz with Gemini…");
+        try {
+          const result = await api("/study-guides/generate", {
+            method: "POST",
+            body: JSON.stringify({ fileName: file.name, text: extractedText }),
+          });
+          setCopyMessage("Your study materials are saved. Opening the Study Room…");
+          onGenerated(result.guide);
+        } catch (generationError) {
+          setError(generationError.message);
+        }
       }
     } catch (conversionError) {
       setError(conversionError instanceof Error ? `Could not read this PDF: ${conversionError.message}` : "Could not read this PDF.");
@@ -84,6 +104,7 @@ export default function PdfToText() {
           : "Could not finish PDF processing."));
       }
       setLoading(false);
+      setProcessingLabel("");
     }
   }
 
@@ -103,7 +124,7 @@ export default function PdfToText() {
         <div className="pdf-upload-icon"><Icon name="fileText" size={22} /></div>
         <div className="pdf-upload-copy">
           <h2>Turn a PDF into text</h2>
-          <p>Your file is processed in this browser and is not uploaded to a server. Scanned PDFs need OCR, which is not supported yet.</p>
+          <p>PDF text is extracted in your browser, then sent to Gemini to create a saved study guide, flashcards, and quiz. Don’t upload patient identifiers or confidential documents; generated materials are shared with app users. Scanned PDFs need OCR.</p>
         </div>
         <input
           className="visually-hidden pdf-upload-input"
@@ -120,7 +141,28 @@ export default function PdfToText() {
       </div>
 
       {fileName && <div className="pdf-file-status">{fileName}{pageCount > 0 && ` · ${pageCount} ${pageCount === 1 ? "page" : "pages"}`}</div>}
-      {loading && <div className="pdf-conversion-status" role="status"><span className="loader" /> Extracting text from your PDF…</div>}
+      {text && error && !loading && (
+        <button className="button pdf-copy-button pdf-retry-button" onClick={async () => {
+          setError("");
+          setCopyMessage("");
+          setLoading(true);
+          setProcessingLabel("Generating your study guide, flashcards, and quiz with Gemini…");
+          try {
+            const result = await api("/study-guides/generate", {
+              method: "POST",
+              body: JSON.stringify({ fileName, text }),
+            });
+            setCopyMessage("Your study materials are saved. Opening the Study Room…");
+            onGenerated(result.guide);
+          } catch (generationError) {
+            setError(generationError.message);
+          } finally {
+            setLoading(false);
+            setProcessingLabel("");
+          }
+        }}>Try generating again</button>
+      )}
+      {loading && <div className="pdf-conversion-status" role="status"><span className="loader" /> {processingLabel}</div>}
       {error && <p className="pdf-conversion-error" role="alert">{error}</p>}
 
       <div className="pdf-result-heading">
