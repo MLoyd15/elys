@@ -26,7 +26,7 @@ A gamified nursing study companion for a fourth-year nursing student. Nurselys c
 
 5. Open the Vite URL shown in the terminal (normally `http://localhost:5173`).
 
-The API runs on port 4000. On first connection, it inserts the sample lessons, a study progress record, and starter to-dos if the database is empty. When a PDF is selected, its selectable text is extracted in the browser and sent to Gemini; the resulting study guide, 12 flashcards, and 10-question quiz are saved in MongoDB and shared with app users. Scanned/image-only PDFs require OCR and are not supported. Do not upload confidential documents or patient identifiers.
+The API runs on port 4000. On first connection, it inserts the sample lessons, a study progress record, and starter to-dos if the database is empty. AI Guide accepts a PDF of up to 30 pages or pasted text. PDF text is extracted in the browser and sent to Gemini; pasted text is sent directly to Gemini. The app checks the selected model's input-token limit before generation. There is no separate character limit for pasted text, but the model context limit and deployment request-size limits still apply. Generated study guides, 12 flashcards, and 10-question quizzes are saved in MongoDB and shared with app users. Scanned/image-only PDFs require OCR and are not supported. Do not upload confidential documents or patient identifiers.
 
 ## Production build
 
@@ -47,7 +47,7 @@ Nurselys can be deployed with the Vercel frontend, a Render Node.js API, and Mon
 4. In the Render service environment, set `GEMINI_API_KEY` to the key created in Google AI Studio. Optionally set `GEMINI_MODEL`; otherwise the API uses `gemini-3.8-flash`. Do not put the key in Vercel or any client-side setting.
 5. Once the Render service is live, copy its base URL (for example, `https://nursepath-api.onrender.com`).
 6. Import the same repository into Vercel with the project root as the root directory. Set the `API_URL` environment variable to the Render service's base URL, with no `/api` suffix. Deploy.
-7. Open the Vercel website URL and test unlocking, quizzes, tasks, notes, and PDF study generation.
+7. Open the Vercel website URL and test unlocking, quizzes, tasks, notes, and AI Guide using both a PDF and pasted text.
 
 The Render free plan may sleep while idle, so the first request after a quiet period can take longer. Hosting providers may change their free-plan limits.
 
