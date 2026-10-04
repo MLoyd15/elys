@@ -368,7 +368,7 @@ app.post("/api/study-guides/generate", async (request, response, next) => {
       return response.status(503).json({ error: "PDF study generation is not configured. Add GEMINI_API_KEY to the server environment." });
     }
 
-    const model = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+    const model = process.env.GEMINI_MODEL || "gemini-3.8-flash";
     const schema = {
       type: "OBJECT",
       properties: {
