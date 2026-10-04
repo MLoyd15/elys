@@ -221,7 +221,7 @@ function App() {
           <button className="button button-primary access-submit" type="submit" disabled={!accessCode || unlocking}>
             {unlocking ? "Unlocking…" : "Open my study space"} {!unlocking && <Icon name="arrow" size={17} />}
           </button>
-          <span className="access-footnote">Testing lang <span>✳</span></span>
+          <span className="access-footnote">Your study journey starts here <span>✳</span></span>
         </form>
       </main>
     );
