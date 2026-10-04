@@ -92,7 +92,9 @@
   .study-sections { gap: 15px; margin-top: 18px; }
   .study-article-footer { flex-wrap: wrap; justify-content: space-between; gap: 4px; padding: 9px 10px; }
   .study-practice-actions { order: 3; width: 100%; justify-content: center; gap: 18px; }
-  .study-step-button, .study-quiz-button, .study-flashcard-button { font-size: 8px; }
+  .study-step-button, .study-quiz-button, .study-flashcard-button, .study-save-button { font-size: 8px; }
+  .study-practice-actions { gap: 9px; }
+  .study-save-message { text-align: center; }
   .study-quiz-button { order: 0; }
   .study-flashcard-button { order: 1; }
   .study-step-button { order: 1; }
@@ -120,4 +122,3 @@
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }
-
