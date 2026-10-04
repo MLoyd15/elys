@@ -4,6 +4,8 @@ import * as pdfjsLib from "pdfjs-dist";
 import pdfWorker from "pdfjs-dist/build/pdf.worker.min.mjs?url";
 import { Icon } from "../icons.jsx";
 
+const MAX_STUDY_TEXT_CHARACTERS = 10000;
+
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorker;
 
 function extractPageText(items) {
@@ -112,6 +114,8 @@ export default function PdfToText({ onGenerated }) {
       setText(extractedText);
       if (!extractedText) {
         setError("No selectable text was found. This PDF may contain scanned pages; OCR is not supported yet.");
+      } else if (extractedText.length > MAX_STUDY_TEXT_CHARACTERS) {
+        setError(`This PDF contains ${extractedText.length.toLocaleString()} characters of text. AI Guide supports up to ${MAX_STUDY_TEXT_CHARACTERS.toLocaleString()} characters; use a shorter PDF or select a shorter passage.`);
       } else {
         await generateStudyMaterials(extractedText, file.name);
       }
@@ -134,6 +138,10 @@ export default function PdfToText({ onGenerated }) {
   async function handleTextSubmit(event) {
     event.preventDefault();
     if (!text.trim() || loading) return;
+    if (text.trim().length > MAX_STUDY_TEXT_CHARACTERS) {
+      setError(`Please shorten your text to ${MAX_STUDY_TEXT_CHARACTERS.toLocaleString()} characters or fewer.`);
+      return;
+    }
     setFileName("");
     setPageCount(0);
     await generateStudyMaterials(text.trim(), "Pasted text");
@@ -200,12 +208,13 @@ export default function PdfToText({ onGenerated }) {
               setCopyMessage("");
               setRetryAvailable(false);
             }}
+            maxLength={MAX_STUDY_TEXT_CHARACTERS}
             placeholder="Paste your notes, reading material, or lecture transcript here…"
             spellCheck="false"
             disabled={loading}
           />
           <div className="ai-guide-text-footer">
-            <span>There’s no app-set character limit. Gemini has a maximum context size; very long text may be rejected.</span>
+            <span>{text.length.toLocaleString()} / {MAX_STUDY_TEXT_CHARACTERS.toLocaleString()} characters. Shorten the source if it’s over the limit.</span>
             <button className="button button-primary" type="submit" disabled={!text.trim() || loading}>
               <Icon name="spark" size={16} /> Generate study materials
             </button>

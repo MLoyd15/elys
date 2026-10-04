@@ -26,7 +26,7 @@ A gamified nursing study companion for a fourth-year nursing student. Nurselys c
 
 5. Open the Vite URL shown in the terminal (normally `http://localhost:5173`).
 
-The API runs on port 4000. On first connection, it inserts the sample lessons, a study progress record, and starter to-dos if the database is empty. AI Guide accepts a PDF of up to 30 pages or pasted text. PDF text is extracted in the browser and sent to Gemini; pasted text is sent directly to Gemini. The app checks the selected model's input-token limit before generation. There is no separate character limit for pasted text, but the model context limit and deployment request-size limits still apply. Generated study guides, 12 flashcards, and 10-question quizzes are saved in MongoDB and shared with app users. Scanned/image-only PDFs require OCR and are not supported. Do not upload confidential documents or patient identifiers.
+The API runs on port 4000. On first connection, it inserts the sample lessons, a study progress record, and starter to-dos if the database is empty. AI Guide accepts a PDF of up to 30 pages or pasted text, with a 10,000-character maximum for extracted or pasted text. PDF text is extracted in the browser and sent to Gemini; pasted text is sent directly to Gemini. Generated study guides, 12 flashcards, and 10-question quizzes are saved in MongoDB and shared with app users. Scanned/image-only PDFs require OCR and are not supported. Do not upload confidential documents or patient identifiers.
 
 ## Production build
 

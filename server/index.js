@@ -13,6 +13,7 @@ const app = express();
 const port = Number(process.env.PORT || 4000);
 const sessionCookie = "nursepath_access";
 const sessionDurationSeconds = 7 * 24 * 60 * 60;
+const maxStudyTextCharacters = 10000;
 const loginAttempts = new Map();
 
 app.use(cors());
@@ -364,6 +365,9 @@ app.post("/api/study-guides/generate", async (request, response, next) => {
     if (!fileName || fileName.length > 180 || !text) {
       return response.status(400).json({ error: "Provide a source name and non-empty text." });
     }
+    if (text.length > maxStudyTextCharacters) {
+      return response.status(413).json({ error: "Study material must be 10,000 characters or fewer. Shorten the text and try again." });
+    }
     if (!process.env.GEMINI_API_KEY) {
       return response.status(503).json({ error: "PDF study generation is not configured. Add GEMINI_API_KEY to the server environment." });
     }
@@ -441,35 +445,6 @@ app.post("/api/study-guides/generate", async (request, response, next) => {
     const timeout = setTimeout(() => controller.abort(), 90000);
     let geminiResponse;
     try {
-      const [tokenCountResponse, modelResponse] = await Promise.all([
-        fetch(`${requestUrl}:countTokens?key=${apiKey}`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          signal: controller.signal,
-          body: JSON.stringify({ generateContentRequest }),
-        }),
-        fetch(`${requestUrl}?key=${apiKey}`, { signal: controller.signal }),
-      ]);
-      if (!tokenCountResponse.ok || !modelResponse.ok) {
-        const failedResponse = !tokenCountResponse.ok ? tokenCountResponse : modelResponse;
-        const providerError = await failedResponse.json().catch(() => ({}));
-        console.error(`Gemini token-limit check failed (${failedResponse.status}): ${providerError.error?.message || "Unknown provider error"}`);
-        return response.status(502).json({ error: "Could not check this text against Gemini’s input limit. Please try again later." });
-      }
-      const [tokenCount, modelInfo] = await Promise.all([
-        tokenCountResponse.json(),
-        modelResponse.json(),
-      ]);
-      if (!Number.isInteger(modelInfo.inputTokenLimit) || !Number.isInteger(tokenCount.totalTokens)) {
-        console.error("Gemini did not return the model input limit and token count.");
-        return response.status(502).json({ error: "Could not check this text against Gemini’s input limit. Please try again later." });
-      }
-      if (tokenCount.totalTokens > modelInfo.inputTokenLimit) {
-        return response.status(413).json({
-          error: `This text is about ${tokenCount.totalTokens.toLocaleString()} tokens, which exceeds Gemini ${model}’s ${modelInfo.inputTokenLimit.toLocaleString()}-token input limit. Shorten the text and try again.`,
-        });
-      }
-
       for (let attempt = 0; attempt < 3; attempt += 1) {
         geminiResponse = await fetch(
           `${requestUrl}:generateContent?key=${apiKey}`,
