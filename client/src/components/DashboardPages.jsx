@@ -1,6 +1,9 @@
+import { lazy, Suspense } from "react";
 import AddTask from "./AddTask.jsx";
 import Notepad from "./Notepad.jsx";
 import { Icon } from "../icons.jsx";
+
+const PdfToText = lazy(() => import("./PdfToText.jsx"));
 
 export default function DashboardPages({
   activeNav,
@@ -279,6 +282,11 @@ export default function DashboardPages({
       )}
 
       <Notepad active={activeNav === "notes"} />
+      {activeNav === "pdf" && (
+        <Suspense fallback={<div className="pdf-conversion-status" role="status">Loading PDF tools…</div>}>
+          <PdfToText />
+        </Suspense>
+      )}
       <footer className="page-footer">Made for the nurse you’re becoming <span>✳</span></footer>
     </>
   );

@@ -3,6 +3,7 @@ export function Icon({ name, size = 20 }) {
     home: <><path d="m3 10 9-7 9 7" /><path d="M5 9v11h14V9M9 20v-7h6v7" /></>,
     book: <><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21z" /><path d="M4 5.5v13A2.5 2.5 0 0 1 6.5 16H20M8 7h8M8 10h8" /></>,
     note: <><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><path d="M14 2v6h6M8 13h8M8 17h8" /></>,
+    fileText: <><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><path d="M14 2v6h6M8 13h8M8 17h8" /></>,
     cards: <><rect x="4" y="4" width="13" height="15" rx="2" /><path d="M8 8h5M8 12h5M8 16h3" /><path d="M8 2h11a2 2 0 0 1 2 2v13" /></>,
     check: <><path d="m5 12 4 4L19 6" /><path d="M21 12a9 9 0 1 1-2.6-6.4" /></>,
     chart: <><path d="M4 19V5M4 19h17" /><path d="m7 14 4-4 3 2 5-6" /></>,

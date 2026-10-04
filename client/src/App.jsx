@@ -254,6 +254,7 @@ function App() {
     cards: "Flashcards",
     check: "My to-dos",
     notes: "Notepad",
+    pdf: "PDF to text",
     chart: "Progress",
   };
   const pageDescriptions = {
@@ -261,6 +262,7 @@ function App() {
     quiz: "Practice with the same unit quizzes available in the Study Room.",
     check: "Keep track of your study tasks and plans.",
     notes: "Write down your own study notes and keep them in one place.",
+    pdf: "Extract selectable text from a PDF right in your browser.",
     chart: "See how your completed study-unit quizzes add up.",
   };
   return (
@@ -280,6 +282,7 @@ function App() {
             { key: "cards", icon: "cards", label: "Flashcards" },
             { key: "check", icon: "check", label: "My to-dos" },
             { key: "notes", icon: "note", label: "Notepad" },
+            { key: "pdf", icon: "fileText", label: "PDF to text" },
             { key: "chart", icon: "chart", label: "Progress" },
           ].map(({ key, icon, label }) => (
             <button

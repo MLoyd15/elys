@@ -1,0 +1,26 @@
+.pdf-text-workspace { display: grid; gap: 17px; padding: 20px; border: 1px solid #f0dce3; border-radius: 14px; background: #fff; box-shadow: 0 8px 24px rgb(180 84 117 / 5%); }
+.pdf-upload-card { display: flex; align-items: center; gap: 14px; padding: 18px; border: 1px dashed #e9cbd5; border-radius: 11px; background: #fffafb; }
+.pdf-upload-icon { display: grid; place-items: center; flex: 0 0 auto; width: 42px; height: 42px; border-radius: 12px; color: #a94f6c; background: #f8e5eb; }
+.pdf-upload-copy { flex: 1; min-width: 0; }
+.pdf-upload-copy h2, .pdf-result-heading h2 { margin: 0; color: #704356; font-family: var(--serif); font-size: 15px; font-weight: 800; }
+.pdf-upload-copy p, .pdf-result-heading p { margin: 5px 0 0; color: #929b93; font-size: 10px; line-height: 1.6; }
+.pdf-upload-button { display: inline-flex; flex: 0 0 auto; align-items: center; gap: 7px; min-height: 36px; }
+.pdf-upload-button.is-disabled { cursor: wait; opacity: .65; }
+.pdf-upload-input:focus-visible + .pdf-upload-button { outline: 3px solid #9bd3ae; outline-offset: 3px; }
+.pdf-file-status { overflow: hidden; color: #78867b; font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
+.pdf-conversion-status { display: flex; align-items: center; gap: 9px; color: #78867b; font-size: 11px; }
+.pdf-conversion-error { margin: 0; color: #a65e54; font-size: 11px; line-height: 1.6; }
+.pdf-result-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 3px; }
+.pdf-copy-button { display: inline-flex; align-items: center; gap: 6px; min-height: 33px; padding: 0 10px; color: #844d62; border: 1px solid #efdae2; background: #fffafb; font-size: 10px; }
+.pdf-copy-button:hover { background: #fff0f4; }
+.pdf-copy-status { color: #73927a; font-size: 10px; }
+.pdf-text-output { width: 100%; min-height: 370px; resize: vertical; padding: 15px; border: 1px solid #f1e7ea; border-radius: 10px; color: #536258; background: #fff; font-size: 12px; line-height: 1.8; }
+.pdf-text-output::placeholder { color: #a9b0a8; }
+.pdf-text-output:focus { border-color: #dfbdc9; outline: none; }
+@media (max-width: 520px) {
+  .pdf-text-workspace { padding: 13px; }
+  .pdf-upload-card { align-items: flex-start; flex-wrap: wrap; padding: 13px; }
+  .pdf-upload-copy { flex-basis: calc(100% - 58px); }
+  .pdf-upload-button { margin-left: 56px; }
+  .pdf-text-output { min-height: 300px; }
+}
