@@ -1,0 +1,196 @@
+:root {
+  --glass-border: rgb(255 255 255 / 74%);
+  --glass-surface: rgb(255 255 255 / 67%);
+  --glass-shadow: 0 14px 36px rgb(94 75 88 / 9%);
+}
+
+body {
+  background:
+    radial-gradient(ellipse at 8% 8%, rgb(200 230 204 / 58%), transparent 34%),
+    radial-gradient(ellipse at 91% 23%, rgb(249 211 224 / 48%), transparent 34%),
+    radial-gradient(ellipse at 75% 91%, rgb(213 232 218 / 46%), transparent 36%),
+    #f7f7f5;
+  background-attachment: fixed;
+}
+
+.sidebar {
+  border-right-color: rgb(255 255 255 / 75%);
+  background: rgb(255 249 251 / 72%);
+  box-shadow: 8px 0 30px rgb(112 89 101 / 5%);
+  backdrop-filter: blur(22px) saturate(145%);
+  -webkit-backdrop-filter: blur(22px) saturate(145%);
+}
+
+.topbar {
+  border-bottom-color: rgb(255 255 255 / 75%);
+  background: rgb(250 249 248 / 68%);
+  backdrop-filter: blur(18px) saturate(145%);
+  -webkit-backdrop-filter: blur(18px) saturate(145%);
+}
+
+.sidebar-note,
+.weekly-pill,
+.lesson-card,
+.study-path-card,
+.todo-card,
+.progress-card,
+.review-stat-card,
+.overview-review-card,
+.notepad-workspace,
+.pdf-text-workspace,
+.access-card,
+.quiz-modal,
+.flashcard-modal,
+.study-room,
+.toast {
+  border-color: var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  backdrop-filter: blur(18px) saturate(145%);
+  -webkit-backdrop-filter: blur(18px) saturate(145%);
+}
+
+.sidebar-note {
+  background: rgb(255 255 255 / 48%);
+}
+
+.weekly-pill,
+.lesson-card,
+.study-path-card,
+.todo-card,
+.overview-review-card,
+.notepad-workspace,
+.pdf-text-workspace,
+.access-card,
+.quiz-modal,
+.flashcard-modal,
+.study-room,
+.toast {
+  background: var(--glass-surface);
+}
+
+.hero-card {
+  border: 1px solid rgb(255 255 255 / 70%);
+  background: linear-gradient(115deg, rgb(224 242 226 / 76%), rgb(230 243 232 / 66%) 63%, rgb(252 230 238 / 72%));
+  box-shadow: var(--glass-shadow);
+  backdrop-filter: blur(16px) saturate(145%);
+  -webkit-backdrop-filter: blur(16px) saturate(145%);
+}
+
+.study-path-card.is-next,
+.study-path-card.is-reviewed,
+.study-path-card:nth-child(even):not(.is-next) {
+  background: rgb(255 255 255 / 61%);
+}
+
+.progress-card {
+  background: linear-gradient(145deg, rgb(255 247 249 / 78%), rgb(250 231 238 / 68%));
+}
+
+.review-stat-green {
+  background: linear-gradient(145deg, rgb(246 251 244 / 76%), rgb(234 245 232 / 67%));
+}
+
+.review-stat-pink {
+  background: linear-gradient(145deg, rgb(255 248 250 / 78%), rgb(251 237 241 / 68%));
+}
+
+.notes-list-panel,
+.study-unit-list {
+  background: rgb(255 250 252 / 49%);
+  backdrop-filter: blur(14px) saturate(135%);
+  -webkit-backdrop-filter: blur(14px) saturate(135%);
+}
+
+.study-article-footer {
+  background: rgb(255 255 255 / 62%);
+  backdrop-filter: blur(14px) saturate(135%);
+  -webkit-backdrop-filter: blur(14px) saturate(135%);
+}
+
+.answer-option,
+.flashcard-nav,
+.flashcard-toolbar select,
+.study-objectives,
+.study-safety-note {
+  background-color: rgb(255 255 255 / 57%);
+  backdrop-filter: blur(12px) saturate(135%);
+  -webkit-backdrop-filter: blur(12px) saturate(135%);
+}
+
+.flashcard {
+  border-color: rgb(255 255 255 / 76%);
+  background:
+    radial-gradient(ellipse at 90% 10%, rgb(252 232 238 / 76%) 0, transparent 36%),
+    linear-gradient(145deg, rgb(245 250 243 / 78%), rgb(255 242 246 / 74%));
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 74%), 0 10px 24px rgb(112 89 101 / 7%);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+}
+
+.flashcard.is-flipped {
+  background:
+    radial-gradient(ellipse at 10% 90%, rgb(230 242 228 / 78%) 0, transparent 38%),
+    linear-gradient(145deg, rgb(255 247 249 / 78%), rgb(240 247 239 / 76%));
+}
+
+.pdf-upload-card {
+  border-color: rgb(255 255 255 / 78%);
+  background: rgb(255 255 255 / 40%);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 66%);
+}
+
+.pdf-upload-card {
+  border-style: dashed;
+}
+
+.task-form-fields > input,
+.task-deadline-field input {
+  background: rgb(255 255 255 / 70%);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.access-screen {
+  background:
+    radial-gradient(ellipse at 18% 14%, rgb(226 241 226 / 70%) 0, transparent 36%),
+    radial-gradient(ellipse at 90% 88%, rgb(248 229 235 / 68%) 0, transparent 38%),
+    rgb(247 248 244 / 70%);
+}
+
+@media (max-width: 760px) {
+  .sidebar {
+    border-top-color: rgb(255 255 255 / 75%);
+    background: rgb(255 249 251 / 78%);
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .sidebar,
+  .topbar,
+  .sidebar-note,
+  .weekly-pill,
+  .lesson-card,
+  .study-path-card,
+  .todo-card,
+  .progress-card,
+  .review-stat-card,
+  .overview-review-card,
+  .notepad-workspace,
+  .pdf-text-workspace,
+  .access-card,
+  .quiz-modal,
+  .flashcard-modal,
+  .study-room,
+  .toast,
+  .notes-list-panel,
+  .study-unit-list,
+  .study-article-footer,
+  .answer-option,
+  .flashcard-nav,
+  .flashcard-toolbar select,
+  .study-objectives,
+  .study-safety-note {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
