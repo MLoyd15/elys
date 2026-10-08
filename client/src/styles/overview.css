@@ -1,0 +1,42 @@
+.page-content { max-width: 1120px; }
+.page-title-row { margin: 13px 0 25px; }
+.page-title-row h1 { margin: 7px 0 5px; color: #2b3a31; font-family: var(--serif); font-size: 32.4px; font-weight: 800; letter-spacing: -.8px; }
+.page-title-row > p { margin: 0; color: #8b958c; font-size: 13.2px; }
+.page-footer { margin-top: 28px; padding: 16px 0 4px; border-top: 1px solid #f0e8eb; color: #929b93; font-size: 12px; line-height: 1.5; text-align: center; }
+.page-footer span { display: inline-block; margin-left: 4px; color: #d87594; }
+.overview-welcome { margin-bottom: 22px; }
+.overview-welcome h1 { font-size: 32.4px; }
+.overview-date-pill { display: inline-flex; align-items: center; gap: 7px; padding: 9px 12px; border: 1px solid #f0dce3; border-radius: 10px; color: #a94f6c; background: #fff5f7; font-size: 12px; font-weight: 700; }
+.review-stats-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.review-stat-card { display: grid; justify-items: start; min-height: 151px; padding: 15px; border: 1px solid; border-radius: 13px; }
+.review-stat-green { border-color: #d1e5d1; background: linear-gradient(145deg, #f6fbf4, #eaf5e8); }
+.review-stat-pink { border-color: #f0d6df; background: linear-gradient(145deg, #fff8fa, #fbedf1); }
+.review-stat-icon { display: grid; place-items: center; width: 33px; height: 33px; margin-bottom: 9px; border-radius: 10px; color: #34754e; background: #dcefdc; }
+.review-stat-pink .review-stat-icon { color: #a94f6c; background: #f8dce5; }
+.review-stat-label { color: #7a897d; font-size: 9.6px; font-weight: 800; letter-spacing: .7px; }
+.review-stat-pink .review-stat-label { color: #a27484; }
+.review-stat-card > strong { margin-top: 3px; color: #315d3e; font-family: var(--serif); font-size: 30px; font-weight: 800; line-height: 1.15; }
+.review-stat-pink > strong { color: #984b65; }
+.review-stat-card > strong small { font-family: "DM Sans", sans-serif; font-size: 14.4px; font-weight: 700; }
+.review-stat-note { margin-top: 4px; color: #89968c; font-size: 10.8px; }
+.overview-review-card { padding: 19px; margin-top: 15px; border: 1px solid #f0dce3; border-radius: 14px; background: #fff; }
+.overview-review-heading { display: flex; align-items: center; justify-content: space-between; gap: 15px; }
+.overview-review-heading h2 { margin: 5px 0 4px; color: #704356; font-family: var(--serif); font-size: 21.6px; font-weight: 800; }
+.overview-review-heading p { margin: 0; color: #929b92; font-size: 12px; }
+.overview-review-heading > strong { color: #a94f6c; font-family: var(--serif); font-size: 31.2px; }
+.overview-progress-track { height: 8px; overflow: hidden; margin-top: 15px; border-radius: 8px; background: #f5e8ec; }
+.overview-progress-track span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #63a878, #d87594); transition: width .35s ease; }
+.overview-unit-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 25px; margin-top: 10px; }
+.overview-unit-row { display: flex; align-items: center; min-height: 42px; gap: 9px; border-bottom: 1px solid #f4eff0; }
+.overview-unit-number { display: grid; flex: 0 0 auto; place-items: center; width: 23px; height: 23px; border-radius: 8px; color: #64846b; background: #edf5eb; font-size: 10.8px; font-weight: 800; }
+.overview-unit-number.is-complete { color: #fff; background: #62a476; }
+.overview-unit-name { overflow: hidden; color: #566258; font-size: 12px; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
+.overview-unit-status { margin-left: auto; color: #a2aaa2; font-size: 9.6px; white-space: nowrap; }
+.overview-unit-status.is-complete { color: #558666; }
+.overview-units-error { grid-column: 1 / -1; padding: 12px 0; color: #a65e54; font-size: 12px; }
+.overview-units-error .text-button { margin-left: 8px; }
+.single-panel-grid { grid-template-columns: minmax(0, 1fr); }
+.single-panel-grid .todo-card, .single-panel-grid .progress-card { min-height: 240px; }
+.single-panel-grid .progress-review-count { position: absolute; right: 28px; bottom: 27px; color: #a27484; font-size: 12px; font-weight: 700; }
+.single-panel-grid .progress-stats { margin-top: 34px; }
+.single-panel-grid .progress-ring-wrap { right: 42px; }

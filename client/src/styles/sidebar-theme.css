@@ -1,0 +1,6 @@
+.sidebar { border-right-color: #f0d8e0; background: #fff4f7; }
+.sidebar .nav-item { color: #7b6570; }
+.sidebar .nav-item:hover { color: #704356; background: #fce9ef; }
+.sidebar .nav-item.active { color: #a94f6c; background: #f8dce5; }
+.sidebar .sidebar-note { border-color: #f0d8e0; background: #fffafb; }
+.sidebar .profile { border-top-color: #f0d8e0; background: transparent; }

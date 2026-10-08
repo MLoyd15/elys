@@ -1,0 +1,210 @@
+.single-panel-grid .todo-card { max-width: 820px; }
+.notepad-workspace { display: grid; grid-template-columns: minmax(210px, 270px) minmax(0, 1fr); min-height: 490px; overflow: hidden; border: 1px solid #f0dce3; border-radius: 14px; background: #fff; box-shadow: 0 8px 24px rgb(180 84 117 / 5%); }
+.notes-list-panel { min-width: 0; padding: 17px 13px; border-right: 1px solid #f1e7ea; background: #fffafb; }
+.notes-list-heading { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 0 3px 13px; }
+.notes-list-heading h2 { margin: 5px 0 0; color: #704356; font-family: var(--serif); font-size: 19.2px; font-weight: 800; }
+.notes-new-button { display: grid; place-items: center; width: 32px; height: 32px; padding: 0; border: 1px solid #efdae2; border-radius: 9px; color: var(--pink-dark); background: #fff; }
+.notes-new-button:hover { background: #fff0f4; }
+.notes-new-button:disabled { cursor: wait; opacity: .6; }
+.notes-folder-list { display: grid; gap: 3px; margin-bottom: 9px; }
+.notes-folder-item { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-width: 0; padding: 7px 9px; border: 1px solid transparent; border-radius: 7px; color: #806d74; background: transparent; font-size: 12px; text-align: left; }
+.notes-folder-item > span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.notes-folder-item > span:last-child { flex: 0 0 auto; color: #aa9aa0; font-size: 10.8px; }
+.notes-folder-item:hover { background: #fff3f6; }
+.notes-folder-item.selected { border-color: #f0d8e0; color: #844d62; background: #fff0f4; font-weight: 700; }
+.notes-folder-item.drop-target { border-color: var(--pink); color: #844d62; background: #ffe8ef; box-shadow: 0 0 0 2px rgb(223 139 164 / 16%); }
+.notes-folder-form { display: flex; gap: 5px; margin: 0 0 12px; }
+.notes-folder-form input { width: 100%; min-width: 0; padding: 7px 8px; border: 1px solid #efdae2; border-radius: 7px; color: #536258; background: #fff; font-size: 10.8px; }
+.notes-folder-add { display: grid; flex: 0 0 29px; place-items: center; padding: 0; border: 1px solid #efdae2; border-radius: 7px; color: var(--pink-dark); background: #fff; }
+.notes-folder-add:hover { background: #fff0f4; }
+.notes-folder-add:disabled { cursor: not-allowed; opacity: .55; }
+.notes-folder-hint { margin: 0 0 9px; color: #a19499; font-size: 10.8px; line-height: 1.5; }
+.notes-folder-feedback { margin: 0 0 9px; padding: 7px 8px; border: 1px solid #e2eee4; border-radius: 7px; color: #577b5f; background: #f4faf4; font-size: 10.8px; line-height: 1.5; overflow-wrap: anywhere; }
+.notes-folder-feedback.error { border-color: #f0d7d1; color: #a65e54; background: #fff7f5; }
+.notes-list { display: grid; gap: 6px; }
+.note-list-item { display: grid; gap: 5px; min-width: 0; padding: 11px 10px; border: 1px solid transparent; border-radius: 9px; color: #526056; background: transparent; text-align: left; }
+.note-list-item[draggable="true"] { cursor: grab; }
+.note-list-item[draggable="true"]:active { cursor: grabbing; }
+.note-list-item.dragging { opacity: .45; }
+.note-list-item:hover { background: #fff3f6; }
+.note-list-item.selected { border-color: #f0d8e0; color: #844d62; background: #fff0f4; }
+.note-list-item strong { overflow: hidden; font-size: 13.2px; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
+.note-list-item span { overflow: hidden; color: #929b93; font-size: 10.8px; line-height: 1.5; text-overflow: ellipsis; white-space: nowrap; }
+.notes-empty-list { display: grid; justify-items: center; padding: 27px 11px; color: #9a8790; text-align: center; }
+.notes-empty-list > span, .note-editor-empty > span { color: var(--pink); font-size: 30px; }
+.notes-empty-list p { margin: 7px 0 0; font-size: 12px; line-height: 1.6; }
+.note-editor { display: flex; flex-direction: column; min-width: 0; min-height: 490px; padding: 17px 20px 15px; }
+.note-editor-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-bottom: 12px; border-bottom: 1px solid #f3ecee; }
+.note-save-status { color: #73927a; font-size: 10.8px; }
+.note-save-status.unsaved { color: #a85d45; }
+.note-editor-actions { display: flex; align-items: center; gap: 8px; }
+.note-delete-button { display: inline-flex; align-items: center; gap: 5px; padding: 7px 8px; border: 0; border-radius: 7px; color: #9a7b85; background: transparent; font-size: 10.8px; }
+.note-delete-button:hover { color: #a94f6c; background: #fff0f4; }
+.note-delete-button:disabled { cursor: wait; opacity: .6; }
+.note-save-button { min-height: 32px; padding: 0 11px; font-size: 10.8px; }
+.note-save-button:disabled { cursor: not-allowed; opacity: .55; }
+.note-folder-select { align-self: flex-start; max-width: 100%; margin-top: 14px; padding: 6px 9px; border: 1px solid #efdae2; border-radius: 7px; color: #806d74; background: #fffafb; font-size: 12px; }
+.note-title-input { width: 100%; margin-top: 19px; padding: 4px 0 10px; border: 0; border-bottom: 1px solid transparent; color: #3f5145; background: transparent; font-family: var(--serif); font-size: 26.4px; font-weight: 800; letter-spacing: -.5px; }
+.note-title-input::placeholder { color: #b7bdb6; }
+.note-title-input:focus { border-bottom-color: #efd7df; outline: none; }
+.note-content-input { flex: 1; width: 100%; min-height: 330px; resize: vertical; padding: 14px 0 0; border: 0; color: #536258; background: transparent; font-size: 14.4px; line-height: 1.8; }
+.note-content-input::placeholder { color: #a9b0a8; }
+.note-content-input:focus { outline: none; }
+.notes-message { display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 250px; color: #7e8b80; font-size: 13.2px; }
+.notes-error { color: #a65e54; font-size: 12px; line-height: 1.5; }
+.note-editor > .notes-error { margin-top: 8px; }
+.notes-message .text-button { margin-left: 0; }
+.note-editor-empty { display: grid; flex: 1; align-content: center; justify-items: center; padding: 25px; text-align: center; }
+.note-editor-empty h2 { margin: 10px 0 5px; color: #704356; font-family: var(--serif); font-size: 21.6px; font-weight: 800; }
+.note-editor-empty p { max-width: 290px; margin: 0 0 14px; color: #929b93; font-size: 12px; line-height: 1.6; }
+.note-editor-empty .button { min-height: 35px; gap: 7px; font-size: 12px; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; clip-path: inset(50%); }
+
+/* ================= GLASSMORPHISM LAYER ================= */
+.page-content {
+  --glass-bg: rgb(255 255 255 / 40%);
+  --glass-bg-strong: rgb(255 255 255 / 58%);
+  --glass-border: rgb(255 255 255 / 70%);
+  --glass-shadow: 0 8px 32px rgb(60 90 80 / 12%), inset 0 1px 0 rgb(255 255 255 / 80%);
+  --glass-blur: blur(18px) saturate(165%);
+  position: relative;
+  isolation: isolate;
+}
+
+/* soft colour blobs behind the glass so the blur has something to show */
+.page-content::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(520px 420px at 12% 8%, rgb(120 200 150 / 45%), transparent 70%),
+    radial-gradient(480px 460px at 88% 14%, rgb(240 140 175 / 38%), transparent 70%),
+    radial-gradient(560px 480px at 70% 92%, rgb(150 170 240 / 34%), transparent 70%),
+    radial-gradient(420px 380px at 8% 85%, rgb(255 190 150 / 34%), transparent 70%);
+}
+
+/* glass surfaces */
+.lesson-card,
+.study-path-card,
+.todo-card,
+.progress-card,
+.overview-review-card,
+.notepad-workspace,
+.path-load-error {
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-shadow);
+}
+.study-path-card.is-next {
+  border-color: rgb(140 210 160 / 85%);
+  background: linear-gradient(145deg, rgb(255 255 255 / 52%), rgb(190 235 200 / 34%));
+}
+.study-path-card.is-reviewed { background: rgb(255 255 255 / 48%); }
+
+/* tinted stat cards */
+.review-stat-card {
+  border: 1px solid var(--glass-border);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-shadow);
+}
+.review-stat-green { background: linear-gradient(145deg, rgb(255 255 255 / 45%), rgb(130 200 150 / 28%)); }
+.review-stat-pink  { background: linear-gradient(145deg, rgb(255 255 255 / 45%), rgb(240 140 175 / 26%)); }
+.review-stat-icon { background: rgb(255 255 255 / 60%); box-shadow: inset 0 1px 0 rgb(255 255 255 / 80%); }
+.review-stat-pink .review-stat-icon { background: rgb(255 255 255 / 60%); }
+
+/* lift on hover */
+.lesson-card:hover,
+.study-path-card:hover {
+  background: var(--glass-bg-strong);
+  border-color: rgb(255 255 255 / 90%);
+  box-shadow: 0 14px 36px rgb(60 90 80 / 18%), inset 0 1px 0 rgb(255 255 255 / 90%);
+}
+
+/* pills and buttons */
+.path-progress-pill,
+.overview-date-pill,
+.add-task-button,
+.notes-new-button,
+.notes-folder-add,
+.study-path-action,
+.cancel-add {
+  border: 1px solid var(--glass-border);
+  background: rgb(255 255 255 / 45%);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 80%);
+}
+.add-task-button:hover,
+.notes-new-button:hover,
+.notes-folder-add:hover,
+.study-path-action:hover,
+.cancel-add:hover { background: rgb(255 255 255 / 70%); }
+.lesson-action.review-action { background: rgb(255 255 255 / 55%); }
+
+/* inputs */
+.task-form-fields > input,
+.task-deadline-field input,
+.notes-folder-form input,
+.note-folder-select {
+  border: 1px solid var(--glass-border);
+  background: rgb(255 255 255 / 50%);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+.task-form-fields > input:focus,
+.task-deadline-field input:focus { background: rgb(255 255 255 / 75%); }
+.task-form-fields input:disabled { background: rgb(255 255 255 / 30%); }
+
+/* tasks */
+.task-row { border-bottom: 1px solid rgb(255 255 255 / 55%); }
+.task-check { border: 1px solid rgb(150 190 160 / 80%); background: rgb(255 255 255 / 55%); }
+.task-check.checked { border-color: #4f9c71; background: #4f9c71; }
+.task-due,
+.task-due.soon,
+.task-due.overdue,
+.task-due.no-deadline {
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  background-color: rgb(255 255 255 / 50%);
+}
+.task-delete:hover { background: rgb(255 255 255 / 70%); }
+
+/* dividers inside cards */
+.lesson-footer,
+.study-path-card-footer { border-top: 1px solid rgb(255 255 255 / 60%); }
+.overview-unit-row { border-bottom: 1px solid rgb(255 255 255 / 55%); }
+.overview-unit-number { background: rgb(255 255 255 / 60%); }
+.overview-unit-number.is-complete { background: #62a476; }
+.overview-progress-track { background: rgb(255 255 255 / 55%); box-shadow: inset 0 1px 2px rgb(60 90 80 / 12%); }
+.page-footer { border-top: 1px solid rgb(255 255 255 / 60%); }
+
+/* notepad */
+.notes-list-panel { border-right: 1px solid rgb(255 255 255 / 60%); background: rgb(255 255 255 / 28%); }
+.notes-folder-item:hover,
+.note-list-item:hover { background: rgb(255 255 255 / 50%); }
+.notes-folder-item.selected,
+.note-list-item.selected { border-color: var(--glass-border); background: rgb(255 255 255 / 65%); }
+.notes-folder-item.drop-target { background: rgb(255 255 255 / 75%); }
+.notes-folder-feedback { background: rgb(255 255 255 / 55%); }
+.note-editor-toolbar { border-bottom: 1px solid rgb(255 255 255 / 60%); }
+.note-title-input:focus { border-bottom-color: rgb(255 255 255 / 90%); }
+
+/* fallbacks */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .lesson-card, .study-path-card, .todo-card, .progress-card,
+  .overview-review-card, .notepad-workspace, .review-stat-card { background: rgb(255 255 255 / 85%); }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .lesson-card, .study-path-card, .todo-card, .progress-card,
+  .overview-review-card, .notepad-workspace, .review-stat-card,
+  .path-progress-pill, .overview-date-pill, .add-task-button {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: #fff;
+  }
+}
