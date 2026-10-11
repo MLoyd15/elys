@@ -145,7 +145,6 @@ router.post("/:slug/attempt", async (request, response, next) => {
       completionField: "completedStudyQuizzes",
       slug: guide.slug,
       earnedXp,
-      minutes: Number.parseInt(guide.readTime, 10) || 0,
     });
 
     response.json({

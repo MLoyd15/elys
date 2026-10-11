@@ -42,7 +42,6 @@ router.post("/:slug/attempt", async (request, response, next) => {
       completionField: "completedLessons",
       slug: lesson.slug,
       earnedXp,
-      minutes: Number.parseInt(lesson.duration, 10) || 0,
     });
 
     response.json({

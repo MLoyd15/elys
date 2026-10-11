@@ -63,11 +63,65 @@ function formatStudyMaterials(guide, cards, quiz) {
   ].join("\n");
 }
 
+function formatTimer(seconds) {
+  const safeSeconds = Math.max(0, seconds);
+  const hours = Math.floor(safeSeconds / 3600);
+  const minutes = Math.floor((safeSeconds % 3600) / 60);
+  const remainingSeconds = safeSeconds % 60;
+  return [hours, minutes, remainingSeconds].map((part) => String(part).padStart(2, "0")).join(":");
+}
 
-export default function StudyRoom({ guides, loading, error, initialSlug, readGuides, onGuideReviewed, onClose, onStartQuiz, onBrowseFlashcards }) {
+export default function StudyRoom({ guides, loading, error, initialSlug, readGuides, onGuideReviewed, onClose, onStartQuiz, onBrowseFlashcards, onSessionsChanged }) {
   const [selectedSlug, setSelectedSlug] = useState(initialSlug || "");
   const [savingMaterials, setSavingMaterials] = useState(false);
   const [saveMessage, setSaveMessage] = useState("");
+  const [timerSession, setTimerSession] = useState(null);
+  const [timerNow, setTimerNow] = useState(Date.now());
+  const [timerBusy, setTimerBusy] = useState(false);
+  const [timerError, setTimerError] = useState("");
+
+  useEffect(() => {
+    let mounted = true;
+    api("/study-sessions")
+      .then((summary) => {
+        if (!mounted) return;
+        setTimerSession(summary.activeSession);
+        onSessionsChanged(summary);
+      })
+      .catch((loadError) => {
+        if (mounted) setTimerError(loadError.message);
+      });
+    return () => { mounted = false; };
+  }, [onSessionsChanged]);
+
+  useEffect(() => {
+    if (!timerSession) return undefined;
+    const interval = window.setInterval(() => setTimerNow(Date.now()), 1000);
+    return () => window.clearInterval(interval);
+  }, [timerSession?.startedAt]);
+
+  async function toggleStudyTimer() {
+    if (timerBusy) return;
+    setTimerBusy(true);
+    setTimerError("");
+    try {
+      if (timerSession) {
+        const summary = await api("/study-sessions/stop", { method: "POST" });
+        setTimerSession(null);
+        setTimerNow(Date.now());
+        onSessionsChanged(summary);
+      } else {
+        const { session } = await api("/study-sessions/start", { method: "POST" });
+        setTimerSession(session);
+        setTimerNow(Date.now());
+        onSessionsChanged(await api("/study-sessions"));
+      }
+    } catch (timerActionError) {
+      setTimerError(timerActionError.message);
+    } finally {
+      setTimerBusy(false);
+    }
+  }
 
   useEffect(() => {
     if (initialSlug && guides.some((guide) => guide.slug === initialSlug)) {
@@ -143,8 +197,18 @@ export default function StudyRoom({ guides, loading, error, initialSlug, readGui
             <h1 id="study-room-title">Study room</h1>
           </div>
           <span className="study-read-count">{readGuides.length} of {guides.length} reviewed</span>
+          <div className={`study-timer ${timerSession ? "is-running" : ""}`}>
+            <span className="study-timer-readout" aria-live="off">
+              <span>{timerSession ? "STUDY SESSION" : "STUDY TIMER"}</span>
+              <strong>{formatTimer(timerSession ? Math.floor((timerNow - Date.parse(timerSession.startedAt)) / 1000) : 0)}</strong>
+            </span>
+            <button type="button" className="study-timer-button" onClick={toggleStudyTimer} disabled={timerBusy}>
+              {timerBusy ? "Please wait…" : timerSession ? "Stop timer" : "Start timer"}
+            </button>
+          </div>
           <button className="study-back-button" onClick={onClose}><Icon name="arrow" size={16} /> Back to overview</button>
         </header>
+        {timerError && <div className="study-timer-error" role="alert">{timerError}</div>}
         {loading ? (
           <div className="study-empty"><span className="loader" /><span>Opening your study notes…</span></div>
         ) : error ? (

@@ -19,6 +19,7 @@ function App() {
   const [studyGuidesLoading, setStudyGuidesLoading] = useState(false);
   const [studyGuidesError, setStudyGuidesError] = useState("");
   const [reviewedGuideSlugs, setReviewedGuideSlugs] = useState([]);
+  const [studySessions, setStudySessions] = useState([]);
   const studyGuidesRequestStarted = useRef(false);
   const [notice, setNotice] = useState("");
   const [accessCode, setAccessCode] = useState("");
@@ -32,6 +33,7 @@ function App() {
     return Number.isFinite(savedWidth) && savedWidth >= 210 && savedWidth <= 340 ? savedWidth : 246;
   });
   const sidebarResizePointer = useRef(null);
+  const studySessionsRequestStarted = useRef(false);
 
   const loadDashboard = useCallback(async () => {
     setLoading(true);
@@ -53,6 +55,36 @@ function App() {
   useEffect(() => {
     loadDashboard();
   }, [loadDashboard]);
+
+  const applyStudySessionSummary = useCallback((summary) => {
+    setStudySessions(summary.sessions || []);
+    setDashboard((current) => current ? {
+      ...current,
+      progress: { ...current.progress, weeklyMinutes: summary.weeklyMinutes || 0 },
+    } : current);
+  }, []);
+
+  const loadStudySessions = useCallback(async () => {
+    const summary = await api("/study-sessions");
+    applyStudySessionSummary(summary);
+    return summary;
+  }, [applyStudySessionSummary]);
+
+  useEffect(() => {
+    if (dashboard && !studySessionsRequestStarted.current) {
+      studySessionsRequestStarted.current = true;
+      loadStudySessions().catch((loadError) => setNotice(loadError.message));
+    }
+  }, [dashboard, loadStudySessions]);
+
+  const hasActiveStudySession = studySessions.some((session) => !session.endedAt);
+  useEffect(() => {
+    if (!hasActiveStudySession) return undefined;
+    const interval = window.setInterval(() => {
+      loadStudySessions().catch((loadError) => setNotice(loadError.message));
+    }, 60_000);
+    return () => window.clearInterval(interval);
+  }, [hasActiveStudySession, loadStudySessions]);
 
   const loadStudyGuides = useCallback(async () => {
     setStudyGuidesLoading(true);
@@ -104,6 +136,15 @@ function App() {
       setDashboard((current) => ({ ...current, tasks: current.tasks.filter((task) => task.id !== taskId) }));
     } catch (taskError) {
       setNotice(taskError.message);
+    }
+  }
+
+  async function removeStudySession(sessionId) {
+    try {
+      await api(`/study-sessions/${sessionId}`, { method: "DELETE" });
+      await loadStudySessions();
+    } catch (sessionError) {
+      setNotice(sessionError.message);
     }
   }
 
@@ -378,7 +419,7 @@ function App() {
           </div>
         </header>
 
-        <div className="page-content">
+        <div className={`page-content ${activeNav === "study" ? "study-room-content" : ""}`}>
           {activeNav !== "home" && !["study", "cards"].includes(activeNav) && (
             <section className="page-title-row">
               <div className="section-kicker">{pageLabels[activeNav].toUpperCase()}</div>
@@ -397,10 +438,12 @@ function App() {
             onClose={() => setActiveNav("home")}
             onStartQuiz={startStudyGuideQuiz}
             onBrowseFlashcards={(topic, slug) => openFlashcards(topic, slug)}
+            onSessionsChanged={applyStudySessionSummary}
           /> : <DashboardPages
             activeNav={activeNav}
             todayLabel={todayLabel}
             dashboard={dashboard}
+            studySessions={studySessions}
             taskStats={{ unfinishedTasks, completedTasks }}
             reviewStats={{ completedStudyQuizzes, completedReviewCount, reviewPathLength, reviewCompletionPercent }}
             studyState={{
@@ -411,7 +454,7 @@ function App() {
               reviewedGuideSlugs,
               nextGuideSlug,
             }}
-            actions={{ loadStudyGuides, openStudyRoom, startStudyGuideQuiz, addTask, toggleTask, removeTask, onGeneratedStudyGuide: openGeneratedStudyGuide }}
+            actions={{ loadStudyGuides, openStudyRoom, startStudyGuideQuiz, addTask, toggleTask, removeTask, removeStudySession, onGeneratedStudyGuide: openGeneratedStudyGuide }}
           />}
         </div>
       </main>

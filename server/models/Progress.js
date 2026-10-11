@@ -7,8 +7,6 @@ const progressSchema = new mongoose.Schema({
   completedLessons: [{ type: String }],
   completedStudyQuizzes: [{ type: String }],
   lastStudyDate: { type: String, default: "" },
-  weeklyMinutes: { type: Number, default: 0 },
-  weekStart: { type: String, default: "" },
 });
 
 export const Progress = mongoose.model("Progress", progressSchema);

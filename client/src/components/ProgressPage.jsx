@@ -16,6 +16,8 @@ export default function ProgressPage({
   xp,
   streak,
   weeklyMinutes,
+  sessions = [],
+  onRemoveSession,
   onStartQuiz,
   onReload,
 }) {
@@ -25,6 +27,7 @@ export default function ProgressPage({
   const percent = total ? Math.round((completedCount / total) * 100) : 0;
   const nextGuide = guides.find((guide) => !completedSlugs.includes(guide.slug));
   const allDone = total > 0 && !nextGuide;
+  const recentSessions = sessions.slice(0, 8);
 
   let headline = "Your progress starts here.";
   let summary = "Take a study-unit quiz and your results will show up on this page.";
@@ -57,8 +60,8 @@ export default function ProgressPage({
           <svg viewBox="0 0 130 130" aria-hidden="true">
             <defs>
               <linearGradient id="pg-ring-gradient" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stopColor="#4f9c71" />
-                <stop offset="100%" stopColor="#d87594" />
+                <stop offset="0%" stopColor="#d77f9f" />
+                <stop offset="100%" stopColor="#a34e6e" />
               </linearGradient>
             </defs>
             <circle cx="65" cy="65" r={RING_RADIUS} className="pg-ring-track" />
@@ -138,6 +141,39 @@ export default function ProgressPage({
               );
             })}
           </ul>
+        )}
+      </section>
+
+      <section className="pg-card pg-sessions" aria-label="Recent study sessions">
+        <div className="pg-units-heading">
+          <h3>Recent study sessions</h3>
+          <span>{sessions.length ? `${sessions.length} saved` : "Real time, tracked by your timer"}</span>
+        </div>
+        {recentSessions.length ? (
+          <ul className="pg-session-list">
+            {recentSessions.map((session) => {
+              const minutes = Math.floor(session.durationSeconds / 60);
+              const seconds = session.durationSeconds % 60;
+              const duration = minutes ? `${minutes}m ${String(seconds).padStart(2, "0")}s` : `${seconds}s`;
+              const date = new Intl.DateTimeFormat("en", {
+                month: "short", day: "numeric", hour: "numeric", minute: "2-digit",
+              }).format(new Date(session.startedAt));
+              return (
+                <li className="pg-session" key={session.id}>
+                  <span className="pg-session-icon"><Icon name="clock" size={17} /></span>
+                  <span className="pg-session-copy"><strong>{date}</strong><small>{session.endedAt ? "Study room session" : "Timer is still running"}</small></span>
+                  <strong className="pg-session-duration">{session.endedAt ? duration : "In progress"}</strong>
+                  {session.endedAt && (
+                    <button type="button" className="pg-session-remove" onClick={() => onRemoveSession?.(session.id)} aria-label={`Remove study session from ${date}`} title="Remove session">
+                      <Icon name="trash" size={16} />
+                    </button>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        ) : (
+          <p className="pg-session-empty">Start a timer in the Study Room to record your actual study time.</p>
         )}
       </section>
     </div>

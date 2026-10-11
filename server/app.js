@@ -8,6 +8,7 @@ import flashcardRoutes from "./routes/flashcards.js";
 import lessonRoutes from "./routes/lessons.js";
 import noteRoutes from "./routes/notes.js";
 import studyGuideRoutes from "./routes/studyGuides.js";
+import studySessionRoutes from "./routes/studySessions.js";
 import taskRoutes from "./routes/tasks.js";
 import { requireSession } from "./middleware/requireSession.js";
 import { errorHandler } from "./middleware/errorHandler.js";
@@ -28,6 +29,7 @@ app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/lessons", lessonRoutes);
 app.use("/api/flashcards", flashcardRoutes);
 app.use("/api/study-guides", studyGuideRoutes);
+app.use("/api/study-sessions", studySessionRoutes);
 app.use("/api/tasks", taskRoutes);
 app.use("/api/notes", noteRoutes);
 

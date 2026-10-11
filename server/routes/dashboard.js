@@ -3,15 +3,23 @@ import { lessonCatalog } from "../catalog.js";
 import { Lesson } from "../models/Lesson.js";
 import { Progress } from "../models/Progress.js";
 import { Task } from "../models/Task.js";
+import { StudySession } from "../models/StudySession.js";
+import { getWeeklyStudySeconds, startOfStudyWeek } from "../services/studySessions.js";
 
 const router = Router();
 
 router.get("/", async (_request, response, next) => {
   try {
-    const [lessons, tasks, progress] = await Promise.all([
+    const now = new Date();
+    const weekStart = startOfStudyWeek(now);
+    const [lessons, tasks, progress, studySessions] = await Promise.all([
       Lesson.find().lean(),
       Task.find().sort({ completed: 1, createdAt: 1 }).lean(),
       Progress.findOne({ key: "default" }).lean(),
+      StudySession.find({
+        startedAt: { $lt: now },
+        $or: [{ endedAt: null }, { endedAt: { $gte: weekStart } }],
+      }).lean(),
     ]);
     if (!progress) throw new Error("Study progress is not initialized.");
 
@@ -40,7 +48,7 @@ router.get("/", async (_request, response, next) => {
         streak: progress.streak,
         completedCount: (progress.completedStudyQuizzes || []).length,
         completedStudyQuizzes: progress.completedStudyQuizzes || [],
-        weeklyMinutes: progress.weeklyMinutes,
+        weeklyMinutes: Math.floor(getWeeklyStudySeconds(studySessions, now) / 60),
       },
     });
   } catch (error) {

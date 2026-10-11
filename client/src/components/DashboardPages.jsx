@@ -36,6 +36,7 @@ export default function DashboardPages({
   activeNav,
   todayLabel,
   dashboard,
+  studySessions,
   taskStats,
   reviewStats,
   studyState,
@@ -291,6 +292,8 @@ export default function DashboardPages({
               xp={progress.xp}
               streak={progress.streak}
               weeklyMinutes={progress.weeklyMinutes}
+              sessions={studySessions}
+              onRemoveSession={actions.removeStudySession}
               onStartQuiz={actions.startStudyGuideQuiz}
               onReload={actions.loadStudyGuides}
             />
