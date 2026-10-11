@@ -1,4 +1,4 @@
-/* Shared glass tokens and the dedicated Study Room glass surface. */
+﻿/* Shared glass tokens and the dedicated Study Room glass surface. */
 
 :root {
   /* surfaces: opacity goes up with importance so text stays readable */
@@ -23,7 +23,7 @@
 }
 
 /* ---------- Backdrop: gives the blur something to refract ---------- */
-body { background: #fff7fb; }
+body { background: #fdf0f5; }
 body::before {
   content: "";
   position: fixed;
@@ -31,10 +31,12 @@ body::before {
   z-index: -1;
   pointer-events: none;
   background:
-    radial-gradient(520px 420px at 12% 8%, rgb(239 170 198 / 22%), transparent 70%),
-    radial-gradient(480px 460px at 88% 14%, rgb(214 163 207 / 15%), transparent 70%),
-    radial-gradient(560px 480px at 70% 92%, rgb(177 163 203 / 10%), transparent 70%),
-    radial-gradient(420px 380px at 8% 85%, rgb(245 204 218 / 12%), transparent 70%);
+    radial-gradient(560px 460px at 10% 6%, rgb(215 127 159 / 40%), transparent 70%),
+    radial-gradient(520px 500px at 90% 12%, rgb(239 170 198 / 46%), transparent 70%),
+    radial-gradient(620px 520px at 72% 94%, rgb(215 127 159 / 32%), transparent 70%),
+    radial-gradient(460px 420px at 6% 88%, rgb(239 170 198 / 38%), transparent 70%),
+    radial-gradient(700px 520px at 50% 50%, rgb(252 222 233 / 65%), transparent 75%),
+    linear-gradient(160deg, #fff7fa 0%, #fdf0f5 100%);
 }
 
 /* ---------- Primary glass cards ---------- */
@@ -117,9 +119,9 @@ body::before {
 }
 .access-screen {
   background:
-    radial-gradient(ellipse at 18% 14%, rgb(249 220 232 / 76%) 0, transparent 36%),
-    radial-gradient(ellipse at 90% 88%, rgb(231 218 239 / 62%) 0, transparent 38%),
-    rgb(255 248 251 / 76%);
+    radial-gradient(ellipse at 18% 14%, rgb(239 170 198 / 45%) 0, transparent 40%),
+    radial-gradient(ellipse at 90% 88%, rgb(215 127 159 / 34%) 0, transparent 42%),
+    rgb(252 222 233 / 55%);
 }
 
 /* Nested backdrop-filter inside a filtered parent has nothing to blur,
@@ -294,6 +296,145 @@ body::before {
 @media (prefers-reduced-motion: reduce) {
   .study-room-page { animation: none; }
   .study-room-page .study-unit-button, .study-back-button { transition: none; }
+}
+
+/* Study Room: layered frosted panels with a clearer reading hierarchy. */
+.study-room-page {
+  border-color: rgb(255 255 255 / 90%);
+  border-radius: 25px;
+  background:
+    radial-gradient(ellipse at 84% 6%, rgb(247 213 227 / 44%), transparent 36%),
+    linear-gradient(135deg, rgb(255 255 255 / 88%), rgb(253 246 250 / 84%));
+  box-shadow: 0 30px 90px rgb(122 75 99 / 17%), inset 0 1px 0 #fff, inset 0 0 0 1px rgb(255 255 255 / 35%);
+}
+.study-room-page::before {
+  background:
+    radial-gradient(ellipse at 3% 95%, rgb(238 195 216 / 28%), transparent 34%),
+    radial-gradient(ellipse at 96% 12%, rgb(222 205 235 / 25%), transparent 38%),
+    linear-gradient(118deg, rgb(255 255 255 / 38%), transparent 35%, transparent 72%, rgb(244 211 228 / 28%));
+}
+.study-room-page .study-room-header {
+  min-height: 82px;
+  gap: 18px;
+  padding: 13px 24px;
+  border-bottom-color: rgb(255 255 255 / 78%);
+  background: rgb(255 255 255 / 44%);
+  box-shadow: 0 8px 24px rgb(133 83 108 / 5%), inset 0 1px 0 rgb(255 255 255 / 78%);
+}
+.study-room-page .study-room-title-block { border-left-color: rgb(198 142 165 / 30%); }
+.study-room-page .study-room-title-block .section-kicker { color: #9c7385; }
+.study-room-page .study-room-title-block h1 { color: #493541; font-size: 21px; }
+.study-room-page .study-read-count {
+  padding: 8px 12px;
+  border: 1px solid rgb(255 255 255 / 85%);
+  border-radius: 999px;
+  color: #80586b;
+  background: rgb(255 255 255 / 58%);
+  box-shadow: inset 0 1px 0 #fff;
+}
+.study-room-page .study-room-body { grid-template-columns: 258px minmax(0, 1fr); }
+.study-room-page .study-unit-list {
+  gap: 7px;
+  padding: 22px 14px 16px;
+  border-right-color: rgb(255 255 255 / 82%);
+  background: linear-gradient(180deg, rgb(255 255 255 / 38%), rgb(249 233 241 / 40%));
+}
+.study-room-page .study-unit-label { padding: 0 10px 11px; color: #9a7185; letter-spacing: 1.2px; }
+.study-room-page .study-unit-button {
+  min-height: 56px;
+  gap: 10px;
+  padding: 8px 10px;
+  border-color: rgb(255 255 255 / 34%);
+  border-radius: 13px;
+  color: #6d5763;
+  background: rgb(255 255 255 / 26%);
+  transition: transform .2s ease, border-color .2s ease, background .2s ease, box-shadow .2s ease;
+}
+.study-room-page .study-unit-button:hover { transform: translateX(3px); border-color: rgb(255 255 255 / 88%); background: rgb(255 255 255 / 66%); box-shadow: 0 7px 18px rgb(139 87 111 / 8%); }
+.study-room-page .study-unit-button.selected { border-color: rgb(255 255 255 / 94%); color: #723d55; background: linear-gradient(115deg, rgb(255 255 255 / 91%), rgb(249 225 235 / 82%)); box-shadow: 0 8px 20px rgb(145 83 113 / 12%), inset 0 1px 0 #fff; }
+.study-room-page .study-unit-number { color: #ad6682; }
+.study-room-page .study-unit-copy small { color: #9d8390; }
+.study-room-page .study-unit-done { color: #fff; background: #b96b89; box-shadow: 0 3px 10px rgb(163 78 110 / 18%); }
+.study-room-page .study-sidebar-note { padding: 14px 11px 0; border-top-color: rgb(255 255 255 / 72%); color: #8e7481; }
+.study-room-page .study-article { background: rgb(255 255 255 / 12%); }
+.study-room-page .study-article-inner { padding-top: 34px; scrollbar-color: rgb(198 142 165 / 45%) transparent; }
+.study-room-page .study-article-meta { align-items: center; width: fit-content; padding: 7px 11px; border: 1px solid rgb(255 255 255 / 80%); border-radius: 999px; color: #93627a; background: rgb(255 255 255 / 54%); box-shadow: inset 0 1px 0 #fff; }
+.study-room-page .study-article-inner > h2 { max-width: 780px; margin-top: 15px; color: #493541; font-size: clamp(27px, 3.4vw, 38px); line-height: 1.2; }
+.study-room-page .study-introduction { max-width: 760px; color: #756873; font-size: 14px; }
+.study-room-page .study-objectives {
+  margin-top: 24px;
+  padding: 18px 20px;
+  border-color: rgb(255 255 255 / 88%);
+  border-radius: 17px;
+  background: linear-gradient(135deg, rgb(255 255 255 / 74%), rgb(250 233 241 / 56%));
+  box-shadow: 0 12px 28px rgb(145 83 113 / 7%), inset 0 1px 0 #fff;
+}
+.study-room-page .study-objectives h3 { color: #8e4d69; }
+.study-room-page .study-objectives li, .study-room-page .study-section li { color: #6e626b; }
+.study-room-page .study-objectives li::marker, .study-room-page .study-section li::marker { color: #c27694; }
+.study-room-page .study-sections { gap: 14px; margin-top: 24px; }
+.study-room-page .study-section {
+  padding: 17px 18px 18px;
+  border: 1px solid rgb(255 255 255 / 78%);
+  border-radius: 16px;
+  background: rgb(255 255 255 / 42%);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 84%);
+  transition: transform .2s ease, background .2s ease, box-shadow .2s ease;
+}
+.study-room-page .study-section:hover { transform: translateY(-2px); background: rgb(255 255 255 / 60%); box-shadow: 0 10px 24px rgb(145 83 113 / 7%), inset 0 1px 0 #fff; }
+.study-room-page .study-section-heading > span { color: #b46684; }
+.study-room-page .study-section-heading h3 { color: #51404a; }
+.study-room-page .study-section > p { color: #756873; }
+.study-room-page .study-reflection {
+  border: 1px solid rgb(255 255 255 / 82%);
+  border-left: 3px solid #d77f9f;
+  border-radius: 0 15px 15px 0;
+  background: linear-gradient(115deg, rgb(250 231 239 / 76%), rgb(255 255 255 / 54%));
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 86%);
+}
+.study-room-page .study-reflection > span { color: #a34e6e; }
+.study-room-page .study-reflection p { color: #624b58; }
+.study-room-page .study-safety-note {
+  border-color: rgb(255 255 255 / 88%);
+  border-radius: 14px;
+  background: rgb(255 255 255 / 56%);
+  box-shadow: inset 0 1px 0 #fff;
+}
+.study-room-page .study-safety-note strong { color: #8e4d69; }
+.study-room-page .study-safety-note span { color: #746770; }
+.study-room-page .study-source { color: #9b8791; }
+.study-room-page .study-article-footer {
+  min-height: 64px;
+  gap: 12px;
+  border-top-color: rgb(255 255 255 / 86%);
+  background: rgb(255 250 253 / 62%);
+  box-shadow: 0 -8px 24px rgb(145 83 113 / 5%), inset 0 1px 0 rgb(255 255 255 / 84%);
+  -webkit-backdrop-filter: blur(14px) saturate(125%);
+  backdrop-filter: blur(14px) saturate(125%);
+}
+.study-room-page .study-step-button, .study-room-page .study-quiz-button, .study-room-page .study-flashcard-button, .study-room-page .study-save-button { padding: 9px 10px; border: 1px solid transparent; border-radius: 10px; color: #984d6b; transition: transform .18s ease, background .18s ease, border-color .18s ease; }
+.study-room-page .study-step-button:hover, .study-room-page .study-quiz-button:hover, .study-room-page .study-flashcard-button:hover, .study-room-page .study-save-button:hover { transform: translateY(-1px); border-color: rgb(255 255 255 / 90%); background: rgb(255 255 255 / 70%); text-decoration: none; }
+.study-room-page .study-quiz-button::before { color: #bb6486; }
+.study-room-page .study-back-button { color: #8e4562; background: rgb(255 255 255 / 62%); box-shadow: inset 0 1px 0 #fff; }
+.study-room-page .study-back-button:hover { box-shadow: 0 8px 18px rgb(145 83 113 / 12%), inset 0 1px 0 #fff; }
+.study-room-page .study-empty { color: #795e6d; }
+.study-room-page .study-load-error { color: #a34e6e; }
+@media (max-width: 760px) {
+  .study-room-page { border-radius: 17px; }
+  .study-room-page .study-room-header { gap: 10px; padding: 10px 12px; background: rgb(255 255 255 / 52%); }
+  .study-room-page .study-room-title-block { padding-left: 9px; }
+  .study-room-page .study-room-title-block h1 { font-size: 16px; }
+  .study-room-page .study-read-count { padding: 6px 8px; font-size: 9px; }
+  .study-room-page .study-unit-list { background: rgb(250 238 244 / 80%); }
+  .study-room-page .study-unit-button { min-height: 41px; background: rgb(255 255 255 / 58%); }
+  .study-room-page .study-unit-button.selected { background: linear-gradient(110deg, #fff, #f8e2eb); }
+  .study-room-page .study-article-inner { padding-top: 22px; }
+  .study-room-page .study-section { padding: 13px; }
+  .study-room-page .study-article-footer { background: rgb(255 250 253 / 88%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .study-room-page .study-section, .study-room-page .study-step-button, .study-room-page .study-quiz-button, .study-room-page .study-flashcard-button, .study-room-page .study-save-button { transition: none; }
+  .study-room-page .study-section:hover, .study-room-page .study-step-button:hover, .study-room-page .study-quiz-button:hover, .study-room-page .study-flashcard-button:hover, .study-room-page .study-save-button:hover { transform: none; }
 }
 
 
