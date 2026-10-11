@@ -10,3 +10,9 @@
 .sidebar .note-spark, .sidebar .avatar { color: #873d5b; background: rgb(255 255 255 / 62%); }
 .sidebar .profile { border-top-color: rgb(255 255 255 / 52%); background: transparent; color: #70394f; }
 .sidebar .profile-copy small, .sidebar .profile-dots { color: #855468; }
+
+.sidebar .sidebar-note { position: relative; overflow: hidden; padding-right: 62px; }
+.sidebar .sidebar-note > p, .sidebar .sidebar-note > span { position: relative; z-index: 1; }
+.sidebar .sidebar-melody { position: absolute; top: 10px; right: 9px; width: 46px; height: 46px; border: 2px solid rgb(255 255 255 / 88%); border-radius: 13px; object-fit: cover; box-shadow: 0 5px 13px rgb(145 83 113 / 15%); transform: rotate(4deg); transition: transform .22s ease, box-shadow .22s ease; }
+.sidebar .sidebar-note:hover .sidebar-melody { transform: rotate(0) scale(1.06); box-shadow: 0 8px 17px rgb(145 83 113 / 20%); }
+@media (prefers-reduced-motion: reduce) { .sidebar .sidebar-melody { transition: none; } }

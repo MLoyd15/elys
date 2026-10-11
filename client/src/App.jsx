@@ -381,6 +381,7 @@ function App() {
         </nav>
         <div className="sidebar-bottom">
           <div className="sidebar-note">
+            <img className="sidebar-melody" src={melodyPopupImage} alt="" />
             <div className="note-spark"><Icon name="spark" size={17} /></div>
             <p>Road to topnotcher!</p>
             <span>kaya mo to love💚</span>
@@ -437,7 +438,7 @@ function App() {
           </div>
         </header>
 
-        <div className={`page-content ${activeNav === "study" ? "study-room-content" : ""} ${["path", "quiz", "chart"].includes(activeNav) ? "wide-content" : ""}`}>
+        <div className={`page-content ${activeNav === "study" ? "study-room-content" : ""}`}>
           {activeNav !== "home" && !["study", "cards"].includes(activeNav) && (
             <section className="page-title-row">
               <div className="section-kicker">{pageLabels[activeNav].toUpperCase()}</div>
