@@ -2,28 +2,28 @@
 
 :root {
   /* surfaces: opacity goes up with importance so text stays readable */
-  --glass-surface-soft: rgb(255 255 255 / 88%);
-  --glass-surface: rgb(255 255 255 / 95%);
-  --glass-surface-strong: rgb(255 255 255 / 98%);
+  --glass-surface-soft: rgb(255 248 252 / 68%);
+  --glass-surface: rgb(255 250 253 / 78%);
+  --glass-surface-strong: rgb(255 251 254 / 90%);
 
-  --glass-border: var(--ui-border);
-  --glass-border-strong: #dedbd6;
+  --glass-border: rgb(255 255 255 / 78%);
+  --glass-border-strong: rgb(255 255 255 / 94%);
 
   /* top-edge highlight + faint bottom edge gives the "pane of glass" feel */
-  --glass-edge: inset 0 1px 0 rgb(255 255 255 / 88%);
-  --glass-shadow: 0 4px 16px rgb(45 59 51 / 6%), var(--glass-edge);
-  --glass-shadow-hover: 0 8px 22px rgb(45 59 51 / 9%), var(--glass-edge);
+  --glass-edge: inset 0 1px 0 rgb(255 255 255 / 88%), inset 0 -1px 0 rgb(218 160 186 / 12%);
+  --glass-shadow: 0 10px 28px rgb(136 82 110 / 9%), var(--glass-edge);
+  --glass-shadow-hover: 0 14px 34px rgb(136 82 110 / 14%), var(--glass-edge);
 
   /* one blur recipe per level; blur only on large outer panes */
-  --glass-blur: blur(7px) saturate(112%);
-  --glass-blur-chrome: blur(12px) saturate(120%);
+  --glass-blur: blur(10px) saturate(125%);
+  --glass-blur-chrome: blur(16px) saturate(135%);
 
   /* readable muted text on translucent surfaces */
-  --glass-muted: #6b786f;
+  --glass-muted: #766873;
 }
 
 /* ---------- Backdrop: gives the blur something to refract ---------- */
-body { background: #f7f7f5; }
+body { background: #fff7fb; }
 body::before {
   content: "";
   position: fixed;
@@ -31,10 +31,10 @@ body::before {
   z-index: -1;
   pointer-events: none;
   background:
-    radial-gradient(520px 420px at 12% 8%, rgb(120 170 135 / 12%), transparent 70%),
-    radial-gradient(480px 460px at 88% 14%, rgb(220 155 170 / 9%), transparent 70%),
-    radial-gradient(560px 480px at 70% 92%, rgb(150 170 160 / 6%), transparent 70%),
-    radial-gradient(420px 380px at 8% 85%, rgb(230 190 165 / 7%), transparent 70%);
+    radial-gradient(520px 420px at 12% 8%, rgb(239 170 198 / 22%), transparent 70%),
+    radial-gradient(480px 460px at 88% 14%, rgb(214 163 207 / 15%), transparent 70%),
+    radial-gradient(560px 480px at 70% 92%, rgb(177 163 203 / 10%), transparent 70%),
+    radial-gradient(420px 380px at 8% 85%, rgb(245 204 218 / 12%), transparent 70%);
 }
 
 /* ---------- Primary glass cards ---------- */
@@ -52,21 +52,21 @@ body::before {
   border: 1px solid var(--glass-border);
   background: var(--glass-surface);
   box-shadow: var(--glass-shadow);
-  -webkit-backdrop-filter: none;
-  backdrop-filter: none;
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
 }
 .sidebar-note { background: var(--glass-surface-soft); }
 
 /* tinted variants */
-.review-stat-green { background: linear-gradient(145deg, rgb(255 255 255 / 66%), rgb(150 210 165 / 34%)); }
-.review-stat-pink  { background: linear-gradient(145deg, rgb(255 255 255 / 66%), rgb(245 160 190 / 30%)); }
+.review-stat-green { background: linear-gradient(145deg, rgb(255 255 255 / 70%), rgb(244 219 229 / 52%)); }
+.review-stat-pink  { background: linear-gradient(145deg, rgb(255 255 255 / 72%), rgb(248 222 234 / 54%)); }
 .review-stat-icon,
-.review-stat-pink .review-stat-icon { background: rgb(255 255 255 / 70%); box-shadow: var(--glass-edge); }
-.study-path-card.is-next { border-color: rgb(140 210 160 / 90%); background: linear-gradient(145deg, rgb(255 255 255 / 74%), rgb(200 238 208 / 46%)); }
+.review-stat-pink .review-stat-icon { background: rgb(255 255 255 / 72%); box-shadow: var(--glass-edge); }
+.study-path-card.is-next { border-color: rgb(215 127 159 / 62%); background: linear-gradient(145deg, rgb(255 255 255 / 82%), rgb(249 226 236 / 70%)); }
 .study-path-card.is-reviewed { background: var(--glass-surface-soft); }
 .hero-card {
   border: 1px solid var(--glass-border);
-  background: linear-gradient(115deg, rgb(224 242 226 / 76%), rgb(230 243 232 / 66%) 63%, rgb(252 230 238 / 72%));
+  background: linear-gradient(115deg, rgb(250 230 239 / 78%), rgb(245 233 245 / 72%) 63%, rgb(255 241 247 / 82%));
   box-shadow: var(--glass-shadow);
   -webkit-backdrop-filter: none;
   backdrop-filter: none;
@@ -84,14 +84,14 @@ body::before {
 /* ---------- App chrome ---------- */
 .sidebar {
   border-right-color: var(--glass-border);
-  background: rgb(255 249 251 / 66%);
-  box-shadow: 8px 0 30px rgb(112 89 101 / 6%), inset -1px 0 0 rgb(255 255 255 / 90%);
+  background: rgb(255 244 249 / 72%);
+  box-shadow: 8px 0 30px rgb(112 89 101 / 6%), inset -1px 0 0 rgb(255 248 252 / 74%);
   -webkit-backdrop-filter: var(--glass-blur-chrome);
   backdrop-filter: var(--glass-blur-chrome);
 }
 .topbar {
   border-bottom-color: var(--glass-border);
-  background: rgb(250 249 248 / 62%);
+  background: rgb(255 248 251 / 72%);
   box-shadow: 0 1px 0 rgb(255 255 255 / 90%), 0 6px 20px rgb(94 75 88 / 5%);
   -webkit-backdrop-filter: var(--glass-blur-chrome);
   backdrop-filter: var(--glass-blur-chrome);
@@ -117,21 +117,21 @@ body::before {
 }
 .access-screen {
   background:
-    radial-gradient(ellipse at 18% 14%, rgb(226 241 226 / 70%) 0, transparent 36%),
-    radial-gradient(ellipse at 90% 88%, rgb(248 229 235 / 68%) 0, transparent 38%),
-    rgb(247 248 244 / 70%);
+    radial-gradient(ellipse at 18% 14%, rgb(249 220 232 / 76%) 0, transparent 36%),
+    radial-gradient(ellipse at 90% 88%, rgb(231 218 239 / 62%) 0, transparent 38%),
+    rgb(255 248 251 / 76%);
 }
 
 /* Nested backdrop-filter inside a filtered parent has nothing to blur,
    so these use translucent tints instead (cheaper and looks the same). */
 .notes-list-panel,
-.study-unit-list { background: rgb(255 255 255 / 88%); border-right: 1px solid rgb(255 255 255 / 70%); }
-.study-article-footer { background: rgb(255 255 255 / 90%); border-top-color: rgb(255 255 255 / 70%); }
+.study-unit-list { background: rgb(255 247 251 / 58%); border-right: 1px solid rgb(255 255 255 / 78%); }
+.study-article-footer { background: rgb(255 249 252 / 78%); border-top-color: rgb(255 255 255 / 78%); }
 .study-objectives,
 .study-safety-note,
 .answer-option,
 .fc-nav,
-.fc-toolbar select { background-color: rgb(255 255 255 / 94%); }
+.fc-toolbar select { background-color: rgb(255 250 253 / 78%); }
 .study-objectives,
 .study-safety-note { border-color: var(--glass-border); }
 .study-unit-button.selected,
@@ -139,8 +139,8 @@ body::before {
 .note-list-item.selected { border-color: var(--glass-border); background: rgb(255 255 255 / 72%); }
 .notes-folder-item:hover,
 .note-list-item:hover,
-.study-unit-button:hover { background: rgb(255 255 255 / 94%); }
-.notes-folder-item.drop-target { background: rgb(255 255 255 / 80%); }
+.study-unit-button:hover { background: rgb(255 250 253 / 78%); }
+.notes-folder-item.drop-target { background: rgb(255 246 250 / 92%); }
 
 /* ---------- Controls: tint + edge only (no per-control blur) ---------- */
 .path-progress-pill,
@@ -153,7 +153,7 @@ body::before {
 .pdf-copy-button,
 .ai-guide-input-tab {
   border: 1px solid var(--glass-border);
-  background: rgb(255 255 255 / 94%);
+  background: rgb(255 250 253 / 78%);
   box-shadow: var(--glass-edge);
 }
 .add-task-button:hover,
@@ -162,8 +162,8 @@ body::before {
 .study-path-action:hover,
 .cancel-add:hover,
 .pdf-copy-button:hover,
-.ai-guide-input-tab:hover { background: rgb(255 255 255 / 80%); }
-.ai-guide-input-tab.active { background: rgb(252 236 241 / 85%); }
+.ai-guide-input-tab:hover { background: rgb(255 246 250 / 92%); }
+.ai-guide-input-tab.active { background: rgb(249 226 236 / 92%); }
 
 .task-form-fields > input,
 .task-deadline-field input,
@@ -171,32 +171,32 @@ body::before {
 .note-folder-select,
 .pdf-text-output {
   border: 1px solid var(--glass-border);
-  background: rgb(255 255 255 / 94%);
+  background: rgb(255 250 253 / 78%);
   box-shadow: inset 0 1px 2px rgb(94 75 88 / 6%);
 }
 .task-form-fields > input:focus,
 .task-deadline-field input:focus,
 .pdf-text-output:focus { background: rgb(255 255 255 / 85%); }
 .task-form-fields input:disabled { background: rgb(255 255 255 / 32%); }
-.pdf-upload-card { border: 1px dashed rgb(220 170 190 / 70%); background: rgb(255 255 255 / 90%); box-shadow: var(--glass-edge); }
+.pdf-upload-card { border: 1px dashed rgb(220 170 190 / 70%); background: rgb(255 248 252 / 74%); box-shadow: var(--glass-edge); }
 
 /* task pills and list rows: no blur, many instances */
 .task-due,
 .task-due.soon,
 .task-due.overdue,
-.task-due.no-deadline { background-color: rgb(255 255 255 / 94%); }
+.task-due.no-deadline { background-color: rgb(255 250 253 / 78%); }
 .task-row,
-.overview-unit-row { border-bottom: 1px solid rgb(255 255 255 / 90%); }
-.task-check { border: 1px solid rgb(150 190 160 / 80%); background: rgb(255 255 255 / 90%); }
-.task-check.checked { border-color: #4f9c71; background: #4f9c71; }
+.overview-unit-row { border-bottom: 1px solid rgb(255 248 252 / 74%); }
+.task-check { border: 1px solid rgb(215 127 159 / 65%); background: rgb(255 248 252 / 74%); }
+.task-check.checked { border-color: #a34e6e; background: #a34e6e; }
 .task-delete:hover { background: rgb(255 255 255 / 75%); }
 .lesson-footer,
 .study-path-card-footer,
 .note-editor-toolbar,
 .page-footer { border-color: rgb(255 255 255 / 65%); }
 .overview-unit-number { background: rgb(255 255 255 / 65%); }
-.overview-unit-number.is-complete { background: #62a476; }
-.overview-progress-track { background: rgb(255 255 255 / 90%); box-shadow: inset 0 1px 2px rgb(60 90 80 / 12%); }
+.overview-unit-number.is-complete { background: #a34e6e; }
+.overview-progress-track { background: rgb(255 248 252 / 74%); box-shadow: inset 0 1px 2px rgb(60 90 80 / 12%); }
 
 /* ---------- Legibility on translucent surfaces ---------- */
 .lesson-card > p,
@@ -243,7 +243,7 @@ body::before {
 /* ---------- Mobile: smaller blur radius is much cheaper to paint ---------- */
 @media (max-width: 760px) {
   :root { --glass-blur: blur(5px) saturate(108%); --glass-blur-chrome: blur(8px) saturate(115%); }
-  .sidebar { border-top-color: var(--glass-border); background: rgb(255 249 251 / 80%); box-shadow: 0 -6px 24px rgb(112 89 101 / 8%); }
+  .sidebar { border-top-color: var(--glass-border); background: rgb(255 244 249 / 88%); box-shadow: 0 -6px 24px rgb(112 89 101 / 8%); }
 }
 /* Study Room page: a calm glass workspace with a short entrance reveal. */
 .study-room-page {
@@ -269,16 +269,16 @@ body::before {
   inset: 0;
   pointer-events: none;
   content: "";
-  background: linear-gradient(118deg, rgb(255 255 255 / 30%), transparent 34%, transparent 72%, rgb(221 242 227 / 18%));
+  background: linear-gradient(118deg, rgb(255 255 255 / 42%), transparent 34%, transparent 72%, rgb(244 211 228 / 24%));
 }
 .study-room-page .study-room-header { border-bottom-color: rgb(255 255 255 / 78%); background: rgb(255 255 255 / 32%); }
 .study-room-page .study-unit-list { background: rgb(255 255 255 / 30%); border-right-color: rgb(255 255 255 / 78%); }
 .study-room-page .study-unit-button { transition: background .18s ease, border-color .18s ease, transform .18s ease; }
-.study-room-page .study-unit-button:hover { transform: translateX(2px); background: rgb(255 255 255 / 90%); }
-.study-room-page .study-unit-button.selected { border-color: rgb(255 255 255 / 90%); background: linear-gradient(110deg, rgb(255 255 255 / 84%), rgb(229 244 230 / 60%)); box-shadow: 0 5px 18px rgb(67 108 77 / 8%), inset 0 1px 0 #fff; }
+.study-room-page .study-unit-button:hover { transform: translateX(2px); background: rgb(255 248 252 / 74%); }
+.study-room-page .study-unit-button.selected { border-color: rgb(255 248 252 / 74%); background: linear-gradient(110deg, rgb(255 255 255 / 84%), rgb(248 224 235 / 72%)); box-shadow: 0 5px 18px rgb(145 83 113 / 10%), inset 0 1px 0 #fff; }
 .study-room-page .study-objectives { background: rgb(255 255 255 / 46%); box-shadow: inset 0 1px 0 rgb(255 255 255 / 72%); }
-.study-room-page .study-article-footer { background: rgb(255 255 255 / 90%); }
-.study-back-button { display: inline-flex; flex: 0 0 auto; align-items: center; gap: 7px; min-height: 36px; padding: 0 12px; border: 1px solid rgb(255 255 255 / 85%); border-radius: 10px; color: #52745b; background: rgb(255 255 255 / 94%); font-size: 12px; font-weight: 700; cursor: pointer; transition: background .18s ease, transform .18s ease; }
+.study-room-page .study-article-footer { background: rgb(255 248 252 / 74%); }
+.study-back-button { display: inline-flex; flex: 0 0 auto; align-items: center; gap: 7px; min-height: 36px; padding: 0 12px; border: 1px solid rgb(255 255 255 / 85%); border-radius: 10px; color: var(--pink-dark); background: rgb(255 250 253 / 78%); font-size: 12px; font-weight: 700; cursor: pointer; transition: background .18s ease, transform .18s ease; }
 .study-back-button:hover { transform: translateY(-1px); background: rgb(255 255 255 / 84%); }
 .study-room-page .study-read-count { margin-left: auto; }
 @keyframes study-glass-enter {
@@ -295,3 +295,13 @@ body::before {
   .study-room-page { animation: none; }
   .study-room-page .study-unit-button, .study-back-button { transition: none; }
 }
+
+
+/* Shared primary actions and loading state. */
+.button-primary { border: 1px solid rgb(163 78 110 / 30%); color: #fff; background: linear-gradient(135deg, #d77f9f, #b65f82); box-shadow: 0 8px 18px rgb(163 78 110 / 18%), inset 0 1px 0 rgb(255 255 255 / 28%); transition: transform .18s ease, box-shadow .18s ease, filter .18s ease; }
+.button-primary:hover:not(:disabled) { transform: translateY(-1px); filter: saturate(1.06); box-shadow: 0 11px 24px rgb(163 78 110 / 24%), inset 0 1px 0 rgb(255 255 255 / 32%); }
+.button-primary:focus-visible { outline: 3px solid rgb(215 127 159 / 42%); outline-offset: 3px; }
+.button-primary:disabled { opacity: .62; cursor: not-allowed; }
+.loader { width: 22px; height: 22px; border: 3px solid rgb(215 127 159 / 22%); border-top-color: var(--pink-dark); border-radius: 50%; animation: pink-loader-spin .72s linear infinite; }
+@keyframes pink-loader-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .button-primary { transition: none; } .button-primary:hover:not(:disabled) { transform: none; } .loader { animation-duration: 1.8s; } }
