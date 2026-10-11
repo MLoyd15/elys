@@ -7,6 +7,7 @@ import { Icon } from "./icons.jsx";
 import melodyPopupImage from "../images/melody-2.jpg";
 import melodyTimerImage from "../images/melody-3.jpg";
 import StudyRoom from "./StudyRoom.jsx";
+import MelodyWelcome from "./components/MelodyWelcome.jsx";
 
 function formatElapsedStudyTime(totalSeconds) {
   const safeSeconds = Math.max(0, totalSeconds);
@@ -439,6 +440,7 @@ function App() {
         </header>
 
         <div className={`page-content ${activeNav === "study" ? "study-room-content" : ""}`}>
+          {activeNav !== "home" && <MelodyWelcome />}
           {activeNav !== "home" && !["study", "cards"].includes(activeNav) && (
             <section className="page-title-row">
               <div className="section-kicker">{pageLabels[activeNav].toUpperCase()}</div>

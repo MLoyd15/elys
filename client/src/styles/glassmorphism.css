@@ -674,7 +674,6 @@ body::before {
 }
 @media (prefers-reduced-motion: reduce) { .floating-study-timer, .floating-study-timer-dot { animation: none; } }
 /* Give the learning path, quizzes, and progress pages the full main-column width. */
-.page-content.wide-content { width: 100%; max-width: none; margin: 0; padding-right: clamp(14px, 3vw, 48px); padding-left: clamp(14px, 3vw, 48px); }
 
 /* Progress uses the same pink glass motion language as the learning cards. */
 .pg-root > .pg-card,
@@ -690,8 +689,6 @@ body::before {
 .pg-unit-action, .pg-session-remove { transition: transform .18s ease, color .18s ease, background .18s ease, box-shadow .18s ease; }
 @keyframes progress-card-enter { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes progress-next-glow { 0%, 100% { box-shadow: inset 0 0 0 1px rgb(215 127 159 / 38%); } 50% { box-shadow: inset 0 0 0 1px rgb(215 127 159 / 72%), 0 5px 16px rgb(163 78 110 / 8%); } }
-@media (max-width: 760px) { .page-content.wide-content { padding-right: 18px; padding-left: 18px; } }
-@media (max-width: 420px) { .page-content.wide-content { padding-right: 13px; padding-left: 13px; } }
 @media (prefers-reduced-motion: reduce) {
   .pg-root > .pg-card, .pg-root > .pg-stats, .pg-unit.is-next { animation: none; }
   .pg-card, .pg-unit, .pg-unit-action, .pg-session-remove { transition: none; }
@@ -739,18 +736,3 @@ body::before {
   .melody-global-popup > div strong { font-size: 10px; }
 }
 @media (prefers-reduced-motion: reduce) { .melody-global-popup { animation: none; } }
-/* Page-wide Melody wallpaper, behind every app route and its glass panels. */
-.app-shell { position: relative; isolation: isolate; }
-.app-shell::before {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  background: url("../../images/melody-study.jpg") center 42% / cover no-repeat;
-  content: "";
-  opacity: .18;
-  pointer-events: none;
-}
-.app-shell > .main-content { position: relative; z-index: 1; }
-@media (max-width: 760px) {
-  .app-shell::before { background-position: center; opacity: .13; }
-}
