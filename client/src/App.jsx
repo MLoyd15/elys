@@ -7,7 +7,7 @@ import { Icon } from "./icons.jsx";
 import melodyPopupImage from "../images/melody-2.jpg";
 import melodyTimerImage from "../images/melody-3.jpg";
 import StudyRoom from "./StudyRoom.jsx";
-import MelodyWelcome from "./components/MelodyWelcome.jsx";
+import PageMelodyArt from "./components/PageMelodyArt.jsx";
 
 function formatElapsedStudyTime(totalSeconds) {
   const safeSeconds = Math.max(0, totalSeconds);
@@ -440,7 +440,6 @@ function App() {
         </header>
 
         <div className={`page-content ${activeNav === "study" ? "study-room-content" : ""}`}>
-          {activeNav !== "home" && <MelodyWelcome />}
           {activeNav !== "home" && !["study", "cards"].includes(activeNav) && (
             <section className="page-title-row">
               <div className="section-kicker">{pageLabels[activeNav].toUpperCase()}</div>
@@ -449,6 +448,7 @@ function App() {
             </section>
           )}
 
+          { ["path", "quiz", "chart"].includes(activeNav) && <PageMelodyArt page={activeNav} />}
           {activeNav === "cards" ? <FlashcardModal cards={flashcards} loading={flashcardsLoading} error={flashcardsError} initialTopic={flashcardTopic} onClose={() => setActiveNav("home")} /> : activeNav === "study" ? <StudyRoom
             guides={studyGuides}
             loading={studyGuidesLoading}
@@ -478,14 +478,7 @@ function App() {
             actions={{ loadStudyGuides, openStudyRoom, startStudyGuideQuiz, addTask, toggleTask, removeTask, removeStudySession, onGeneratedStudyGuide: openGeneratedStudyGuide }}
           />}
         </div>
-      </main>
-      {showMelodyPopup && (
-        <aside className="melody-global-popup" aria-label="Study encouragement">
-          <img src={melodyPopupImage} alt="My Melody cheering you on" />
-          <div><span>A LITTLE REMINDER</span><strong>One unit at a time. You’ve got this!</strong></div>
-          <button type="button" aria-label="Dismiss study encouragement" onClick={() => setShowMelodyPopup(false)}>×</button>
-        </aside>
-      )}      {activeStudySession && activeNav !== "study" && (
+      </main>      {activeStudySession && activeNav !== "study" && (
         <aside className="floating-study-timer" aria-label="Active study timer">
           <span className="floating-study-timer-label"><span className="floating-study-timer-dot" /> STUDY SESSION IN PROGRESS</span>
           <img className="study-timer-melody" src={melodyTimerImage} alt="My Melody" />

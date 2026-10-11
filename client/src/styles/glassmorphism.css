@@ -694,45 +694,37 @@ body::before {
   .pg-card, .pg-unit, .pg-unit-action, .pg-session-remove { transition: none; }
   .pg-card:hover, .pg-unit:not(.is-next):hover { transform: none; }
 }
-/* My Melody stays as a small encouragement badge across dashboard pages. */
-.melody-global-popup {
-  position: fixed;
-  left: calc(var(--sidebar-width, 246px) + 22px);
-  bottom: 24px;
-  z-index: 9;
+
+/* Distinct Melody accents for Learning Path, Quick Quizzes, and Progress. */
+.page-melody-design {
+  position: relative;
   display: flex;
+  min-height: 98px;
   align-items: center;
-  gap: 10px;
-  max-width: min(290px, calc(100vw - var(--sidebar-width, 246px) - 40px));
-  padding: 8px 30px 8px 8px;
-  border: 1px solid rgb(255 255 255 / 88%);
+  justify-content: space-between;
+  overflow: hidden;
+  padding: 15px 21px;
+  margin: 0 0 20px;
+  border: 1px solid rgb(255 255 255 / 84%);
   border-radius: 18px;
-  background: linear-gradient(135deg, rgb(255 250 253 / 93%), rgb(249 226 236 / 88%));
-  box-shadow: 0 12px 30px rgb(145 83 113 / 16%), inset 0 1px 0 #fff;
-  -webkit-backdrop-filter: blur(16px);
-  backdrop-filter: blur(16px);
-  animation: melody-pop-in .5s cubic-bezier(.2,.75,.25,1) both;
+  background: linear-gradient(110deg, rgb(255 247 251 / 85%), rgb(249 226 237 / 78%));
+  box-shadow: 0 10px 26px rgb(145 83 113 / 10%), inset 0 1px 0 #fff;
+  animation: melody-pop-in .48s cubic-bezier(.2,.75,.25,1) both;
 }
-.melody-global-popup > img { width: 58px; height: 58px; flex: 0 0 auto; border: 2px solid rgb(255 255 255 / 92%); border-radius: 14px; object-fit: cover; box-shadow: 0 4px 12px rgb(145 83 113 / 12%); }
-.melody-global-popup > div { display: grid; gap: 4px; }
-.melody-global-popup > div span { color: #a16e82; font-size: 8px; font-weight: 800; letter-spacing: .8px; }
-.melody-global-popup > div strong { color: #59394a; font-size: 11px; line-height: 1.4; }
-.melody-global-popup > button { position: absolute; top: 5px; right: 7px; width: 22px; height: 22px; border: 0; border-radius: 50%; color: #a16e82; background: rgb(255 255 255 / 60%); font-size: 16px; line-height: 1; }
-.melody-global-popup > button:hover { color: #84344f; background: #fff; }
-.study-timer-melody { width: 36px; height: 36px; flex: 0 0 auto; border: 1px solid rgb(255 255 255 / 90%); border-radius: 50%; background: #f7dce7; object-fit: cover; mix-blend-mode: multiply; }
-.floating-study-timer .study-timer-melody { width: 42px; height: 42px; grid-row: 1 / 3; float: right; }
-.floating-study-timer { grid-template-columns: 1fr 42px; align-items: center; }
-.floating-study-timer-label { grid-column: 1; }
-.floating-study-timer > strong { grid-column: 1; }
-.floating-study-timer .study-timer-melody { grid-column: 2; }
-.floating-study-timer button { grid-column: 1 / -1; }
-@keyframes melody-pop-in { from { opacity: 0; transform: translateY(12px) scale(.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
-@media (max-width: 760px) {
-  .melody-global-popup { left: 12px; bottom: 74px; max-width: min(250px, calc(100vw - 24px)); }
+.page-melody-design > div { position: relative; z-index: 1; }
+.page-melody-design > div span { color: #a34e6e; font-size: 9px; font-weight: 800; letter-spacing: 1px; }
+.page-melody-design > div p { margin: 5px 0 0; color: #765968; font-size: 12px; line-height: 1.45; }
+.page-melody-design > img { width: 72px; height: 72px; flex: 0 0 auto; object-fit: cover; box-shadow: 0 6px 16px rgb(145 83 113 / 13%); }
+.page-melody-path { background: linear-gradient(110deg, rgb(255 248 251 / 88%), rgb(243 225 248 / 78%)); }
+.page-melody-path > img { border: 3px solid rgb(255 255 255 / 90%); border-radius: 18px 18px 36px 18px; transform: rotate(4deg); }
+.page-melody-quiz { background: linear-gradient(110deg, rgb(255 247 250 / 88%), rgb(250 220 232 / 78%)); }
+.page-melody-quiz > img { border: 3px solid rgb(255 255 255 / 90%); border-radius: 50%; transform: rotate(-4deg); mix-blend-mode: multiply; }
+.page-melody-chart { background: linear-gradient(110deg, rgb(255 249 252 / 88%), rgb(246 222 237 / 78%)); }
+.page-melody-chart > img { border: 2px solid rgb(255 255 255 / 90%); border-radius: 50%; }
+@keyframes melody-pop-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@media (max-width: 600px) {
+  .page-melody-design { min-height: 82px; padding: 12px 15px; }
+  .page-melody-design > img { width: 58px; height: 58px; }
+  .page-melody-design > div p { max-width: 245px; font-size: 10.5px; }
 }
-@media (max-width: 420px) {
-  .melody-global-popup { gap: 7px; max-width: min(225px, calc(100vw - 24px)); padding: 7px 27px 7px 7px; }
-  .melody-global-popup > img { width: 48px; height: 48px; }
-  .melody-global-popup > div strong { font-size: 10px; }
-}
-@media (prefers-reduced-motion: reduce) { .melody-global-popup { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .page-melody-design { animation: none; } }
