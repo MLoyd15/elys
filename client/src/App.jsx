@@ -246,9 +246,11 @@ function App() {
   const completedTasks = tasks.length - unfinishedTasks.length;
   const reviewedGuideCount = studyGuides.filter((guide) => reviewedGuideSlugs.includes(guide.slug)).length;
   const completedStudyQuizzes = progress.completedStudyQuizzes || [];
-  const completedReviewCount = completedStudyQuizzes.length;
-  const reviewPathLength = studyGuides.length || 6;
-  const reviewCompletionPercent = Math.round((completedReviewCount / reviewPathLength) * 100);
+  const completedReviewCount = studyGuides.filter((guide) => completedStudyQuizzes.includes(guide.slug)).length;
+  const reviewPathLength = studyGuides.length;
+  const reviewCompletionPercent = reviewPathLength
+    ? Math.round((completedReviewCount / reviewPathLength) * 100)
+    : 0;
   const nextGuideSlug = studyGuides.find((guide) => !reviewedGuideSlugs.includes(guide.slug))?.slug;
   const pageLabels = {
     home: "Overview",

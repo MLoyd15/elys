@@ -1,5 +1,5 @@
 .bottom-grid { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(220px, .9fr); gap: 14px; margin-top: 18px; }
-.todo-card, .progress-card { position: relative; min-width: 0; padding: 19px; border: 1px solid #e8eee6; border-radius: 14px; background: #fff; }
+.todo-card { position: relative; min-width: 0; padding: 19px; border: 1px solid #e8eee6; border-radius: 14px; background: #fff; }
 .todo-header { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 14px; }
 .todo-header { align-items: flex-start; }
 .todo-header h2 { min-height: 32px; }
@@ -99,5 +99,5 @@
   .task-form-fields > button[type="submit"] { grid-column: 2; }
   .task-form-fields .cancel-add { grid-column: 3; }
   .task-row { grid-template-columns: 18px minmax(0, 1fr) auto 28px; column-gap: 7px; }
-  .todo-card, .progress-card { padding: 15px; }
+  .todo-card { padding: 15px; }
 }

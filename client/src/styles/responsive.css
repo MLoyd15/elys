@@ -12,7 +12,6 @@
   .study-path-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .lesson-card { min-height: 173px; }
   .bottom-grid { grid-template-columns: minmax(0, 1.35fr) minmax(220px, .9fr); }
-  .progress-ring-wrap { right: 10px; transform: scale(.83); transform-origin: top right; }
 }
 @media (max-width: 760px) {
   .sidebar { position: fixed; inset: auto 0 0; z-index: 8; display: block; width: 100%; height: 62px; padding: 5px 10px calc(5px + env(safe-area-inset-bottom)); border-top: 1px solid #e9ede7; border-right: 0; background: #fff; }
@@ -62,9 +61,6 @@
   .lesson-card > p { font-size: 9.6px; }
   .lesson-status { font-size: 7.2px; letter-spacing: .3px; }
   .bottom-grid { grid-template-columns: 1fr; }
-  .progress-card { min-height: 190px; }
-  .progress-ring-wrap { top: 33px; right: 22px; transform: scale(.85); }
-  .progress-stats { margin-top: 24px; }
   .study-backdrop { padding: 0; }
   .study-room { width: 100%; height: 100dvh; max-height: 100dvh; border: 0; border-radius: 0; }
   .study-room-header { min-height: 61px; gap: 9px; padding: 8px 12px; }
@@ -117,7 +113,7 @@
   .lesson-icon { width: 29px; height: 29px; font-size: 18px; }
   .study-path-grid { grid-template-columns: 1fr; }
   .study-path-card { min-height: 178px; }
-  .todo-card, .progress-card { padding-right: 13px; padding-left: 13px; }
+  .todo-card { padding-right: 13px; padding-left: 13px; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }

@@ -10,8 +10,6 @@
   .review-stat-card { min-height: 139px; padding: 12px; }
   .overview-review-card { padding: 14px; }
   .overview-unit-list { grid-template-columns: 1fr; }
-  .single-panel-grid .progress-ring-wrap { right: 13px; }
-  .single-panel-grid .progress-review-count { right: 15px; bottom: 19px; max-width: 130px; text-align: right; }
   .notepad-workspace { grid-template-columns: minmax(145px, 190px) minmax(0, 1fr); min-height: 430px; }
   .note-editor { min-height: 430px; padding: 13px; }
   .note-content-input { min-height: 280px; }
@@ -28,5 +26,4 @@
   .review-stat-label { font-size: 8.4px; letter-spacing: .45px; }
   .review-stat-note { font-size: 9.6px; }
   .overview-unit-status { font-size: 8.4px; }
-  .single-panel-grid .progress-stats { gap: 12px; }
 }

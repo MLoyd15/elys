@@ -63,8 +63,8 @@ export default function DashboardPages({
         <>
           <section className="welcome-row overview-welcome">
             <div>
-              <div className="eyebrow">{todayLabel} <span className="tiny-sun">✳</span></div>
-              <h1>Your review, at a glance <span className="wave">✋</span></h1>
+              <div className="eyebrow">{todayLabel} <span className="tiny-sun"><Icon name="spark" size={13} /></span></div>
+              <h1>Your review, at a glance</h1>
               <p className="welcome-subtitle">Welcome back, Elys. Here’s how your road to topnotcher is going.</p>
             </div>
             <div className="overview-date-pill"><Icon name="chart" size={17} /> Review statistics</div>
@@ -100,11 +100,11 @@ export default function DashboardPages({
               <div>
                 <div className="section-kicker">YOUR CCN REVIEW</div>
                 <h2>Road to topnotcher</h2>
-                <p>Quiz completion across your six study units.</p>
+                <p>Quiz completion across your available study units.</p>
               </div>
               <strong>{reviewCompletionPercent}%</strong>
             </div>
-            <div className="overview-progress-track">
+            <div className="overview-progress-track" role="progressbar" aria-label="CCN quiz completion" aria-valuemin={0} aria-valuemax={reviewPathLength} aria-valuenow={completedReviewCount} aria-valuetext={`${reviewCompletionPercent}% complete`}>
               <span style={{ width: `${reviewCompletionPercent}%` }} />
             </div>
             <div className="overview-unit-list">
@@ -113,7 +113,7 @@ export default function DashboardPages({
                 return (
                   <div className="overview-unit-row" key={guide.slug}>
                     <span className={`overview-unit-number ${completed ? "is-complete" : ""}`}>
-                      {completed ? "✓" : String(index + 1).padStart(2, "0")}
+                      {completed ? <Icon name="check" size={13} /> : String(index + 1).padStart(2, "0")}
                     </span>
                     <span className="overview-unit-name">{guide.topic}</span>
                     <span className={`overview-unit-status ${completed ? "is-complete" : ""}`}>
@@ -141,7 +141,7 @@ export default function DashboardPages({
               <h2>Study it, then remember it</h2>
               <p>Choose a study unit to open its reading guide, then review its matching flashcards in the Study Room.</p>
             </div>
-            <span className="path-progress-pill">{reviewedGuideCount} / {studyGuides.length || 6} reviewed</span>
+            <span className="path-progress-pill">{studyGuidesLoading ? "Loading units…" : `${reviewedGuideCount} / ${studyGuides.length} reviewed`}</span>
           </div>
           {studyGuidesError ? (
             <div className="path-load-error" role="alert">
@@ -205,7 +205,7 @@ export default function DashboardPages({
               {studyGuides.map((guide, index) => (
                 <article className={`lesson-card study-quiz-card ${index % 2 === 0 ? "mint" : "peach"}`} key={guide.slug}>
                   <div className="lesson-topline">
-                    <span className={`lesson-icon ${index % 2 === 0 ? "mint" : "peach"}`}>📘</span>
+                    <span className={`lesson-icon ${index % 2 === 0 ? "mint" : "peach"}`}><Icon name="book" size={18} /></span>
                     <span className="lesson-status">10 QUESTIONS</span>
                   </div>
                   <div className="lesson-category">{guide.topic}</div>
@@ -240,7 +240,7 @@ export default function DashboardPages({
                 <AddTask onAdd={actions.addTask} />
               </div>
               {tasks.length === 0 ? (
-                <div className="empty-tasks"><span>🌱</span><p>Nothing on your list yet. Add a little goal to get started.</p></div>
+                <div className="empty-tasks"><span className="empty-task-icon"><Icon name="spark" size={22} /></span><p>Nothing on your list yet. Add a little goal to get started.</p></div>
               ) : (
                 <div className="task-list">
                   {tasks.map((task) => {
@@ -252,7 +252,7 @@ export default function DashboardPages({
                         onClick={() => actions.toggleTask(task)}
                         aria-label={`${task.completed ? "Mark incomplete" : "Complete"} ${task.title}`}
                       >
-                        {task.completed && "✓"}
+                        {task.completed && <Icon name="check" size={12} />}
                       </button>
                       <span className="task-title">{task.title}</span>
                       {deadline ? (
@@ -273,7 +273,7 @@ export default function DashboardPages({
                 </div>
               )}
               <div className="todo-summary">
-                <span className="summary-check">✓</span>
+                <span className="summary-check"><Icon name="check" size={13} /></span>
                 {completedTasks === 0
                   ? "You’ve got this — one task at a time."
                   : `${completedTasks} of ${tasks.length} tasks complete. Nice work!`}
@@ -282,34 +282,85 @@ export default function DashboardPages({
           )}
 
           {activeNav === "chart" && (
-            <section className="progress-card" id="progress-card">
-              <div className="section-kicker">YOUR MOMENTUM</div>
-              <h2>Look at you go.</h2>
-              <p>Every little session adds up.</p>
-              <div className="progress-ring-wrap">
-                <svg className="progress-ring" width="130" height="130" viewBox="0 0 130 130" aria-label={`${completedReviewCount} of ${reviewPathLength} CCN quizzes complete`}>
-                  <circle cx="65" cy="65" r="54" fill="none" stroke="#edf0e9" strokeWidth="10" />
-                  <circle
-                    cx="65"
-                    cy="65"
-                    r="54"
-                    fill="none"
-                    stroke="#57a87a"
-                    strokeWidth="10"
-                    strokeLinecap="round"
-                    strokeDasharray={`${Math.max(completedReviewCount / reviewPathLength, 0.03) * 339} 339`}
-                    transform="rotate(-90 65 65)"
-                  />
-                </svg>
-                <div className="ring-text"><strong>{reviewCompletionPercent}<small>%</small></strong><span>of CCN quizzes</span></div>
-                <span className="ring-leaf">✳</span>
-              </div>
-              <div className="progress-stats">
-                <div><span className="stat-icon xp-mini">✳</span><strong>{progress.xp}</strong><small>Total XP</small></div>
-                <div><span className="stat-icon streak-mini">↗</span><strong>{progress.streak} days</strong><small>Current streak</small></div>
-              </div>
-              <div className="progress-review-count">{completedReviewCount} of {reviewPathLength} study-unit quizzes completed</div>
-            </section>
+            <div className="progress-dashboard">
+              <section className="progress-overview" aria-labelledby="progress-overview-title">
+                <div className="progress-overview-copy">
+                  <div className="section-kicker">YOUR MOMENTUM</div>
+                  <h2 id="progress-overview-title">Progress that adds up.</h2>
+                  {completedReviewCount > 0 ? (
+                    <p>You’ve completed {completedReviewCount} of {reviewPathLength} available study quizzes. Keep building your confidence one unit at a time.</p>
+                  ) : studyGuidesLoading ? (
+                    <p role="status">Loading your study units and quiz progress…</p>
+                  ) : studyGuidesError ? (
+                    <div className="progress-load-error" role="alert">
+                      <p>We couldn’t load your study units, so the quiz total is not available yet.</p>
+                      <button type="button" className="text-button" onClick={actions.loadStudyGuides}>Try again <Icon name="arrow" size={15} /></button>
+                    </div>
+                  ) : reviewPathLength > 0 ? (
+                    <>
+                      <p>Your progress starts with your first quiz. Take a study unit quiz to see your results here.</p>
+                      <button type="button" className="button button-primary progress-start-button" onClick={() => actions.openStudyRoom(nextGuideSlug || "")}>
+                        Start a study unit <Icon name="arrow" size={16} />
+                      </button>
+                    </>
+                  ) : (
+                    <p>Quiz progress will appear here when study units are available.</p>
+                  )}
+                </div>
+                <div
+                  className="progress-ring-wrap"
+                  role="progressbar"
+                  aria-label="Study quiz completion"
+                  aria-valuemin={0}
+                  aria-valuemax={reviewPathLength}
+                  aria-valuenow={completedReviewCount}
+                  aria-valuetext={`${reviewCompletionPercent}% complete, ${completedReviewCount} of ${reviewPathLength} study quizzes`}
+                >
+                  <svg className="progress-ring" viewBox="0 0 160 160" aria-hidden="true">
+                    <circle className="progress-ring-track" cx="80" cy="80" r="64" fill="none" strokeWidth="11" />
+                    <circle
+                      className="progress-ring-value"
+                      cx="80"
+                      cy="80"
+                      r="64"
+                      fill="none"
+                      strokeWidth="11"
+                      strokeLinecap="round"
+                      strokeDasharray={`${(reviewCompletionPercent / 100) * 402.12} 402.12`}
+                      transform="rotate(-90 80 80)"
+                    />
+                  </svg>
+                  <div className="ring-text"><strong>{reviewCompletionPercent}<small>%</small></strong><span>quizzes complete</span></div>
+                </div>
+              </section>
+
+              <section className="progress-metrics" aria-label="Study statistics">
+                <article className="progress-metric-card">
+                  <span className="progress-metric-icon"><Icon name="check" size={19} /></span>
+                  <span className="progress-metric-label">QUIZZES COMPLETED</span>
+                  <strong>{completedReviewCount}<small> / {reviewPathLength}</small></strong>
+                  <span className="progress-metric-note">of available study units</span>
+                </article>
+                <article className="progress-metric-card">
+                  <span className="progress-metric-icon"><Icon name="spark" size={19} /></span>
+                  <span className="progress-metric-label">TOTAL XP</span>
+                  <strong>{progress.xp}</strong>
+                  <span className="progress-metric-note">earned from practice</span>
+                </article>
+                <article className="progress-metric-card">
+                  <span className="progress-metric-icon"><Icon name="flame" size={19} /></span>
+                  <span className="progress-metric-label">CURRENT STREAK</span>
+                  <strong>{progress.streak}<small> days</small></strong>
+                  <span className="progress-metric-note">consecutive study days</span>
+                </article>
+                <article className="progress-metric-card">
+                  <span className="progress-metric-icon"><Icon name="clock" size={19} /></span>
+                  <span className="progress-metric-label">STUDY TIME THIS WEEK</span>
+                  <strong>{progress.weeklyMinutes}<small> min</small></strong>
+                  <span className="progress-metric-note">time spent reviewing</span>
+                </article>
+              </section>
+            </div>
           )}
         </div>
       )}
