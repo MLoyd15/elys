@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { api } from "./api.js";
 import { Icon } from "./icons.jsx";
+import melodyTimerImage from "../images/melody-3.jpg";
 
 function formatStudyMaterials(guide, cards, quiz) {
   const sections = guide.sections.map((section, index) => [
@@ -198,6 +199,7 @@ export default function StudyRoom({ guides, loading, error, initialSlug, readGui
           </div>
           <span className="study-read-count">{readGuides.length} of {guides.length} reviewed</span>
           <div className={`study-timer ${timerSession ? "is-running" : ""}`}>
+            <img className="study-timer-melody" src={melodyTimerImage} alt="My Melody" />
             <span className="study-timer-readout" aria-live="off">
               <span>{timerSession ? "STUDY SESSION" : "STUDY TIMER"}</span>
               <strong>{formatTimer(timerSession ? Math.floor((timerNow - Date.parse(timerSession.startedAt)) / 1000) : 0)}</strong>

@@ -4,6 +4,8 @@ import DashboardPages from "./components/DashboardPages.jsx";
 import FlashcardModal from "./components/FlashcardModal.jsx";
 import QuizModal from "./components/QuizModal.jsx";
 import { Icon } from "./icons.jsx";
+import melodyPopupImage from "../images/melody-2.jpg";
+import melodyTimerImage from "../images/melody-3.jpg";
 import StudyRoom from "./StudyRoom.jsx";
 
 function formatElapsedStudyTime(totalSeconds) {
@@ -29,6 +31,7 @@ function App() {
   const [reviewedGuideSlugs, setReviewedGuideSlugs] = useState([]);
   const [studySessions, setStudySessions] = useState([]);
   const [studyTimerNow, setStudyTimerNow] = useState(Date.now());
+  const [showMelodyPopup, setShowMelodyPopup] = useState(true);
   const studyGuidesRequestStarted = useRef(false);
   const [notice, setNotice] = useState("");
   const [accessCode, setAccessCode] = useState("");
@@ -434,7 +437,7 @@ function App() {
           </div>
         </header>
 
-        <div className={`page-content ${activeNav === "study" ? "study-room-content" : ""}`}>
+        <div className={`page-content ${activeNav === "study" ? "study-room-content" : ""} ${["path", "quiz", "chart"].includes(activeNav) ? "wide-content" : ""}`}>
           {activeNav !== "home" && !["study", "cards"].includes(activeNav) && (
             <section className="page-title-row">
               <div className="section-kicker">{pageLabels[activeNav].toUpperCase()}</div>
@@ -473,9 +476,16 @@ function App() {
           />}
         </div>
       </main>
-      {activeStudySession && activeNav !== "study" && (
+      {showMelodyPopup && (
+        <aside className="melody-global-popup" aria-label="Study encouragement">
+          <img src={melodyPopupImage} alt="My Melody cheering you on" />
+          <div><span>A LITTLE REMINDER</span><strong>One unit at a time. You’ve got this!</strong></div>
+          <button type="button" aria-label="Dismiss study encouragement" onClick={() => setShowMelodyPopup(false)}>×</button>
+        </aside>
+      )}      {activeStudySession && activeNav !== "study" && (
         <aside className="floating-study-timer" aria-label="Active study timer">
           <span className="floating-study-timer-label"><span className="floating-study-timer-dot" /> STUDY SESSION IN PROGRESS</span>
+          <img className="study-timer-melody" src={melodyTimerImage} alt="My Melody" />
           <strong aria-live="off">{formatElapsedStudyTime(Math.floor((studyTimerNow - Date.parse(activeStudySession.startedAt)) / 1000))}</strong>
           <button type="button" onClick={() => setActiveNav("study")}>
             Open Study Room <Icon name="arrow" size={15} />
