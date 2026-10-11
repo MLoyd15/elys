@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { Icon } from "../icons.jsx";
-import "./FlashcardModal.css";
 
 const pad = (value) => String(value).padStart(2, "0");
 
@@ -130,6 +129,7 @@ export default function FlashcardModal({ cards, loading, error, onClose, initial
   return (
     <div className="modal-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}>
       <section className="fc-modal" role="dialog" aria-modal="true" aria-labelledby="flashcard-title">
+        <style>{flashcardStyles}</style>
         <div className="quiz-top">
           <span className="quiz-brand"><span>n+</span> flashcard practice</span>
           <button className="modal-close" onClick={onClose} aria-label="Close flashcards"><Icon name="close" size={20} /></button>

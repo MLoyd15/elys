@@ -1,31 +1,254 @@
+/* =====================================================================
+   Nurselys glass system  (single source of truth)
+   Replaces client/src/styles/glassmorphism.css AND the
+   "GLASSMORPHISM LAYER" block at the bottom of notepad.css.
+   Must stay the LAST import in styles.css.
+   ===================================================================== */
+
 :root {
-  --glass-border: rgb(255 255 255 / 74%);
-  --glass-surface: rgb(255 255 255 / 67%);
-  --glass-shadow: 0 14px 36px rgb(94 75 88 / 9%);
+  /* surfaces: opacity goes up with importance so text stays readable */
+  --glass-surface-soft: rgb(255 255 255 / 52%);
+  --glass-surface: rgb(255 255 255 / 70%);
+  --glass-surface-strong: rgb(255 255 255 / 84%);
+
+  --glass-border: rgb(255 255 255 / 82%);
+  --glass-border-strong: rgb(255 255 255 / 94%);
+
+  /* top-edge highlight + faint bottom edge gives the "pane of glass" feel */
+  --glass-edge: inset 0 1px 0 rgb(255 255 255 / 92%), inset 0 -1px 0 rgb(255 255 255 / 28%);
+  --glass-shadow: 0 10px 30px rgb(94 75 88 / 10%), 0 2px 6px rgb(94 75 88 / 5%), var(--glass-edge);
+  --glass-shadow-hover: 0 16px 38px rgb(94 75 88 / 15%), 0 3px 8px rgb(94 75 88 / 7%), var(--glass-edge);
+
+  /* one blur recipe per level; blur only on large outer panes */
+  --glass-blur: blur(16px) saturate(150%);
+  --glass-blur-chrome: blur(22px) saturate(160%);
+
+  /* readable muted text on translucent surfaces */
+  --glass-muted: #6b786f;
 }
-body {
-  background: radial-gradient(ellipse at 8% 8%, rgb(200 230 204 / 58%), transparent 34%), radial-gradient(ellipse at 91% 23%, rgb(249 211 224 / 48%), transparent 34%), radial-gradient(ellipse at 75% 91%, rgb(213 232 218 / 46%), transparent 36%), #f7f7f5;
-  background-attachment: fixed;
+
+/* ---------- Backdrop: gives the blur something to refract ---------- */
+body { background: #f7f7f5; }
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(520px 420px at 12% 8%, rgb(120 200 150 / 38%), transparent 70%),
+    radial-gradient(480px 460px at 88% 14%, rgb(240 140 175 / 32%), transparent 70%),
+    radial-gradient(560px 480px at 70% 92%, rgb(150 170 240 / 26%), transparent 70%),
+    radial-gradient(420px 380px at 8% 85%, rgb(255 190 150 / 28%), transparent 70%);
 }
-.sidebar { border-right-color: rgb(255 255 255 / 75%); background: rgb(255 249 251 / 72%); box-shadow: 8px 0 30px rgb(112 89 101 / 5%); backdrop-filter: blur(22px) saturate(145%); -webkit-backdrop-filter: blur(22px) saturate(145%); }
-.topbar { border-bottom-color: rgb(255 255 255 / 75%); background: rgb(250 249 248 / 68%); backdrop-filter: blur(18px) saturate(145%); -webkit-backdrop-filter: blur(18px) saturate(145%); }
-.sidebar-note, .weekly-pill, .lesson-card, .study-path-card, .todo-card, .progress-card, .review-stat-card, .overview-review-card, .notepad-workspace, .pdf-text-workspace, .access-card, .quiz-modal, .flashcard-modal, .study-room, .toast { border-color: var(--glass-border); box-shadow: var(--glass-shadow); backdrop-filter: blur(18px) saturate(145%); -webkit-backdrop-filter: blur(18px) saturate(145%); }
-.sidebar-note { background: rgb(255 255 255 / 48%); }
-.weekly-pill, .lesson-card, .study-path-card, .todo-card, .overview-review-card, .notepad-workspace, .pdf-text-workspace, .access-card, .quiz-modal, .flashcard-modal, .study-room, .toast { background: var(--glass-surface); }
-.hero-card { border: 1px solid rgb(255 255 255 / 70%); background: linear-gradient(115deg, rgb(224 242 226 / 76%), rgb(230 243 232 / 66%) 63%, rgb(252 230 238 / 72%)); box-shadow: var(--glass-shadow); backdrop-filter: blur(16px) saturate(145%); -webkit-backdrop-filter: blur(16px) saturate(145%); }
-.study-path-card.is-next, .study-path-card.is-reviewed, .study-path-card:nth-child(even):not(.is-next) { background: rgb(255 255 255 / 61%); }
-.progress-card { background: linear-gradient(145deg, rgb(255 247 249 / 78%), rgb(250 231 238 / 68%)); }
-.review-stat-green { background: linear-gradient(145deg, rgb(246 251 244 / 76%), rgb(234 245 232 / 67%)); }
-.review-stat-pink { background: linear-gradient(145deg, rgb(255 248 250 / 78%), rgb(251 237 241 / 68%)); }
-.notes-list-panel, .study-unit-list { background: rgb(255 250 252 / 49%); backdrop-filter: blur(14px) saturate(135%); -webkit-backdrop-filter: blur(14px) saturate(135%); }
-.study-article-footer { background: rgb(255 255 255 / 62%); backdrop-filter: blur(14px) saturate(135%); -webkit-backdrop-filter: blur(14px) saturate(135%); }
-.answer-option, .flashcard-nav, .flashcard-toolbar select, .study-objectives, .study-safety-note { background-color: rgb(255 255 255 / 57%); backdrop-filter: blur(12px) saturate(135%); -webkit-backdrop-filter: blur(12px) saturate(135%); }
-.flashcard { border-color: rgb(255 255 255 / 76%); background: radial-gradient(ellipse at 90% 10%, rgb(252 232 238 / 76%) 0, transparent 36%), linear-gradient(145deg, rgb(245 250 243 / 78%), rgb(255 242 246 / 74%)); box-shadow: inset 0 1px 0 rgb(255 255 255 / 74%), 0 10px 24px rgb(112 89 101 / 7%); backdrop-filter: blur(14px) saturate(140%); -webkit-backdrop-filter: blur(14px) saturate(140%); }
-.flashcard.is-flipped { background: radial-gradient(ellipse at 10% 90%, rgb(230 242 228 / 78%) 0, transparent 38%), linear-gradient(145deg, rgb(255 247 249 / 78%), rgb(240 247 239 / 76%)); }
-.pdf-upload-card { border-color: rgb(255 255 255 / 78%); background: rgb(255 255 255 / 40%); box-shadow: inset 0 1px 0 rgb(255 255 255 / 66%); border-style: dashed; }
-.task-form-fields > input, .task-deadline-field input { background: rgb(255 255 255 / 70%); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
-.access-screen { background: radial-gradient(ellipse at 18% 14%, rgb(226 241 226 / 70%) 0, transparent 36%), radial-gradient(ellipse at 90% 88%, rgb(248 229 235 / 68%) 0, transparent 38%), rgb(247 248 244 / 70%); }
-@media (max-width: 760px) { .sidebar { border-top-color: rgb(255 255 255 / 75%); background: rgb(255 249 251 / 78%); } }
-@media (prefers-reduced-transparency: reduce) {
-  .sidebar, .topbar, .sidebar-note, .weekly-pill, .lesson-card, .study-path-card, .todo-card, .progress-card, .review-stat-card, .overview-review-card, .notepad-workspace, .pdf-text-workspace, .access-card, .quiz-modal, .flashcard-modal, .study-room, .toast, .notes-list-panel, .study-unit-list, .study-article-footer, .answer-option, .flashcard-nav, .flashcard-toolbar select, .study-objectives, .study-safety-note { backdrop-filter: none; -webkit-backdrop-filter: none; }
+
+/* ---------- Primary glass cards ---------- */
+.lesson-card,
+.study-path-card,
+.study-path-card:nth-child(even):not(.is-next),
+.todo-card,
+.progress-card,
+.review-stat-card,
+.overview-review-card,
+.notepad-workspace,
+.pdf-text-workspace,
+.path-load-error,
+.sidebar-note,
+.weekly-pill {
+  border: 1px solid var(--glass-border);
+  background: var(--glass-surface);
+  box-shadow: var(--glass-shadow);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+.sidebar-note { background: var(--glass-surface-soft); }
+
+/* tinted variants */
+.review-stat-green { background: linear-gradient(145deg, rgb(255 255 255 / 66%), rgb(150 210 165 / 34%)); }
+.review-stat-pink  { background: linear-gradient(145deg, rgb(255 255 255 / 66%), rgb(245 160 190 / 30%)); }
+.review-stat-icon,
+.review-stat-pink .review-stat-icon { background: rgb(255 255 255 / 70%); box-shadow: var(--glass-edge); }
+.progress-card { background: linear-gradient(145deg, rgb(255 255 255 / 68%), rgb(250 215 228 / 52%)); }
+.study-path-card.is-next { border-color: rgb(140 210 160 / 90%); background: linear-gradient(145deg, rgb(255 255 255 / 74%), rgb(200 238 208 / 46%)); }
+.study-path-card.is-reviewed { background: var(--glass-surface-soft); }
+.hero-card {
+  border: 1px solid var(--glass-border);
+  background: linear-gradient(115deg, rgb(224 242 226 / 76%), rgb(230 243 232 / 66%) 63%, rgb(252 230 238 / 72%));
+  box-shadow: var(--glass-shadow);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+
+/* hover gets MORE opaque (the old rule made cards more transparent on hover) */
+.lesson-card:hover,
+.study-path-card:hover,
+.study-path-card:nth-child(even):not(.is-next):hover {
+  border-color: var(--glass-border-strong);
+  background: var(--glass-surface-strong);
+  box-shadow: var(--glass-shadow-hover);
+}
+
+/* ---------- App chrome ---------- */
+.sidebar {
+  border-right-color: var(--glass-border);
+  background: rgb(255 249 251 / 66%);
+  box-shadow: 8px 0 30px rgb(112 89 101 / 6%), inset -1px 0 0 rgb(255 255 255 / 60%);
+  -webkit-backdrop-filter: var(--glass-blur-chrome);
+  backdrop-filter: var(--glass-blur-chrome);
+}
+.topbar {
+  border-bottom-color: var(--glass-border);
+  background: rgb(250 249 248 / 62%);
+  box-shadow: 0 1px 0 rgb(255 255 255 / 60%), 0 6px 20px rgb(94 75 88 / 5%);
+  -webkit-backdrop-filter: var(--glass-blur-chrome);
+  backdrop-filter: var(--glass-blur-chrome);
+}
+
+/* ---------- Modals: one blurred pane; inner pieces are tint only ---------- */
+.modal-backdrop {
+  background: rgb(40 36 44 / 32%);
+  -webkit-backdrop-filter: blur(8px) saturate(120%);
+  backdrop-filter: blur(8px) saturate(120%);
+}
+.quiz-modal,
+.fc-modal,
+.flashcard-modal,
+.study-room,
+.access-card,
+.toast {
+  border: 1px solid var(--glass-border);
+  background: var(--glass-surface-strong);
+  box-shadow: 0 24px 70px rgb(40 30 45 / 22%), var(--glass-edge);
+  -webkit-backdrop-filter: var(--glass-blur-chrome);
+  backdrop-filter: var(--glass-blur-chrome);
+}
+.access-screen {
+  background:
+    radial-gradient(ellipse at 18% 14%, rgb(226 241 226 / 70%) 0, transparent 36%),
+    radial-gradient(ellipse at 90% 88%, rgb(248 229 235 / 68%) 0, transparent 38%),
+    rgb(247 248 244 / 70%);
+}
+
+/* Nested backdrop-filter inside a filtered parent has nothing to blur,
+   so these use translucent tints instead (cheaper and looks the same). */
+.notes-list-panel,
+.study-unit-list { background: rgb(255 255 255 / 34%); border-right: 1px solid rgb(255 255 255 / 70%); }
+.study-article-footer { background: rgb(255 255 255 / 60%); border-top-color: rgb(255 255 255 / 70%); }
+.study-objectives,
+.study-safety-note,
+.answer-option,
+.fc-nav,
+.fc-toolbar select { background-color: rgb(255 255 255 / 62%); }
+.study-objectives,
+.study-safety-note { border-color: var(--glass-border); }
+.study-unit-button.selected,
+.notes-folder-item.selected,
+.note-list-item.selected { border-color: var(--glass-border); background: rgb(255 255 255 / 72%); }
+.notes-folder-item:hover,
+.note-list-item:hover,
+.study-unit-button:hover { background: rgb(255 255 255 / 55%); }
+.notes-folder-item.drop-target { background: rgb(255 255 255 / 80%); }
+
+/* ---------- Controls: tint + edge only (no per-control blur) ---------- */
+.path-progress-pill,
+.overview-date-pill,
+.add-task-button,
+.notes-new-button,
+.notes-folder-add,
+.study-path-action,
+.cancel-add,
+.pdf-copy-button,
+.ai-guide-input-tab {
+  border: 1px solid var(--glass-border);
+  background: rgb(255 255 255 / 58%);
+  box-shadow: var(--glass-edge);
+}
+.add-task-button:hover,
+.notes-new-button:hover,
+.notes-folder-add:hover,
+.study-path-action:hover,
+.cancel-add:hover,
+.pdf-copy-button:hover,
+.ai-guide-input-tab:hover { background: rgb(255 255 255 / 80%); }
+.ai-guide-input-tab.active { background: rgb(252 236 241 / 85%); }
+
+.task-form-fields > input,
+.task-deadline-field input,
+.notes-folder-form input,
+.note-folder-select,
+.pdf-text-output {
+  border: 1px solid var(--glass-border);
+  background: rgb(255 255 255 / 58%);
+  box-shadow: inset 0 1px 2px rgb(94 75 88 / 6%);
+}
+.task-form-fields > input:focus,
+.task-deadline-field input:focus,
+.pdf-text-output:focus { background: rgb(255 255 255 / 85%); }
+.task-form-fields input:disabled { background: rgb(255 255 255 / 32%); }
+.pdf-upload-card { border: 1px dashed rgb(220 170 190 / 70%); background: rgb(255 255 255 / 42%); box-shadow: var(--glass-edge); }
+
+/* task pills and list rows: no blur, many instances */
+.task-due,
+.task-due.soon,
+.task-due.overdue,
+.task-due.no-deadline { background-color: rgb(255 255 255 / 62%); }
+.task-row,
+.overview-unit-row { border-bottom: 1px solid rgb(255 255 255 / 60%); }
+.task-check { border: 1px solid rgb(150 190 160 / 80%); background: rgb(255 255 255 / 60%); }
+.task-check.checked { border-color: #4f9c71; background: #4f9c71; }
+.task-delete:hover { background: rgb(255 255 255 / 75%); }
+.lesson-footer,
+.study-path-card-footer,
+.note-editor-toolbar,
+.page-footer { border-color: rgb(255 255 255 / 65%); }
+.overview-unit-number { background: rgb(255 255 255 / 65%); }
+.overview-unit-number.is-complete { background: #62a476; }
+.overview-progress-track { background: rgb(255 255 255 / 60%); box-shadow: inset 0 1px 2px rgb(60 90 80 / 12%); }
+
+/* ---------- Legibility on translucent surfaces ---------- */
+.lesson-card > p,
+.study-path-card > p,
+.study-path-topic,
+.lesson-category,
+.review-stat-note,
+.overview-unit-status,
+.notes-folder-hint,
+.note-list-item span,
+.pdf-upload-copy p,
+.pdf-result-heading p { color: var(--glass-muted); }
+
+/* ---------- Focus ---------- */
+:where(.lesson-card, .study-path-card, .notepad-workspace) :focus-visible { outline-offset: 2px; }
+
+/* ---------- Fallbacks ---------- */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .lesson-card, .study-path-card, .study-path-card:nth-child(even):not(.is-next), .todo-card, .progress-card,
+  .overview-review-card, .notepad-workspace, .pdf-text-workspace, .review-stat-card, .sidebar-note, .weekly-pill,
+  .quiz-modal, .fc-modal, .flashcard-modal, .study-room, .access-card, .toast { background: rgb(255 255 255 / 92%); }
+  .sidebar, .topbar { background: rgb(255 250 252 / 94%); }
+}
+
+/* Users who ask for less transparency get solid surfaces, not translucent ones without blur */
+@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+  .lesson-card, .study-path-card, .study-path-card:nth-child(even):not(.is-next), .study-path-card.is-next,
+  .todo-card, .progress-card, .overview-review-card, .notepad-workspace, .pdf-text-workspace,
+  .review-stat-card, .sidebar-note, .weekly-pill, .hero-card, .path-load-error,
+  .quiz-modal, .fc-modal, .flashcard-modal, .study-room, .access-card, .toast,
+  .sidebar, .topbar, .modal-backdrop {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  .lesson-card, .study-path-card, .study-path-card:nth-child(even):not(.is-next), .study-path-card.is-next,
+  .todo-card, .progress-card, .overview-review-card, .notepad-workspace, .pdf-text-workspace,
+  .review-stat-card, .sidebar-note, .weekly-pill, .path-load-error,
+  .quiz-modal, .fc-modal, .flashcard-modal, .study-room, .access-card, .toast { background: #fff; }
+  .sidebar { background: #fff4f7; }
+  .topbar { background: #faf8f7; }
+  .modal-backdrop { background: rgb(26 41 32 / 55%); }
+}
+
+/* ---------- Mobile: smaller blur radius is much cheaper to paint ---------- */
+@media (max-width: 760px) {
+  :root { --glass-blur: blur(10px) saturate(140%); --glass-blur-chrome: blur(14px) saturate(145%); }
+  .sidebar { border-top-color: var(--glass-border); background: rgb(255 249 251 / 80%); box-shadow: 0 -6px 24px rgb(112 89 101 / 8%); }
 }
