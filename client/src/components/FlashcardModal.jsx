@@ -1,8 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { Icon } from "../icons.jsx";
+import melodyImageOne from "../../images/melody-study.jpg";
+import melodyImageTwo from "../../images/melody-2.jpg";
+import melodyImageThree from "../../images/melody-3.jpg";
 import "../styles/FlashcardModal.css";
 
 const pad = (value) => String(value).padStart(2, "0");
+const melodyImages = [melodyImageOne, melodyImageTwo, melodyImageThree];
 
 export default function FlashcardModal({ cards, loading, error, onClose, initialTopic = "All topics" }) {
   const [topic, setTopic] = useState(initialTopic);
@@ -12,6 +16,7 @@ export default function FlashcardModal({ cards, loading, error, onClose, initial
   const [topicOpen, setTopicOpen] = useState(false);
   const topicPickerRef = useRef(null);
   const topicOptionRefs = useRef([]);
+  const melodyAssignments = useRef(new Map());
 
   const topics = [...new Set(cards.map((card) => card.topic))];
   const deck = cards.filter((card) => topic === "All topics" || card.topic === topic);
@@ -82,6 +87,10 @@ export default function FlashcardModal({ cards, loading, error, onClose, initial
     body = <div className="fc-message">There are no cards in this topic yet.</div>;
   } else {
     const counter = `${pad(cardIndex + 1)} / ${pad(deck.length)}`;
+    if (!melodyAssignments.current.has(card.slug)) {
+      melodyAssignments.current.set(card.slug, Math.floor(Math.random() * melodyImages.length));
+    }
+    const melodyIndex = melodyAssignments.current.get(card.slug);
     body = (
       <>
         {/* key remounts the card, so the next question never flashes its answer while flipping back */}
@@ -96,6 +105,7 @@ export default function FlashcardModal({ cards, loading, error, onClose, initial
               <span className="fc-meta">
                 <span className="fc-topic">{card.topic}</span>
                 <span className="fc-counter">{counter}</span>
+                <img className={`fc-melody-thumb ${melodyIndex === 2 ? "is-checker" : ""}`} src={melodyImages[melodyIndex]} alt="" aria-hidden="true" />
               </span>
               <span className="fc-body">
                 <span className="fc-label">Question</span>
@@ -112,6 +122,7 @@ export default function FlashcardModal({ cards, loading, error, onClose, initial
               <span className="fc-meta">
                 <span className="fc-topic">{card.topic}</span>
                 <span className="fc-counter">{counter}</span>
+                <img className={`fc-melody-thumb ${melodyIndex === 2 ? "is-checker" : ""}`} src={melodyImages[melodyIndex]} alt="" aria-hidden="true" />
               </span>
               <span className="fc-body">
                 <span className="fc-label">Answer</span>

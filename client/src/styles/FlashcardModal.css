@@ -1,4 +1,4 @@
-﻿.fc-modal { display: flex; flex-direction: column; width: min(680px, 100%); max-height: calc(100vh - 40px); overflow: auto; border-radius: 18px; background: #fff; box-shadow: 0 20px 70px rgb(18 37 24 / 20%); }
+.fc-modal { display: flex; flex-direction: column; width: min(680px, 100%); max-height: calc(100vh - 40px); overflow: auto; border-radius: 18px; background: #fff; box-shadow: 0 20px 70px rgb(18 37 24 / 20%); }
 .fc-heading { padding: 22px 28px 13px; }
 .fc-heading h1 { margin: 7px 0 5px; color: #2d3c32; font-family: var(--serif); font-size: 26px; font-weight: 800; letter-spacing: -.7px; }
 .fc-heading p { margin: 0; color: #879287; font-size: 13px; }
@@ -81,3 +81,24 @@
   .fc-text { font-size: 19px; }
   .fc-controls { gap: 10px; padding-right: 12px; padding-left: 12px; }
 }
+
+.fc-page .fc-meta { align-items: center; }
+.fc-page .fc-topic { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fc-melody-thumb {
+  display: block;
+  width: 42px;
+  height: 42px;
+  min-width: 42px;
+  flex: 0 0 42px;
+  border: 2px solid rgb(255 255 255 / 92%);
+  border-radius: 13px;
+  background: #f8e4ec;
+  object-fit: cover;
+  box-shadow: 0 5px 13px rgb(145 83 113 / 13%);
+  pointer-events: none;
+  animation: flashcard-melody-pop .3s ease both;
+}
+.fc-melody-thumb.is-checker { border-radius: 50%; mix-blend-mode: multiply; }
+@keyframes flashcard-melody-pop { from { opacity: 0; transform: scale(.85) rotate(-5deg); } to { opacity: 1; transform: scale(1) rotate(0); } }
+@media (max-width: 600px) { .fc-melody-thumb { width: 36px; height: 36px; min-width: 36px; flex-basis: 36px; } }
+@media (prefers-reduced-motion: reduce) { .fc-melody-thumb { animation: none; } }
