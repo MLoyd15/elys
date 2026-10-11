@@ -1,0 +1,47 @@
+﻿.fc-modal { display: flex; flex-direction: column; width: min(680px, 100%); max-height: calc(100vh - 40px); overflow: auto; border-radius: 18px; background: #fff; box-shadow: 0 20px 70px rgb(18 37 24 / 20%); }
+.fc-heading { padding: 22px 28px 13px; }
+.fc-heading h1 { margin: 7px 0 5px; color: #2d3c32; font-family: var(--serif); font-size: 26px; font-weight: 800; letter-spacing: -.7px; }
+.fc-heading p { margin: 0; color: #879287; font-size: 13px; }
+.fc-toolbar { display: flex; align-items: center; gap: 9px; padding: 0 28px 13px; }
+.fc-toolbar label { color: #8b968b; font-size: 12px; font-weight: 600; }
+.fc-toolbar select { max-width: 190px; padding: 7px 25px 7px 9px; border: 1px solid #e7ece5; border-radius: 7px; color: #526357; background: #fff; font-size: 12px; }
+.fc-count { margin-left: auto; color: #829084; font-size: 11px; }
+.fc-count.is-complete { color: #4e815b; }
+.fc-progress { height: 4px; margin: 0 28px 13px; overflow: hidden; border-radius: 3px; background: #edf1ec; }
+.fc-progress span { display: block; height: 100%; border-radius: inherit; background: #69a77a; transition: width .3s; }
+.fc-card { position: relative; display: block; flex: 1; min-height: 265px; margin: 0 28px; padding: 0; overflow: hidden; border: 1px solid #dcebdd; border-radius: 15px; color: #314538; background: linear-gradient(145deg, #f7fbf5, #f0f7ee); text-align: left; cursor: pointer; perspective: 1200px; }
+.fc-card:hover { border-color: #b7d3b8; }
+.fc-card-inner { position: absolute; inset: 0; display: block; transform-style: preserve-3d; transition: transform .45s ease; }
+.fc-card.is-flipped .fc-card-inner { transform: rotateY(180deg); }
+.fc-side { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: space-between; padding: 17px 20px; backface-visibility: hidden; }
+.fc-back { transform: rotateY(180deg); background: linear-gradient(145deg, #f8fbf7, #f1f7f1); }
+.fc-meta, .fc-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; color: #829783; font-size: 11px; }
+.fc-topic, .fc-counter { font-weight: 700; }
+.fc-counter { white-space: nowrap; }
+.fc-body { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 20px 8px; text-align: center; }
+.fc-label { color: #77a17b; font-size: 11px; font-weight: 800; letter-spacing: 1.4px; text-transform: uppercase; }
+.fc-text { max-width: 490px; color: #314538; font-family: var(--serif); font-size: 22px; font-weight: 700; line-height: 1.5; white-space: pre-wrap; }
+.fc-back .fc-text { font-family: "DM Sans", sans-serif; font-size: 16px; font-weight: 500; line-height: 1.7; }
+.fc-hint { max-width: 440px; color: #879588; font-size: 12px; line-height: 1.5; }
+.fc-source { color: #9aa79a; font-size: 11px; }
+.fc-cue { color: #91a192; font-size: 11px; }
+.fc-controls { display: flex; align-items: center; justify-content: center; gap: 17px; padding: 15px 28px 7px; }
+.fc-nav { display: grid; place-items: center; width: 36px; height: 36px; border: 1px solid #e7ece5; border-radius: 10px; color: #65836a; background: #fff; font-size: 22px; cursor: pointer; }
+.fc-nav:hover { border-color: #b8d1b8; background: #f5faf3; }
+.fc-controls .button:disabled { cursor: not-allowed; opacity: .55; }
+.button-remembered { color: #4e815b; background: #e8f3e7; }
+.button-remembered:hover { background: #dceede; }
+.fc-disclaimer { padding: 0 20px 15px; color: #a0a89e; text-align: center; font-size: 11px; }
+.fc-message { display: flex; flex: 1; flex-direction: column; align-items: center; justify-content: center; gap: 12px; min-height: 280px; color: #7d897e; font-size: 14px; }
+.fc-error { color: #a65e54; }
+@media (max-width: 600px) {
+  .modal-backdrop { padding: 10px; }
+  .fc-modal { max-height: calc(100vh - 20px); }
+  .fc-heading { padding: 18px 18px 12px; }
+  .fc-toolbar { flex-wrap: wrap; padding: 0 18px 12px; }
+  .fc-progress { margin-right: 18px; margin-left: 18px; }
+  .fc-card { min-height: 250px; margin-right: 18px; margin-left: 18px; }
+  .fc-side { padding: 14px; }
+  .fc-text { font-size: 19px; }
+  .fc-controls { gap: 10px; padding-right: 12px; padding-left: 12px; }
+}
