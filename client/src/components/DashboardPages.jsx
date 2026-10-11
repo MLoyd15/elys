@@ -1,6 +1,7 @@
 import { lazy, Suspense } from "react";
 import AddTask from "./AddTask.jsx";
 import Notepad from "./Notepad.jsx";
+import ProgressPage from "./ProgressPage.jsx";
 import { Icon } from "../icons.jsx";
 
 
@@ -282,85 +283,17 @@ export default function DashboardPages({
           )}
 
           {activeNav === "chart" && (
-            <div className="progress-dashboard">
-              <section className="progress-overview" aria-labelledby="progress-overview-title">
-                <div className="progress-overview-copy">
-                  <div className="section-kicker">YOUR MOMENTUM</div>
-                  <h2 id="progress-overview-title">Progress that adds up.</h2>
-                  {completedReviewCount > 0 ? (
-                    <p>You’ve completed {completedReviewCount} of {reviewPathLength} available study quizzes. Keep building your confidence one unit at a time.</p>
-                  ) : studyGuidesLoading ? (
-                    <p role="status">Loading your study units and quiz progress…</p>
-                  ) : studyGuidesError ? (
-                    <div className="progress-load-error" role="alert">
-                      <p>We couldn’t load your study units, so the quiz total is not available yet.</p>
-                      <button type="button" className="text-button" onClick={actions.loadStudyGuides}>Try again <Icon name="arrow" size={15} /></button>
-                    </div>
-                  ) : reviewPathLength > 0 ? (
-                    <>
-                      <p>Your progress starts with your first quiz. Take a study unit quiz to see your results here.</p>
-                      <button type="button" className="button button-primary progress-start-button" onClick={() => actions.openStudyRoom(nextGuideSlug || "")}>
-                        Start a study unit <Icon name="arrow" size={16} />
-                      </button>
-                    </>
-                  ) : (
-                    <p>Quiz progress will appear here when study units are available.</p>
-                  )}
-                </div>
-                <div
-                  className="progress-ring-wrap"
-                  role="progressbar"
-                  aria-label="Study quiz completion"
-                  aria-valuemin={0}
-                  aria-valuemax={reviewPathLength}
-                  aria-valuenow={completedReviewCount}
-                  aria-valuetext={`${reviewCompletionPercent}% complete, ${completedReviewCount} of ${reviewPathLength} study quizzes`}
-                >
-                  <svg className="progress-ring" viewBox="0 0 160 160" aria-hidden="true">
-                    <circle className="progress-ring-track" cx="80" cy="80" r="64" fill="none" strokeWidth="11" />
-                    <circle
-                      className="progress-ring-value"
-                      cx="80"
-                      cy="80"
-                      r="64"
-                      fill="none"
-                      strokeWidth="11"
-                      strokeLinecap="round"
-                      strokeDasharray={`${(reviewCompletionPercent / 100) * 402.12} 402.12`}
-                      transform="rotate(-90 80 80)"
-                    />
-                  </svg>
-                  <div className="ring-text"><strong>{reviewCompletionPercent}<small>%</small></strong><span>quizzes complete</span></div>
-                </div>
-              </section>
-
-              <section className="progress-metrics" aria-label="Study statistics">
-                <article className="progress-metric-card">
-                  <span className="progress-metric-icon"><Icon name="check" size={19} /></span>
-                  <span className="progress-metric-label">QUIZZES COMPLETED</span>
-                  <strong>{completedReviewCount}<small> / {reviewPathLength}</small></strong>
-                  <span className="progress-metric-note">of available study units</span>
-                </article>
-                <article className="progress-metric-card">
-                  <span className="progress-metric-icon"><Icon name="spark" size={19} /></span>
-                  <span className="progress-metric-label">TOTAL XP</span>
-                  <strong>{progress.xp}</strong>
-                  <span className="progress-metric-note">earned from practice</span>
-                </article>
-                <article className="progress-metric-card">
-                  <span className="progress-metric-icon"><Icon name="flame" size={19} /></span>
-                  <span className="progress-metric-label">CURRENT STREAK</span>
-                  <strong>{progress.streak}<small> days</small></strong>
-                  <span className="progress-metric-note">consecutive study days</span>
-                </article>
-                <article className="progress-metric-card">
-                  <span className="progress-metric-icon"><Icon name="clock" size={19} /></span>
-                  <span className="progress-metric-label">STUDY TIME THIS WEEK</span>
-                  <strong>{progress.weeklyMinutes}<small> min</small></strong>
-                  <span className="progress-metric-note">time spent reviewing</span>
-                </article>
-              </section>
-            </div>
+            <ProgressPage
+              guides={studyGuides}
+              loading={studyGuidesLoading}
+              error={studyGuidesError}
+              completedSlugs={completedStudyQuizzes}
+              xp={progress.xp}
+              streak={progress.streak}
+              weeklyMinutes={progress.weeklyMinutes}
+              onStartQuiz={actions.startStudyGuideQuiz}
+              onReload={actions.loadStudyGuides}
+            />
           )}
         </div>
       )}
