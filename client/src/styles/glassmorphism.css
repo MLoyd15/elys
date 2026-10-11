@@ -645,3 +645,31 @@ body::before {
   .study-path-card::after, .lesson-card::after { transition: none; }
   .study-path-card:hover, .lesson-card:hover { transform: none; }
 }
+/* Persistent timer chip stays visible while moving between dashboard pages. */
+.floating-study-timer {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 10;
+  display: grid;
+  justify-items: start;
+  gap: 7px;
+  min-width: 216px;
+  padding: 13px 15px;
+  border: 1px solid rgb(255 255 255 / 88%);
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgb(255 250 253 / 92%), rgb(249 226 236 / 86%));
+  box-shadow: 0 14px 36px rgb(145 83 113 / 18%), inset 0 1px 0 #fff;
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
+  animation: pink-card-appear .35s ease both;
+}
+.floating-study-timer-label { display: flex; align-items: center; gap: 7px; color: #a16e82; font-size: 8px; font-weight: 800; letter-spacing: .75px; }
+.floating-study-timer-dot { width: 7px; height: 7px; border-radius: 50%; background: #c55d82; box-shadow: 0 0 0 3px rgb(215 127 159 / 16%); animation: timer-pulse 1.6s ease-in-out infinite; }
+.floating-study-timer > strong { color: #59394a; font-size: 22px; font-variant-numeric: tabular-nums; letter-spacing: 1px; }
+.floating-study-timer button { display: inline-flex; align-items: center; gap: 7px; padding: 5px 0 0; border: 0; color: #963e60; background: transparent; font-size: 10px; font-weight: 700; }
+.floating-study-timer button:hover { color: #84344f; }
+@media (max-width: 760px) {
+  .floating-study-timer { right: 13px; bottom: 74px; min-width: 194px; padding: 10px 12px; }
+}
+@media (prefers-reduced-motion: reduce) { .floating-study-timer, .floating-study-timer-dot { animation: none; } }

@@ -6,6 +6,14 @@ import QuizModal from "./components/QuizModal.jsx";
 import { Icon } from "./icons.jsx";
 import StudyRoom from "./StudyRoom.jsx";
 
+function formatElapsedStudyTime(totalSeconds) {
+  const safeSeconds = Math.max(0, totalSeconds);
+  const hours = Math.floor(safeSeconds / 3600);
+  const minutes = Math.floor((safeSeconds % 3600) / 60);
+  const seconds = safeSeconds % 60;
+  return [hours, minutes, seconds].map((part) => String(part).padStart(2, "0")).join(":");
+}
+
 function App() {
   const [dashboard, setDashboard] = useState(null);
   const [activeNav, setActiveNav] = useState("home");
@@ -20,6 +28,7 @@ function App() {
   const [studyGuidesError, setStudyGuidesError] = useState("");
   const [reviewedGuideSlugs, setReviewedGuideSlugs] = useState([]);
   const [studySessions, setStudySessions] = useState([]);
+  const [studyTimerNow, setStudyTimerNow] = useState(Date.now());
   const studyGuidesRequestStarted = useRef(false);
   const [notice, setNotice] = useState("");
   const [accessCode, setAccessCode] = useState("");
@@ -77,7 +86,13 @@ function App() {
     }
   }, [dashboard, loadStudySessions]);
 
-  const hasActiveStudySession = studySessions.some((session) => !session.endedAt);
+  const activeStudySession = studySessions.find((session) => !session.endedAt) || null;
+  const hasActiveStudySession = Boolean(activeStudySession);
+  useEffect(() => {
+    if (!activeStudySession) return undefined;
+    const timer = window.setInterval(() => setStudyTimerNow(Date.now()), 1000);
+    return () => window.clearInterval(timer);
+  }, [activeStudySession?.startedAt]);
   useEffect(() => {
     if (!hasActiveStudySession) return undefined;
     const interval = window.setInterval(() => {
@@ -458,7 +473,15 @@ function App() {
           />}
         </div>
       </main>
-      {activeLesson && <QuizModal lesson={activeLesson} onClose={() => setActiveLesson(null)} onSubmit={submitLesson} />}
+      {activeStudySession && activeNav !== "study" && (
+        <aside className="floating-study-timer" aria-label="Active study timer">
+          <span className="floating-study-timer-label"><span className="floating-study-timer-dot" /> STUDY SESSION IN PROGRESS</span>
+          <strong aria-live="off">{formatElapsedStudyTime(Math.floor((studyTimerNow - Date.parse(activeStudySession.startedAt)) / 1000))}</strong>
+          <button type="button" onClick={() => setActiveNav("study")}>
+            Open Study Room <Icon name="arrow" size={15} />
+          </button>
+        </aside>
+      )}      {activeLesson && <QuizModal lesson={activeLesson} onClose={() => setActiveLesson(null)} onSubmit={submitLesson} />}
       {notice && <div className="toast" role="status">{notice}<button onClick={() => setNotice("")}><Icon name="close" size={16} /></button></div>}
     </div>
   );
