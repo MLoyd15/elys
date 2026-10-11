@@ -37,3 +37,27 @@
 .overview-units-error .text-button { margin-left: 8px; }
 .single-panel-grid { grid-template-columns: minmax(0, 1fr); }
 .single-panel-grid .todo-card { min-height: 240px; }
+
+.melody-welcome { position: relative; display: flex; min-height: 188px; align-items: center; justify-content: space-between; overflow: hidden; padding: 22px 30px; margin: 0 0 16px; border: 1px solid rgb(255 255 255 / 78%); border-radius: 20px; background: linear-gradient(112deg, rgb(255 244 249 / 88%), rgb(249 224 237 / 72%) 58%, rgb(243 224 245 / 76%)); box-shadow: 0 14px 36px rgb(145 83 113 / 10%), inset 0 1px 0 rgb(255 255 255 / 80%); backdrop-filter: blur(18px); animation: melody-welcome-enter .65s cubic-bezier(.2,.75,.25,1) both; }
+.melody-welcome-copy { position: relative; z-index: 2; width: 60%; }
+.melody-welcome-kicker { color: #a34e6e; font-size: 10px; font-weight: 800; letter-spacing: 1.3px; }
+.melody-welcome h2 { max-width: 440px; margin: 8px 0 6px; color: #59394a; font-family: var(--serif); font-size: clamp(21px, 2.5vw, 29px); font-weight: 800; letter-spacing: -.7px; line-height: 1.16; }
+.melody-welcome p { max-width: 430px; margin: 0; color: #816b77; font-size: 12.5px; line-height: 1.6; }
+.melody-welcome-art { position: absolute; top: 9px; right: 24px; z-index: 1; width: 172px; height: 172px; overflow: hidden; border: 1px solid rgb(255 255 255 / 85%); border-radius: 50%; background: rgb(255 255 255 / 38%); box-shadow: 0 9px 28px rgb(145 83 113 / 15%), inset 0 1px 0 rgb(255 255 255 / 88%); animation: melody-art-float 5s ease-in-out infinite; }
+.melody-welcome-art img { width: 100%; height: 100%; object-fit: cover; transition: transform .45s cubic-bezier(.2,.75,.25,1); }
+.melody-welcome:hover .melody-welcome-art img { transform: scale(1.07) rotate(-2deg); }
+.melody-orb { position: absolute; border: 1px solid rgb(255 255 255 / 55%); border-radius: 50%; background: rgb(255 255 255 / 24%); pointer-events: none; }
+.melody-orb-one { top: -34px; right: 118px; width: 102px; height: 102px; }
+.melody-orb-two { right: 172px; bottom: -47px; width: 118px; height: 118px; }
+@keyframes melody-welcome-enter { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes melody-art-float { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-5px) rotate(1.5deg); } }
+@media (max-width: 600px) {
+  .melody-welcome { min-height: 164px; padding: 19px 18px; }
+  .melody-welcome-copy { width: 68%; }
+  .melody-welcome-art { top: 22px; right: -18px; width: 135px; height: 135px; opacity: .86; }
+  .melody-welcome p { max-width: 260px; font-size: 11.5px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .melody-welcome, .melody-welcome-art { animation: none; }
+  .melody-welcome-art img { transition: none; }
+}

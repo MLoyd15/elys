@@ -3,6 +3,7 @@ import AddTask from "./AddTask.jsx";
 import Notepad from "./Notepad.jsx";
 import ProgressPage from "./ProgressPage.jsx";
 import { Icon } from "../icons.jsx";
+import melodyStudyImage from "../../images/melody-study.jpg";
 
 
 const PdfToText = lazy(() => import("./PdfToText.jsx"));
@@ -70,6 +71,18 @@ export default function DashboardPages({
               <p className="welcome-subtitle">Welcome back, Elys. Here’s how your road to topnotcher is going.</p>
             </div>
             <div className="overview-date-pill"><Icon name="chart" size={17} /> Review statistics</div>
+          </section>
+          <section className="melody-welcome" aria-label="A little study inspiration">
+            <div className="melody-welcome-copy">
+              <span className="melody-welcome-kicker">A LITTLE STUDY MAGIC</span>
+              <h2>Make room for a brighter study day</h2>
+              <p>Take a breath, find your focus, and keep moving toward your nursing goals.</p>
+            </div>
+            <div className="melody-welcome-art">
+              <img src={melodyStudyImage} alt="My Melody sitting on a cloud beneath a rainbow" />
+            </div>
+            <span className="melody-orb melody-orb-one" aria-hidden="true" />
+            <span className="melody-orb melody-orb-two" aria-hidden="true" />
           </section>
           <section className="review-stats-grid" aria-label="Review statistics">
             <article className="review-stat-card review-stat-green">
