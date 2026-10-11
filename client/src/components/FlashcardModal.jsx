@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Icon } from "../icons.jsx";
 import "../styles/FlashcardModal.css";
 
@@ -9,6 +9,9 @@ export default function FlashcardModal({ cards, loading, error, onClose, initial
   const [cardIndex, setCardIndex] = useState(0);
   const [flipped, setFlipped] = useState(false);
   const [remembered, setRemembered] = useState([]);
+  const [topicOpen, setTopicOpen] = useState(false);
+  const topicPickerRef = useRef(null);
+  const topicOptionRefs = useRef([]);
 
   const topics = [...new Set(cards.map((card) => card.topic))];
   const deck = cards.filter((card) => topic === "All topics" || card.topic === topic);
@@ -17,6 +20,18 @@ export default function FlashcardModal({ cards, loading, error, onClose, initial
   const rememberedCount = deck.filter((item) => remembered.includes(item.slug)).length;
   const allRemembered = deck.length > 0 && rememberedCount === deck.length;
   const progress = deck.length ? (rememberedCount / deck.length) * 100 : 0;
+  const topicOptions = ["All topics", ...topics];
+
+  useEffect(() => {
+    if (!topicOpen) return undefined;
+    const selectedIndex = topicOptions.indexOf(topic);
+    topicOptionRefs.current[selectedIndex >= 0 ? selectedIndex : 0]?.focus();
+    function closeOnOutsideClick(event) {
+      if (!topicPickerRef.current?.contains(event.target)) setTopicOpen(false);
+    }
+    document.addEventListener("pointerdown", closeOnOutsideClick);
+    return () => document.removeEventListener("pointerdown", closeOnOutsideClick);
+  }, [topicOpen, topicOptions, topic]);
 
   useEffect(() => {
     function handleKeyDown(event) {
@@ -141,11 +156,59 @@ export default function FlashcardModal({ cards, loading, error, onClose, initial
         </div>
 
         <div className="fc-toolbar">
-          <label htmlFor="flashcard-topic">Study topic</label>
-          <select id="flashcard-topic" value={topic} onChange={(event) => changeTopic(event.target.value)}>
-            <option>All topics</option>
-            {topics.map((item) => <option key={item}>{item}</option>)}
-          </select>
+          <label id="flashcard-topic-label">Study topic</label>
+          <div className="fc-topic-picker" ref={topicPickerRef}>
+            <button
+              type="button"
+              className="fc-topic-trigger"
+              aria-labelledby="flashcard-topic-label"
+              aria-haspopup="listbox"
+              aria-expanded={topicOpen}
+              onClick={() => setTopicOpen((open) => !open)}
+              onKeyDown={(event) => {
+                if (["ArrowDown", "Enter", " "].includes(event.key)) {
+                  event.preventDefault();
+                  setTopicOpen(true);
+                }
+              }}
+            >
+              <span>{topic}</span><span className="fc-topic-chevron" aria-hidden="true">⌄</span>
+            </button>
+            {topicOpen && (
+              <div className="fc-topic-menu" role="listbox" aria-labelledby="flashcard-topic-label">
+                {topicOptions.map((item, index) => (
+                  <button
+                    key={item}
+                    ref={(node) => { topicOptionRefs.current[index] = node; }}
+                    type="button"
+                    role="option"
+                    aria-selected={topic === item}
+                    tabIndex={topic === item ? 0 : -1}
+                    className={`fc-topic-option ${topic === item ? "selected" : ""}`}
+                    onClick={() => {
+                      changeTopic(item);
+                      setTopicOpen(false);
+                      topicPickerRef.current?.querySelector(".fc-topic-trigger")?.focus();
+                    }}
+                    onKeyDown={(event) => {
+                      const currentIndex = topicOptions.indexOf(item);
+                      const nextIndex = event.key === "ArrowDown" ? (currentIndex + 1) % topicOptions.length
+                        : event.key === "ArrowUp" ? (currentIndex - 1 + topicOptions.length) % topicOptions.length
+                          : event.key === "Home" ? 0 : event.key === "End" ? topicOptions.length - 1 : -1;
+                      if (nextIndex >= 0) {
+                        event.preventDefault();
+                        topicOptionRefs.current[nextIndex]?.focus();
+                      } else if (event.key === "Escape") {
+                        event.preventDefault();
+                        setTopicOpen(false);
+                        topicPickerRef.current?.querySelector(".fc-topic-trigger")?.focus();
+                      }
+                    }}
+                  >{item}</button>
+                ))}
+              </div>
+            )}
+          </div>
           {!loading && !error && (
             <span className={`fc-count ${allRemembered ? "is-complete" : ""}`}>
               {allRemembered ? "All remembered ✓" : `${rememberedCount} of ${deck.length} remembered`}
