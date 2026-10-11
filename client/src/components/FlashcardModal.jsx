@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Icon } from "../icons.jsx";
-import "./FlashcardModal.css";
+import "../styles/FlashcardModal.css";
 
 const pad = (value) => String(value).padStart(2, "0");
 

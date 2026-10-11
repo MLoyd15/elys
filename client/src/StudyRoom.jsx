@@ -77,14 +77,6 @@ export default function StudyRoom({ guides, loading, error, initialSlug, readGui
     }
   }, [guides, initialSlug, selectedSlug]);
 
-  useEffect(() => {
-    function handleKeyDown(event) {
-      if (event.key === "Escape") onClose();
-    }
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [onClose]);
-
   const selectedIndex = guides.findIndex((guide) => guide.slug === selectedSlug);
   const guide = selectedIndex >= 0 ? guides[selectedIndex] : null;
   const isRead = guide ? readGuides.includes(guide.slug) : false;
@@ -140,8 +132,7 @@ export default function StudyRoom({ guides, loading, error, initialSlug, readGui
   }
 
   return (
-    <div className="modal-backdrop study-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}>
-      <section className="study-room" role="dialog" aria-modal="true" aria-labelledby="study-room-title">
+    <section className="study-room study-room-page" aria-labelledby="study-room-title">
         <header className="study-room-header">
           <a className="brand study-brand" href="#" onClick={(event) => event.preventDefault()}>
             <span className="brand-mark">n<span>+</span></span>
@@ -152,7 +143,7 @@ export default function StudyRoom({ guides, loading, error, initialSlug, readGui
             <h1 id="study-room-title">Study room</h1>
           </div>
           <span className="study-read-count">{readGuides.length} of {guides.length} reviewed</span>
-          <button className="modal-close" onClick={onClose} aria-label="Close study room"><Icon name="close" size={20} /></button>
+          <button className="study-back-button" onClick={onClose}><Icon name="arrow" size={16} /> Back to overview</button>
         </header>
         {loading ? (
           <div className="study-empty"><span className="loader" /><span>Opening your study notes…</span></div>
@@ -219,7 +210,6 @@ export default function StudyRoom({ guides, loading, error, initialSlug, readGui
             )}
           </div>
         )}
-      </section>
-    </div>
+    </section>
   );
 }

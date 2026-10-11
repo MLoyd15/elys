@@ -15,7 +15,6 @@ function App() {
   const [flashcardTopic, setFlashcardTopic] = useState("All topics");
   const [flashcardsLoading, setFlashcardsLoading] = useState(false);
   const [flashcardsError, setFlashcardsError] = useState("");
-  const [studyRoomOpen, setStudyRoomOpen] = useState(false);
   const [studyRoomInitialSlug, setStudyRoomInitialSlug] = useState("");
   const [studyGuides, setStudyGuides] = useState([]);
   const [studyGuidesLoading, setStudyGuidesLoading] = useState(false);
@@ -117,7 +116,6 @@ function App() {
   }
 
   async function startStudyGuideQuiz(slug) {
-    setStudyRoomOpen(false);
     setActiveNav("quiz");
     try {
       setActiveLesson(await api(`/study-guides/${slug}/quiz`));
@@ -145,7 +143,6 @@ function App() {
   function openStudyRoom(initialSlug = "") {
     setActiveNav("study");
     setStudyRoomInitialSlug(initialSlug);
-    setStudyRoomOpen(true);
     if (studyGuides.length === 0 && !studyGuidesLoading) {
       loadStudyGuides();
     }
@@ -155,7 +152,6 @@ function App() {
     setStudyGuides((current) => [guide, ...current.filter((item) => item.slug !== guide.slug)]);
     setStudyRoomInitialSlug(guide.slug);
     setActiveNav("study");
-    setStudyRoomOpen(true);
   }
 
   async function unlockSite(event) {
@@ -352,7 +348,17 @@ function App() {
             </section>
           )}
 
-          <DashboardPages
+          {activeNav === "study" ? <StudyRoom
+            guides={studyGuides}
+            loading={studyGuidesLoading}
+            error={studyGuidesError}
+            initialSlug={studyRoomInitialSlug}
+            readGuides={reviewedGuideSlugs}
+            onGuideReviewed={(slug) => setReviewedGuideSlugs((current) => current.includes(slug) ? current : [...current, slug])}
+            onClose={() => setActiveNav("home")}
+            onStartQuiz={startStudyGuideQuiz}
+            onBrowseFlashcards={(topic, slug) => openFlashcards(topic, slug)}
+          /> : <DashboardPages
             activeNav={activeNav}
             todayLabel={todayLabel}
             dashboard={dashboard}
@@ -367,26 +373,11 @@ function App() {
               nextGuideSlug,
             }}
             actions={{ loadStudyGuides, openStudyRoom, startStudyGuideQuiz, addTask, toggleTask, removeTask, onGeneratedStudyGuide: openGeneratedStudyGuide }}
-          />
+          />}
         </div>
       </main>
       {activeLesson && <QuizModal lesson={activeLesson} onClose={() => setActiveLesson(null)} onSubmit={submitLesson} />}
       {flashcardsOpen && <FlashcardModal cards={flashcards} loading={flashcardsLoading} error={flashcardsError} initialTopic={flashcardTopic} onClose={() => { setFlashcardsOpen(false); setActiveNav("home"); }} />}
-      {studyRoomOpen && <StudyRoom
-        guides={studyGuides}
-        loading={studyGuidesLoading}
-        error={studyGuidesError}
-        initialSlug={studyRoomInitialSlug}
-        readGuides={reviewedGuideSlugs}
-        onGuideReviewed={(slug) => setReviewedGuideSlugs((current) => current.includes(slug) ? current : [...current, slug])}
-        onClose={() => { setStudyRoomOpen(false); setActiveNav("home"); }}
-        onStartQuiz={startStudyGuideQuiz}
-        onBrowseFlashcards={(topic, slug) => {
-          setStudyRoomOpen(false);
-          setActiveNav("cards");
-          openFlashcards(topic, slug);
-        }}
-      />}
       {notice && <div className="toast" role="status">{notice}<button onClick={() => setNotice("")}><Icon name="close" size={16} /></button></div>}
     </div>
   );
