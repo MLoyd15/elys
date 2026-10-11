@@ -305,3 +305,15 @@ body::before {
 .loader { width: 22px; height: 22px; border: 3px solid rgb(215 127 159 / 22%); border-top-color: var(--pink-dark); border-radius: 50%; animation: pink-loader-spin .72s linear infinite; }
 @keyframes pink-loader-spin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { .button-primary { transition: none; } .button-primary:hover:not(:disabled) { transform: none; } .loader { animation-duration: 1.8s; } }
+
+/* Refined feedback for common interactive surfaces. */
+.sidebar-resize-handle { appearance: none; }
+.nav-item, .lesson-card, .study-path-card, .todo-card, .add-task-button, .notes-new-button, .study-path-action, .pdf-copy-button, .ai-guide-input-tab, .button, .top-avatar { transition: transform .18s ease, box-shadow .18s ease, background-color .18s ease, border-color .18s ease, color .18s ease; }
+.nav-item:hover, .lesson-card:hover, .study-path-card:hover, .todo-card:hover { transform: translateY(-2px); }
+.nav-item:active, .add-task-button:active, .notes-new-button:active, .study-path-action:active, .pdf-copy-button:active, .button:active:not(:disabled), .top-avatar:active { transform: scale(.97); }
+.sidebar .nav-item:hover { box-shadow: 0 7px 18px rgb(136 58 91 / 10%); }
+.sidebar-resize-handle:focus-visible { outline-color: #a34e6e; }
+@media (prefers-reduced-motion: reduce) {
+  .nav-item, .lesson-card, .study-path-card, .todo-card, .add-task-button, .notes-new-button, .study-path-action, .pdf-copy-button, .ai-guide-input-tab, .button, .top-avatar { transition: none; }
+  .nav-item:hover, .lesson-card:hover, .study-path-card:hover, .todo-card:hover, .nav-item:active, .add-task-button:active, .notes-new-button:active, .study-path-action:active, .pdf-copy-button:active, .button:active:not(:disabled), .top-avatar:active { transform: none; }
+}

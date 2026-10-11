@@ -4,8 +4,7 @@
   .hero-book { top: 58px; }
 }
 @media (max-width: 1100px) {
-  .sidebar { width: 213px; padding-right: 15px; padding-left: 15px; }
-  .main-content { margin-left: 213px; }
+  .sidebar { padding-right: 15px; padding-left: 15px; }
   .topbar { padding: 0 29px; }
   .page-content { padding-right: 29px; padding-left: 29px; }
   .lesson-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -14,6 +13,7 @@
   .bottom-grid { grid-template-columns: minmax(0, 1.35fr) minmax(220px, .9fr); }
 }
 @media (max-width: 760px) {
+  .sidebar-resize-handle { display: none; }
   .sidebar { position: fixed; inset: auto 0 0; z-index: 8; display: block; width: 100%; height: 62px; padding: 5px 10px calc(5px + env(safe-area-inset-bottom)); border-top: 1px solid #e9ede7; border-right: 0; background: #fff; }
   .brand, .nav-label, .sidebar-bottom { display: none; }
   .main-nav { display: flex; justify-content: space-around; height: 100%; gap: 3px; }

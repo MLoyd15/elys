@@ -10,7 +10,6 @@ function App() {
   const [dashboard, setDashboard] = useState(null);
   const [activeNav, setActiveNav] = useState("home");
   const [activeLesson, setActiveLesson] = useState(null);
-  const [flashcardsOpen, setFlashcardsOpen] = useState(false);
   const [flashcards, setFlashcards] = useState([]);
   const [flashcardTopic, setFlashcardTopic] = useState("All topics");
   const [flashcardsLoading, setFlashcardsLoading] = useState(false);
@@ -28,6 +27,11 @@ function App() {
   const [unlocking, setUnlocking] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [sidebarWidth, setSidebarWidth] = useState(() => {
+    const savedWidth = Number(window.localStorage.getItem("nurselys-sidebar-width"));
+    return Number.isFinite(savedWidth) && savedWidth >= 210 && savedWidth <= 340 ? savedWidth : 246;
+  });
+  const sidebarResizePointer = useRef(null);
 
   const loadDashboard = useCallback(async () => {
     setLoading(true);
@@ -127,7 +131,6 @@ function App() {
   async function openFlashcards(topic = "All topics", studyGuideSlug = "") {
     setActiveNav("cards");
     setFlashcardTopic(topic);
-    setFlashcardsOpen(true);
     setFlashcardsLoading(true);
     setFlashcardsError("");
     try {
@@ -272,7 +275,7 @@ function App() {
     chart: "See how your completed study-unit quizzes add up.",
   };
   return (
-    <div className="app-shell">
+    <div className="app-shell" style={{ "--sidebar-width": `${sidebarWidth}px` }}>
       <aside className="sidebar">
         <a className="brand" href="#" onClick={(event) => event.preventDefault()}>
           <span className="brand-mark">n<span>+</span></span>
@@ -330,6 +333,40 @@ function App() {
           </button>
         </div>
       </aside>
+      <button
+        type="button"
+        className="sidebar-resize-handle"
+        role="separator"
+        aria-label="Resize sidebar"
+        aria-orientation="vertical"
+        aria-valuemin={210}
+        aria-valuemax={340}
+        aria-valuenow={sidebarWidth}
+        onPointerDown={(event) => {
+          sidebarResizePointer.current = event.clientX;
+          event.currentTarget.setPointerCapture(event.pointerId);
+        }}
+        onPointerMove={(event) => {
+          if (sidebarResizePointer.current === null) return;
+          const nextWidth = Math.max(210, Math.min(340, event.clientX));
+          setSidebarWidth(nextWidth);
+          window.localStorage.setItem("nurselys-sidebar-width", String(nextWidth));
+        }}
+        onPointerUp={(event) => {
+          sidebarResizePointer.current = null;
+          if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
+        }}
+        onPointerCancel={() => { sidebarResizePointer.current = null; }}
+        onKeyDown={(event) => {
+          if (!["ArrowLeft", "ArrowRight"].includes(event.key)) return;
+          event.preventDefault();
+          setSidebarWidth((current) => {
+            const nextWidth = Math.max(210, Math.min(340, current + (event.key === "ArrowRight" ? 12 : -12)));
+            window.localStorage.setItem("nurselys-sidebar-width", String(nextWidth));
+            return nextWidth;
+          });
+        }}
+      />
 
       <main className="main-content">
         <header className="topbar">
@@ -350,7 +387,7 @@ function App() {
             </section>
           )}
 
-          {activeNav === "study" ? <StudyRoom
+          {activeNav === "cards" ? <FlashcardModal cards={flashcards} loading={flashcardsLoading} error={flashcardsError} initialTopic={flashcardTopic} onClose={() => setActiveNav("home")} /> : activeNav === "study" ? <StudyRoom
             guides={studyGuides}
             loading={studyGuidesLoading}
             error={studyGuidesError}
@@ -379,7 +416,6 @@ function App() {
         </div>
       </main>
       {activeLesson && <QuizModal lesson={activeLesson} onClose={() => setActiveLesson(null)} onSubmit={submitLesson} />}
-      {flashcardsOpen && <FlashcardModal cards={flashcards} loading={flashcardsLoading} error={flashcardsError} initialTopic={flashcardTopic} onClose={() => { setFlashcardsOpen(false); setActiveNav("home"); }} />}
       {notice && <div className="toast" role="status">{notice}<button onClick={() => setNotice("")}><Icon name="close" size={16} /></button></div>}
     </div>
   );

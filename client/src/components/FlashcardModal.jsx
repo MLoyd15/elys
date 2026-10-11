@@ -128,8 +128,7 @@ export default function FlashcardModal({ cards, loading, error, onClose, initial
   }
 
   return (
-    <div className="modal-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}>
-      <section className="fc-modal" role="dialog" aria-modal="true" aria-labelledby="flashcard-title">
+    <section className="fc-page" aria-labelledby="flashcard-title">
         <div className="quiz-top">
           <span className="quiz-brand"><span>n+</span> flashcard practice</span>
           <button className="modal-close" onClick={onClose} aria-label="Close flashcards"><Icon name="close" size={20} /></button>
@@ -168,7 +167,6 @@ export default function FlashcardModal({ cards, loading, error, onClose, initial
         )}
 
         {body}
-      </section>
-    </div>
+    </section>
   );
 }

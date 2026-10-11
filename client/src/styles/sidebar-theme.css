@@ -1,6 +1,12 @@
-.sidebar { border-right-color: #f0d8e0; background: #fff4f7; }
-.sidebar .nav-item { color: #7b6570; }
-.sidebar .nav-item:hover { color: #704356; background: #fce9ef; }
-.sidebar .nav-item.active { color: #a94f6c; background: #f8dce5; }
-.sidebar .sidebar-note { border-color: #f0d8e0; background: #fffafb; }
-.sidebar .profile { border-top-color: #f0d8e0; background: transparent; }
+.sidebar { border-right-color: #e7a9bf; background: linear-gradient(165deg, #f6c9d8 0%, #edabc2 48%, #e79bb7 100%); box-shadow: 12px 0 38px rgb(153 76 108 / 12%); }
+.sidebar .brand, .sidebar .nav-label { color: #70394f; }
+.sidebar .brand-mark { color: #8e4562; background: rgb(255 255 255 / 60%); }
+.sidebar .brand-mark span, .sidebar .brand-name span { color: #a74c70; }
+.sidebar .nav-item { color: #74465a; }
+.sidebar .nav-item:hover { color: #673449; background: rgb(255 255 255 / 38%); }
+.sidebar .nav-item.active { color: #79364f; background: rgb(255 255 255 / 66%); box-shadow: inset 0 0 0 1px rgb(255 255 255 / 50%); }
+.sidebar .nav-count { color: #79364f; background: rgb(255 255 255 / 72%); }
+.sidebar .sidebar-note { border-color: rgb(255 255 255 / 58%); background: rgb(255 255 255 / 42%); }
+.sidebar .note-spark, .sidebar .avatar { color: #873d5b; background: rgb(255 255 255 / 62%); }
+.sidebar .profile { border-top-color: rgb(255 255 255 / 52%); background: transparent; color: #70394f; }
+.sidebar .profile-copy small, .sidebar .profile-dots { color: #855468; }
