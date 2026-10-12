@@ -10,6 +10,18 @@ import melodyTimerImage from "../images/melody-3.jpg";
 import StudyRoom from "./StudyRoom.jsx";
 import PageMelodyArt from "./components/PageMelodyArt.jsx";
 
+const landingFeatures = [
+  { icon: '⌂', name: 'Overview', description: 'See your study streak, weekly time, and next steps together.' },
+  { icon: '▤', name: 'Learning path', description: 'Work through focused nursing study units at your own pace.' },
+  { icon: '✓', name: 'Quick quizzes', description: 'Check your understanding with short, topic-based quizzes.' },
+  { icon: '◷', name: 'Study room & timer', description: 'Read a guide and track real study sessions as you learn.' },
+  { icon: '▣', name: 'Flashcards', description: 'Review key concepts with a personal set of study cards.' },
+  { icon: '☑', name: 'To-dos', description: 'Turn your study goals into small tasks you can complete.' },
+  { icon: '✎', name: 'Notepad', description: 'Keep your notes close while you review your materials.' },
+  { icon: '✧', name: 'AI guide', description: 'Create a study guide from your own learning materials.' },
+  { icon: '↗', name: 'Progress', description: 'Follow completed quizzes, study time, and your progress.' },
+];
+
 function formatElapsedStudyTime(totalSeconds) {
   const safeSeconds = Math.max(0, totalSeconds);
   const hours = Math.floor(safeSeconds / 3600);
@@ -34,6 +46,7 @@ function App() {
   const [studySessions, setStudySessions] = useState([]);
   const [studyTimerNow, setStudyTimerNow] = useState(Date.now());
   const [showMelodyPopup, setShowMelodyPopup] = useState(true);
+  const [landingFeature, setLandingFeature] = useState(0);
   const studyGuidesRequestStarted = useRef(false);
   const [notice, setNotice] = useState("");
   const [authMode, setAuthMode] = useState("login");
@@ -325,18 +338,46 @@ function App() {
               <span className="section-kicker">A LITTLE STUDY MAGIC</span>
               <h1 id="landing-heading">Make room for a brighter study day.</h1>
               <p>Your nursing goals are closer than they feel. Come in, find your focus, and take the next small step.</p>
-              <div className="landing-highlights" aria-label="Study space features">
+              <div className="landing-highlights" aria-label="Study space highlights">
                 <span><i aria-hidden="true">✧</i> Study at your pace</span>
                 <span><i aria-hidden="true">♡</i> Celebrate every win</span>
               </div>
             </div>
-            <div className="landing-art" aria-hidden="true">
-              <span className="landing-art-orbit landing-art-orbit-one" />
-              <span className="landing-art-orbit landing-art-orbit-two" />
-              <span className="landing-art-spark landing-art-spark-one">✦</span>
-              <span className="landing-art-spark landing-art-spark-two">✧</span>
-              <img src={melodyStudyImage} alt="" />
-            </div>
+            <section className="landing-feature-tour" aria-label="Explore Nurselys features">
+              <div className="landing-feature-content">
+                <div className="landing-feature-heading">
+                  <span className="section-kicker">YOUR STUDY SPACE, ALL IN ONE</span>
+                  <span className="landing-feature-count">{String(landingFeature + 1).padStart(2, "0")} / 09</span>
+                </div>
+                <div className="landing-feature-tabs" role="group" aria-label="Choose a feature to preview">
+                  {landingFeatures.map((feature, index) => (
+                    <button
+                      className={`landing-feature-tab ${landingFeature === index ? "is-active" : ""}`}
+                      type="button"
+                      key={feature.name}
+                      aria-pressed={landingFeature === index}
+                      onClick={() => setLandingFeature(index)}
+                    >
+                      <span aria-hidden="true">{feature.icon}</span>{feature.name}
+                    </button>
+                  ))}
+                </div>
+                <div className="landing-feature-preview" aria-live="polite" aria-atomic="true">
+                  <span className="landing-feature-preview-icon" aria-hidden="true">{landingFeatures[landingFeature].icon}</span>
+                  <div>
+                    <strong>{landingFeatures[landingFeature].name}</strong>
+                    <p>{landingFeatures[landingFeature].description}</p>
+                  </div>
+                </div>
+              </div>
+              <div className="landing-art" aria-hidden="true">
+                <span className="landing-art-orbit landing-art-orbit-one" />
+                <span className="landing-art-orbit landing-art-orbit-two" />
+                <span className="landing-art-spark landing-art-spark-one">✦</span>
+                <span className="landing-art-spark landing-art-spark-two">✧</span>
+                <img src={melodyStudyImage} alt="" />
+              </div>
+            </section>
             <div className="landing-footer"><span>✿</span> A calm little corner to learn, grow, and glow.</div>
           </section>
 
@@ -471,7 +512,7 @@ function App() {
             <img className="sidebar-melody" src={melodyPopupImage} alt="" />
             <div className="note-spark"><Icon name="spark" size={17} /></div>
             <p>Road to topnotcher!</p>
-            <span>kaya mo to love💚</span>
+            <span>You can do this</span>
           </div>
           <button className="profile" onClick={lockSite} title="Sign out">
             <span className="avatar">{(user?.name || "U").slice(0, 1).toUpperCase()}</span>
