@@ -10,18 +10,6 @@ import melodyTimerImage from "../images/melody-3.jpg";
 import StudyRoom from "./StudyRoom.jsx";
 import PageMelodyArt from "./components/PageMelodyArt.jsx";
 
-const landingFeatures = [
-  { icon: '⌂', name: 'Overview', description: 'See your study streak, weekly time, and next steps together.' },
-  { icon: '▤', name: 'Learning path', description: 'Work through focused nursing study units at your own pace.' },
-  { icon: '✓', name: 'Quick quizzes', description: 'Check your understanding with short, topic-based quizzes.' },
-  { icon: '◷', name: 'Study room & timer', description: 'Read a guide and track real study sessions as you learn.' },
-  { icon: '▣', name: 'Flashcards', description: 'Review key concepts with a personal set of study cards.' },
-  { icon: '☑', name: 'To-dos', description: 'Turn your study goals into small tasks you can complete.' },
-  { icon: '✎', name: 'Notepad', description: 'Keep your notes close while you review your materials.' },
-  { icon: '✧', name: 'AI guide', description: 'Create a study guide from your own learning materials.' },
-  { icon: '↗', name: 'Progress', description: 'Follow completed quizzes, study time, and your progress.' },
-];
-
 function formatElapsedStudyTime(totalSeconds) {
   const safeSeconds = Math.max(0, totalSeconds);
   const hours = Math.floor(safeSeconds / 3600);
@@ -30,76 +18,35 @@ function formatElapsedStudyTime(totalSeconds) {
   return [hours, minutes, seconds].map((part) => String(part).padStart(2, "0")).join(":");
 }
 
-function LandingFeatureScreenshot({ featureIndex }) {
-  const feature = landingFeatures[featureIndex];
+function LandingFeatureScreenshot({ kind }) {
+  const aiStudy = kind === "ai";
   return (
-    <div className="landing-shot-window" role="img" aria-label={`${feature.name} interface preview`}>
+    <div className="landing-shot-window" role="img" aria-label={aiStudy ? "Preview of an AI generated lesson, quiz, and flashcards" : "Preview of the progress dashboard"}>
       <div className="landing-shot-toolbar">
         <span className="landing-shot-dots" aria-hidden="true"><i /><i /><i /></span>
         <span className="landing-shot-brand"><b>n</b> nurselys</span>
         <span className="landing-shot-avatar"><img src={melodyStudyImage} alt="" /></span>
       </div>
       <div className="landing-shot-workspace">
-        <aside className="landing-shot-sidebar" aria-hidden="true">
-          <span className="landing-shot-side-active">Overview</span>
-          <span>Learning path</span>
-          <span>Quick quizzes</span>
-          <span>Study room</span>
-          <span>Flashcards</span>
-        </aside>
+        <aside className="landing-shot-sidebar" aria-hidden="true"><span>Overview</span><span>Learning path</span><span>Quick quizzes</span><span>Study room</span><span>Flashcards</span></aside>
         <div className="landing-shot-main">
-          <div className="landing-shot-heading">
-            <span>{feature.name.toUpperCase()}</span>
-            <strong>{feature.name === "Study room & timer" ? "00:24:18" : "Your study space"}</strong>
-          </div>
-          {featureIndex === 0 && (
+          {aiStudy ? (
             <>
-              <h3>Your review, at a glance</h3>
-              <div className="landing-shot-stats"><b>08<small> quizzes</small></b><b>125<small> XP</small></b><b>42<small> min</small></b></div>
-              <div className="landing-shot-panel"><strong>Road to topnotcher</strong><span className="landing-shot-progress"><i /></span><small>8 of 12 study units complete</small></div>
+              <div className="landing-shot-heading"><span>YOUR AI STUDY KIT</span><strong>READY TO REVIEW</strong></div>
+              <h3>One source, a complete study set</h3>
+              <p className="landing-shot-paragraph">Critical care foundations · generated from your learning material</p>
+              <div className="landing-shot-materials">
+                <div><span className="landing-shot-material-icon">▤</span><b>Study lesson</b><small>Clear guide with learning goals</small><em>Open lesson →</em></div>
+                <div><span className="landing-shot-material-icon">✓</span><b>Practice quiz</b><small>10 questions with explanations</small><em>Start quiz →</em></div>
+                <div><span className="landing-shot-material-icon">▣</span><b>Flashcards</b><small>12 cards for active recall</small><em>Review cards →</em></div>
+              </div>
             </>
-          )}
-          {featureIndex === 1 && (
+          ) : (
             <>
-              <h3>Keep your learning moving</h3>
-              <div className="landing-shot-list"><b className="is-current"><i>01</i> Critical care foundations <small>5 min read</small></b><b><i>02</i> Ethics and legal <small>6 min read</small></b><b><i>03</i> Quality and safety <small>5 min read</small></b></div>
-            </>
-          )}
-          {featureIndex === 2 && (
-            <>
-              <h3>Quick quiz</h3><p className="landing-shot-question">Which action best supports a clear clinical handover?</p>
-              <div className="landing-shot-answers"><span>A. Use SBAR to organize key details</span><span>B. Share only the latest vital sign</span><span>C. Wait until the end of the shift</span></div>
-              <small className="landing-shot-step">QUESTION 3 OF 10</small>
-            </>
-          )}
-          {featureIndex === 3 && (
-            <>
-              <h3>The foundations of critical care</h3><p className="landing-shot-paragraph">Read your nursing guide, review learning goals, and track a real study session.</p>
-              <div className="landing-shot-panel"><strong>After this unit, you can…</strong><small>• Describe the goals of critical care</small><small>• Compare focused and ongoing assessment</small></div>
-            </>
-          )}
-          {featureIndex === 4 && (
-            <div className="landing-shot-flashcard"><small>CRITICAL CARE · 04 OF 18</small><strong>What does a focused assessment help a nurse identify?</strong><span>Tap to reveal answer <i>↻</i></span></div>
-          )}
-          {featureIndex === 5 && (
-            <>
-              <h3>Today’s to-dos <em>2 left</em></h3>
-              <div className="landing-shot-tasks"><span className="is-done"><i>✓</i> Review respiratory assessment</span><span><i /> Complete critical care quiz</span><span><i /> Write three study notes</span></div>
-            </>
-          )}
-          {featureIndex === 6 && (
-            <>
-              <h3>Quick notes</h3><div className="landing-shot-note"><b>Critical care — key reminders</b><span>• Reassess when a patient’s condition changes</span><span>• Use SBAR to structure handover</span><span className="landing-shot-note-line" /></div>
-            </>
-          )}
-          {featureIndex === 7 && (
-            <>
-              <h3>Make a guide from your materials</h3><div className="landing-shot-upload"><span>＋</span><b>Drop a PDF or text file here</b><small>We’ll turn it into a focused study guide</small></div><span className="landing-shot-generate">Generate study guide <i>→</i></span>
-            </>
-          )}
-          {featureIndex === 8 && (
-            <>
-              <h3>Your progress is adding up</h3><div className="landing-shot-progress-row"><div className="landing-shot-ring"><b>67<small>%</small></b></div><div className="landing-shot-bars"><span>Quizzes<i><b style={{ width: "78%" }} /></i></span><span>Study time<i><b style={{ width: "58%" }} /></i></span><span>Study streak<i><b style={{ width: "85%" }} /></i></span></div></div>
+              <div className="landing-shot-heading"><span>YOUR PROGRESS</span><strong>SAMPLE DATA</strong></div>
+              <h3>Your study is adding up</h3>
+              <div className="landing-shot-progress-row"><div className="landing-shot-ring"><b>67<small>%</small></b></div><div className="landing-shot-bars"><span>Quizzes<i><b style={{ width: "78%" }} /></i></span><span>Study time<i><b style={{ width: "58%" }} /></i></span><span>Study streak<i><b style={{ width: "85%" }} /></i></span></div></div>
+              <div className="landing-shot-progress-summary"><b>8 of 12</b><span>study units reviewed</span><b>42 min</b><span>focused study time</span></div>
             </>
           )}
         </div>
@@ -123,7 +70,6 @@ function App() {
   const [studySessions, setStudySessions] = useState([]);
   const [studyTimerNow, setStudyTimerNow] = useState(Date.now());
   const [showMelodyPopup, setShowMelodyPopup] = useState(true);
-  const [landingFeature, setLandingFeature] = useState(0);
   const studyGuidesRequestStarted = useRef(false);
   const [notice, setNotice] = useState("");
   const [authMode, setAuthMode] = useState("login");
@@ -419,31 +365,15 @@ function App() {
                 <span><i aria-hidden="true">✧</i> Study at your pace</span>
                 <span><i aria-hidden="true">♡</i> Celebrate every win</span>
               </div>
+              <a className="landing-scroll-link" href="#landing-features">Explore the features <span aria-hidden="true">↓</span></a>
             </div>
-            <section className="landing-feature-tour" aria-label="Explore Nurselys features">
-              <div className="landing-feature-content">
-                <div className="landing-feature-heading">
-                  <span className="section-kicker">YOUR STUDY SPACE, ALL IN ONE</span>
-                  <span className="landing-feature-count">{String(landingFeature + 1).padStart(2, "0")} / 09</span>
-                </div>
-                <div className="landing-feature-tabs" role="group" aria-label="Choose a feature to preview">
-                  {landingFeatures.map((feature, index) => (
-                    <button
-                      className={`landing-feature-tab ${landingFeature === index ? "is-active" : ""}`}
-                      type="button"
-                      key={feature.name}
-                      aria-pressed={landingFeature === index}
-                      onClick={() => setLandingFeature(index)}
-                    >
-                      <span aria-hidden="true">{feature.icon}</span>{feature.name}
-                    </button>
-                  ))}
-                </div>
-                <p className="landing-feature-description" aria-live="polite" aria-atomic="true">{landingFeatures[landingFeature].description}</p>
-                <LandingFeatureScreenshot key={landingFeature} featureIndex={landingFeature} />
-              </div>
-
-            </section>
+            <div className="landing-art" aria-hidden="true">
+              <span className="landing-art-orbit landing-art-orbit-one" />
+              <span className="landing-art-orbit landing-art-orbit-two" />
+              <span className="landing-art-spark landing-art-spark-one">✦</span>
+              <span className="landing-art-spark landing-art-spark-two">✧</span>
+              <img src={melodyStudyImage} alt="" />
+            </div>
             <div className="landing-footer"><span>✿</span> A calm little corner to learn, grow, and glow.</div>
           </section>
 
@@ -475,6 +405,34 @@ function App() {
             <div className="landing-login-note"><span aria-hidden="true">♡</span> Your learning journey is waiting for you.</div>
           </form>
         </div>
+        <section className="landing-showcase" id="landing-features" aria-labelledby="landing-showcase-title">
+          <div className="landing-showcase-heading">
+            <span className="section-kicker">A LITTLE STUDY MAGIC</span>
+            <h2 id="landing-showcase-title">Your materials become a study plan</h2>
+            <p>Scroll through the tools that help turn what you’re learning into progress you can see.</p>
+          </div>
+          <div className="landing-showcase-grid">
+            <article className="landing-showcase-card landing-ai-card">
+              <div className="landing-showcase-copy">
+                <span className="landing-showcase-number">01 · AI STUDY MATERIALS</span>
+                <h3>One upload. Lesson, quiz, and flashcards.</h3>
+                <p>Give the AI Guide a PDF or pasted notes. It creates a study lesson, a 10-question quiz, and 12 flashcards from that source.</p>
+                <ul><li>Study a clear, structured lesson</li><li>Practice with answer explanations</li><li>Review key ideas with flashcards</li></ul>
+              </div>
+              <LandingFeatureScreenshot kind="ai" />
+            </article>
+            <article className="landing-showcase-card landing-progress-card">
+              <div className="landing-showcase-copy">
+                <span className="landing-showcase-number">02 · YOUR PROGRESS</span>
+                <h3>See your effort add up.</h3>
+                <p>Track quiz completion, real study time, and the units you’ve reviewed as you work toward your goals.</p>
+                <ul><li>Follow completed study quizzes</li><li>See real time from study sessions</li><li>Celebrate each unit you review</li></ul>
+              </div>
+              <LandingFeatureScreenshot kind="progress" />
+            </article>
+          </div>
+          <div className="landing-showcase-end"><span>✿</span> Small steps count. Keep going at your own pace.</div>
+        </section>
       </main>
     );
   }
