@@ -8,16 +8,15 @@ import { getWeeklyStudySeconds, startOfStudyWeek } from "../services/studySessio
 
 const router = Router();
 
-router.get("/", async (_request, response, next) => {
+router.get("/", async (request, response, next) => {
   try {
     const now = new Date();
     const weekStart = startOfStudyWeek(now);
     const [lessons, tasks, progress, studySessions] = await Promise.all([
       Lesson.find().lean(),
-      Task.find().sort({ completed: 1, createdAt: 1 }).lean(),
-      Progress.findOne({ key: "default" }).lean(),
-      StudySession.find({
-        startedAt: { $lt: now },
+      Task.find({ userId: request.userId }).sort({ completed: 1, createdAt: 1 }).lean(),
+      Progress.findOne({ userId: request.userId }).lean(),
+      StudySession.find({ userId: request.userId, startedAt: { $lt: now },
         $or: [{ endedAt: null }, { endedAt: { $gte: weekStart } }],
       }).lean(),
     ]);

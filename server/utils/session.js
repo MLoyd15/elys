@@ -9,34 +9,51 @@ function safeEqual(left, right) {
   return timingSafeEqual(leftHash, rightHash);
 }
 
-function sessionSignature(expiresAt) {
-  return createHmac("sha256", process.env.SESSION_SECRET).update(expiresAt).digest("base64url");
+function sessionSignature(payload) {
+  return createHmac("sha256", process.env.SESSION_SECRET).update(payload).digest("base64url");
 }
 
-export function hasValidSession(request) {
+function readSession(request) {
   const cookie = request.headers.cookie
     ?.split(";")
     .map((part) => part.trim())
-    .find((part) => part.startsWith(`${sessionCookie}=`));
-  if (!cookie) return false;
+    .find((part) => part.startsWith(sessionCookie + "="));
+  if (!cookie) return null;
 
-  const [expiresAt, signature] = decodeURIComponent(cookie.slice(sessionCookie.length + 1)).split(".");
-  if (!expiresAt || !signature || Number(expiresAt) <= Date.now()) return false;
-  return safeEqual(signature, sessionSignature(expiresAt));
+  let decoded;
+  try {
+    decoded = decodeURIComponent(cookie.slice(sessionCookie.length + 1));
+  } catch {
+    return null;
+  }
+  const [userId, expiresAt, signature] = decoded.split(".");
+  const payload = userId + "." + expiresAt;
+  if (!userId || !expiresAt || !signature || Number(expiresAt) <= Date.now()) return null;
+  if (!safeEqual(signature, sessionSignature(payload))) return null;
+  return userId;
 }
 
-export function setSessionCookie(response, expiresAt) {
+export function getSessionUserId(request) {
+  return readSession(request);
+}
+
+export function hasValidSession(request) {
+  return Boolean(readSession(request));
+}
+
+export function setSessionCookie(response, userId, expiresAt = String(Date.now() + sessionDurationSeconds * 1000)) {
+  const payload = userId + "." + expiresAt;
   const secure = process.env.NODE_ENV === "production" ? "; Secure" : "";
   response.setHeader(
     "Set-Cookie",
-    `${sessionCookie}=${expiresAt}.${sessionSignature(expiresAt)}; HttpOnly; SameSite=Lax; Path=/; Max-Age=${sessionDurationSeconds}${secure}`,
+    sessionCookie + "=" + payload + "." + sessionSignature(payload) + "; HttpOnly; SameSite=Lax; Path=/; Max-Age=" + sessionDurationSeconds + secure,
   );
 }
 
 export function clearSessionCookie(response) {
   response.setHeader(
     "Set-Cookie",
-    `${sessionCookie}=; HttpOnly; SameSite=Lax; Path=/; Max-Age=0${process.env.NODE_ENV === "production" ? "; Secure" : ""}`,
+    sessionCookie + "=; HttpOnly; SameSite=Lax; Path=/; Max-Age=0" + (process.env.NODE_ENV === "production" ? "; Secure" : ""),
   );
 }
 

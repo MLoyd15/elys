@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 
 const studyGuideSchema = new mongoose.Schema({
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", index: true },
   slug: { type: String, required: true, unique: true },
   topic: { type: String, required: true },
   source: { type: String, required: true },

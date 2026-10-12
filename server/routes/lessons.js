@@ -36,7 +36,7 @@ router.post("/:slug/attempt", async (request, response, next) => {
       0,
     );
     const earnedXp = correct * 10 + (correct === lesson.questions.length ? 10 : 0);
-    const progress = await Progress.findOne({ key: "default" });
+    const progress = await Progress.findOne({ userId: request.userId });
     if (!progress) throw new Error("Study progress is not initialized.");
     const { awardedXp, isFirstCompletion } = await awardProgress(progress, {
       completionField: "completedLessons",

@@ -5,12 +5,13 @@ import { getWeeklyStudySeconds, serializeStudySession, startOfStudyWeek } from "
 
 const router = Router();
 
-async function readStudySummary(now = new Date()) {
+async function readStudySummary(userId, now = new Date()) {
   const weekStart = startOfStudyWeek(now);
   const [sessions, activeSession, weeklySessions] = await Promise.all([
-    StudySession.find().sort({ startedAt: -1 }).limit(30).lean(),
-    StudySession.findOne({ endedAt: null }).sort({ startedAt: -1 }).lean(),
+    StudySession.find({ userId }).sort({ startedAt: -1 }).limit(30).lean(),
+    StudySession.findOne({ userId, endedAt: null }).sort({ startedAt: -1 }).lean(),
     StudySession.find({
+      userId,
       startedAt: { $lt: now },
       $or: [{ endedAt: null }, { endedAt: { $gte: weekStart } }],
     }).lean(),
@@ -22,34 +23,34 @@ async function readStudySummary(now = new Date()) {
   };
 }
 
-router.get("/", async (_request, response, next) => {
+router.get("/", async (request, response, next) => {
   try {
-    response.json(await readStudySummary());
+    response.json(await readStudySummary(request.userId));
   } catch (error) {
     next(error);
   }
 });
 
-router.post("/start", async (_request, response, next) => {
+router.post("/start", async (request, response, next) => {
   try {
-    const active = await StudySession.findOne({ endedAt: null }).sort({ startedAt: -1 });
+    const active = await StudySession.findOne({ userId: request.userId, endedAt: null }).sort({ startedAt: -1 });
     if (active) return response.json({ session: serializeStudySession(active) });
-    const session = await StudySession.create({ startedAt: new Date() });
+    const session = await StudySession.create({ userId: request.userId, startedAt: new Date() });
     response.status(201).json({ session: serializeStudySession(session) });
   } catch (error) {
     next(error);
   }
 });
 
-router.post("/stop", async (_request, response, next) => {
+router.post("/stop", async (request, response, next) => {
   try {
-    const session = await StudySession.findOne({ endedAt: null }).sort({ startedAt: -1 });
+    const session = await StudySession.findOne({ userId: request.userId, endedAt: null }).sort({ startedAt: -1 });
     if (!session) return response.status(404).json({ error: "There is no active study timer." });
     const now = new Date();
     session.endedAt = now;
     session.durationSeconds = Math.max(0, Math.floor((now.getTime() - session.startedAt.getTime()) / 1000));
     await session.save();
-    response.json({ session: serializeStudySession(session, now), ...(await readStudySummary(now)) });
+    response.json({ session: serializeStudySession(session, now), ...(await readStudySummary(request.userId, now)) });
   } catch (error) {
     next(error);
   }
@@ -60,7 +61,11 @@ router.delete("/:id", async (request, response, next) => {
     if (!mongoose.isValidObjectId(request.params.id)) {
       return response.status(400).json({ error: "Invalid study session ID." });
     }
-    const session = await StudySession.findOneAndDelete({ _id: request.params.id, endedAt: { $ne: null } });
+    const session = await StudySession.findOneAndDelete({
+      _id: request.params.id,
+      userId: request.userId,
+      endedAt: { $ne: null },
+    });
     if (!session) return response.status(404).json({ error: "Completed study session not found." });
     response.status(204).end();
   } catch (error) {

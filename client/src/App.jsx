@@ -5,6 +5,7 @@ import FlashcardModal from "./components/FlashcardModal.jsx";
 import QuizModal from "./components/QuizModal.jsx";
 import { Icon } from "./icons.jsx";
 import melodyPopupImage from "../images/melody-2.jpg";
+import melodyStudyImage from "../images/melody-study.jpg";
 import melodyTimerImage from "../images/melody-3.jpg";
 import StudyRoom from "./StudyRoom.jsx";
 import PageMelodyArt from "./components/PageMelodyArt.jsx";
@@ -35,7 +36,11 @@ function App() {
   const [showMelodyPopup, setShowMelodyPopup] = useState(true);
   const studyGuidesRequestStarted = useRef(false);
   const [notice, setNotice] = useState("");
-  const [accessCode, setAccessCode] = useState("");
+  const [authMode, setAuthMode] = useState("login");
+  const [authName, setAuthName] = useState("");
+  const [authEmail, setAuthEmail] = useState("");
+  const [authPassword, setAuthPassword] = useState("");
+  const [user, setUser] = useState(null);
   const [accessError, setAccessError] = useState("");
   const [accessLocked, setAccessLocked] = useState(false);
   const [unlocking, setUnlocking] = useState(false);
@@ -52,7 +57,9 @@ function App() {
     setLoading(true);
     setError("");
     try {
-      setDashboard(await api("/dashboard"));
+      const [session, dashboardData] = await Promise.all([api("/auth/me"), api("/dashboard")]);
+      setUser(session.user);
+      setDashboard(dashboardData);
     } catch (loadError) {
       if (loadError.status === 401) {
         setAccessLocked(true);
@@ -158,6 +165,43 @@ function App() {
     }
   }
 
+  async function removeStudyGuide(slug) {
+    const guide = studyGuides.find((item) => item.slug === slug);
+    if (!guide?.userOwned) return;
+    if (!window.confirm("Delete this study room unit, its quiz, and all flashcards made from it?")) return;
+    try {
+      await api("/study-guides/" + encodeURIComponent(slug), { method: "DELETE" });
+      setStudyGuides((current) => current.filter((item) => item.slug !== slug));
+      setReviewedGuideSlugs((current) => current.filter((item) => item !== slug));
+      setFlashcards((current) => current.filter((card) => card.studyGuideSlug !== slug));
+      setDashboard((current) => {
+        if (!current) return current;
+        const completed = current.progress.completedStudyQuizzes || [];
+        return {
+          ...current,
+          progress: {
+            ...current.progress,
+            completedStudyQuizzes: completed.filter((item) => item !== slug),
+            completedCount: Math.max(0, (current.progress.completedCount || 0) - Number(completed.includes(slug))),
+          },
+        };
+      });
+      setNotice("Study unit, quiz, and linked flashcards deleted.");
+    } catch (deleteError) {
+      setNotice(deleteError.message);
+    }
+  }
+  async function removeFlashcard(card) {
+    if (!card?.userOwned) return;
+    if (!window.confirm("Delete this flashcard?")) return;
+    try {
+      await api("/flashcards/" + encodeURIComponent(card.slug), { method: "DELETE" });
+      setFlashcards((current) => current.filter((item) => item.slug !== card.slug));
+      setNotice("Flashcard deleted.");
+    } catch (deleteError) {
+      setNotice(deleteError.message);
+    }
+  }
   async function removeStudySession(sessionId) {
     try {
       await api(`/study-sessions/${sessionId}`, { method: "DELETE" });
@@ -219,29 +263,41 @@ function App() {
 
   async function unlockSite(event) {
     event.preventDefault();
-    if (!accessCode) return;
+    if (!authEmail || !authPassword || (authMode === "register" && !authName)) return;
     setUnlocking(true);
     setAccessError("");
     try {
-      await api("/auth/unlock", {
+      const endpoint = authMode === "register" ? "/auth/register" : "/auth/login";
+      await api(endpoint, {
         method: "POST",
-        body: JSON.stringify({ accessCode }),
+        body: JSON.stringify({
+          ...(authMode === "register" ? { name: authName } : {}),
+          email: authEmail,
+          password: authPassword,
+        }),
       });
       setAccessLocked(false);
-      setAccessCode("");
+      setAuthPassword("");
       await loadDashboard();
-    } catch (unlockError) {
-      setAccessError(unlockError.message);
+    } catch (authError) {
+      setAccessError(authError.message);
     } finally {
       setUnlocking(false);
     }
   }
-
   async function lockSite() {
     try {
-      await api("/auth/lock", { method: "POST" });
+      await api("/auth/logout", { method: "POST" });
       setAccessLocked(true);
       setDashboard(null);
+      setUser(null);
+      setStudyGuides([]);
+      setFlashcards([]);
+      setStudySessions([]);
+      setReviewedGuideSlugs([]);
+      setActiveLesson(null);
+      studyGuidesRequestStarted.current = false;
+      studySessionsRequestStarted.current = false;
       setActiveNav("home");
     } catch (lockError) {
       setNotice(lockError.message);
@@ -253,35 +309,65 @@ function App() {
   }
 
   if (accessLocked) {
+    const registering = authMode === "register";
     return (
-      <main className="access-screen">
-        <form className="access-card" onSubmit={unlockSite}>
-          <a className="brand access-brand" href="#" onClick={(event) => event.preventDefault()}>
-            <span className="brand-mark">n<span>+</span></span>
-            <span className="brand-name">nurse<span>lys</span></span>
-          </a>
-          <div className="access-illustration" aria-hidden="true">🔐</div>
-          <div className="section-kicker">Hulaan mo ano password</div>
-          <h1>Welcome, Elys.</h1>
-          <p>Enter your access code to open your study space.</p>
-          <label className="access-label" htmlFor="access-code">ACCESS CODE</label>
-          <input
-            id="access-code"
-            className="access-input"
-            type="password"
-            autoComplete="current-password"
-            autoFocus
-            value={accessCode}
-            onChange={(event) => setAccessCode(event.target.value)}
-            placeholder="Your special code"
-            aria-describedby={accessError ? "access-error" : undefined}
-          />
-          {accessError && <span className="access-error" id="access-error" role="alert">{accessError}</span>}
-          <button className="button button-primary access-submit" type="submit" disabled={!accessCode || unlocking}>
-            {unlocking ? "Unlocking…" : "Open my study space"} {!unlocking && <Icon name="arrow" size={17} />}
-          </button>
-          <span className="access-footnote">Your study journey starts here <span>✳</span></span>
-        </form>
+      <main className="access-screen landing-screen">
+        <div className="landing-shell">
+          <section className="landing-welcome" aria-labelledby="landing-heading">
+            <div className="landing-topline">
+              <a className="brand access-brand" href="#" onClick={(event) => event.preventDefault()}>
+                <span className="brand-mark">n<span>+</span></span>
+                <span className="brand-name">nurse<span>lys</span></span>
+              </a>
+              <span className="landing-private"><span aria-hidden="true">✦</span> YOUR PERSONAL STUDY SPACE</span>
+            </div>
+            <div className="landing-copy">
+              <span className="section-kicker">A LITTLE STUDY MAGIC</span>
+              <h1 id="landing-heading">Make room for a brighter study day.</h1>
+              <p>Your nursing goals are closer than they feel. Come in, find your focus, and take the next small step.</p>
+              <div className="landing-highlights" aria-label="Study space features">
+                <span><i aria-hidden="true">✧</i> Study at your pace</span>
+                <span><i aria-hidden="true">♡</i> Celebrate every win</span>
+              </div>
+            </div>
+            <div className="landing-art" aria-hidden="true">
+              <span className="landing-art-orbit landing-art-orbit-one" />
+              <span className="landing-art-orbit landing-art-orbit-two" />
+              <span className="landing-art-spark landing-art-spark-one">✦</span>
+              <span className="landing-art-spark landing-art-spark-two">✧</span>
+              <img src={melodyStudyImage} alt="" />
+            </div>
+            <div className="landing-footer"><span>✿</span> A calm little corner to learn, grow, and glow.</div>
+          </section>
+
+          <form className="access-card landing-login-card" onSubmit={unlockSite}>
+            <div className="landing-login-icon" aria-hidden="true">n<span>+</span></div>
+            <div className="section-kicker">{registering ? "YOUR NEXT CHAPTER" : "WELCOME BACK"}</div>
+            <h2>{registering ? "Create your account" : "Log in to your space"}</h2>
+            <p>{registering ? "Create a private study space to keep your progress and materials together." : "Sign in to pick up where you left off."}</p>
+            {registering && (
+              <>
+                <label className="access-label" htmlFor="auth-name">YOUR NAME</label>
+                <input id="auth-name" className="access-input" type="text" autoComplete="name" required minLength={2} maxLength={60} value={authName} onChange={(event) => setAuthName(event.target.value)} placeholder="Your name" />
+              </>
+            )}
+            <label className="access-label" htmlFor="auth-email">EMAIL ADDRESS</label>
+            <input id="auth-email" className="access-input" type="email" autoComplete="email" required value={authEmail} onChange={(event) => setAuthEmail(event.target.value)} placeholder="you@example.com" />
+            <label className="access-label landing-password-label" htmlFor="auth-password">PASSWORD</label>
+            <input id="auth-password" className="access-input" type="password" autoComplete={registering ? "new-password" : "current-password"} required minLength={registering ? 8 : undefined} maxLength={128} value={authPassword} onChange={(event) => setAuthPassword(event.target.value)} placeholder={registering ? "At least 8 characters" : "Enter your password"} aria-describedby={accessError ? "access-error" : undefined} />
+            {accessError && <span className="access-error" id="access-error" role="alert">{accessError}</span>}
+            <button className="button button-primary access-submit" type="submit" disabled={unlocking}>
+              {unlocking ? (registering ? "Creating account…" : "Signing in…") : (registering ? "Create my account" : "Log in")} {!unlocking && <Icon name="arrow" size={17} />}
+            </button>
+            <div className="landing-auth-switch">
+              <span>{registering ? "Already have an account?" : "New to Nurselys?"}</span>
+              <button type="button" onClick={() => { setAuthMode(registering ? "login" : "register"); setAccessError(""); }}>
+                {registering ? "Log in" : "Create an account"}
+              </button>
+            </div>
+            <div className="landing-login-note"><span aria-hidden="true">♡</span> Your learning journey is waiting for you.</div>
+          </form>
+        </div>
       </main>
     );
   }
@@ -387,9 +473,9 @@ function App() {
             <p>Road to topnotcher!</p>
             <span>kaya mo to love💚</span>
           </div>
-          <button className="profile">
-            <span className="avatar">E</span>
-            <span className="profile-copy"><strong>Elys</strong><small>4th year · Nursing</small></span>
+          <button className="profile" onClick={lockSite} title="Sign out">
+            <span className="avatar">{(user?.name || "U").slice(0, 1).toUpperCase()}</span>
+            <span className="profile-copy"><strong>{user?.name || "Student"}</strong><small>Sign out</small></span>
             <span className="profile-dots">···</span>
           </button>
         </div>
@@ -435,7 +521,7 @@ function App() {
           <div className="topbar-right">
             <div className="top-stat streak-stat"><span className="flame-icon"><Icon name="flame" size={19} /></span><strong>{progress.streak}</strong><span>day streak</span></div>
             <div className="top-stat xp-stat"><span className="xp-star">✳</span><strong>{progress.xp}</strong><span>XP</span></div>
-            <button className="top-avatar" aria-label="Lock study space" title="Lock study space" onClick={lockSite}>E</button>
+            <button className="top-avatar" aria-label="Sign out" title="Sign out" onClick={lockSite}>{(user?.name || "U").slice(0, 1).toUpperCase()}</button>
           </div>
         </header>
 
@@ -449,8 +535,9 @@ function App() {
           )}
 
           { ["path", "quiz", "chart"].includes(activeNav) && <PageMelodyArt page={activeNav} />}
-          {activeNav === "cards" ? <FlashcardModal cards={flashcards} loading={flashcardsLoading} error={flashcardsError} initialTopic={flashcardTopic} onClose={() => setActiveNav("home")} /> : activeNav === "study" ? <StudyRoom
+          {activeNav === "cards" ? <FlashcardModal cards={flashcards} loading={flashcardsLoading} error={flashcardsError} initialTopic={flashcardTopic} onDeleteCard={removeFlashcard} onClose={() => setActiveNav("home")} /> : activeNav === "study" ? <StudyRoom
             guides={studyGuides}
+            userName={user?.name}
             loading={studyGuidesLoading}
             error={studyGuidesError}
             initialSlug={studyRoomInitialSlug}
@@ -459,10 +546,12 @@ function App() {
             onClose={() => setActiveNav("home")}
             onStartQuiz={startStudyGuideQuiz}
             onBrowseFlashcards={(topic, slug) => openFlashcards(topic, slug)}
+            onDeleteGuide={removeStudyGuide}
             onSessionsChanged={applyStudySessionSummary}
           /> : <DashboardPages
             activeNav={activeNav}
             todayLabel={todayLabel}
+            user={user}
             dashboard={dashboard}
             studySessions={studySessions}
             taskStats={{ unfinishedTasks, completedTasks }}
@@ -475,7 +564,7 @@ function App() {
               reviewedGuideSlugs,
               nextGuideSlug,
             }}
-            actions={{ loadStudyGuides, openStudyRoom, startStudyGuideQuiz, addTask, toggleTask, removeTask, removeStudySession, onGeneratedStudyGuide: openGeneratedStudyGuide }}
+            actions={{ loadStudyGuides, openStudyRoom, startStudyGuideQuiz, addTask, toggleTask, removeTask, removeStudySession, removeStudyGuide, onGeneratedStudyGuide: openGeneratedStudyGuide }}
           />}
         </div>
       </main>      {activeStudySession && activeNav !== "study" && (

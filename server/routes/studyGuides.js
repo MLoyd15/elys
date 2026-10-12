@@ -10,9 +10,9 @@ import { awardProgress } from "../services/progress.js";
 
 const router = Router();
 
-router.get("/", async (_request, response, next) => {
+router.get("/", async (request, response, next) => {
   try {
-    const guides = await StudyGuide.find().lean();
+    const guides = await StudyGuide.find({ $or: [{ userId: request.userId }, { userId: { $exists: false } }] }).lean();
     guides.sort((a, b) => {
       const indexA = studyGuideCatalog.findIndex((guide) => guide.slug === a.slug);
       const indexB = studyGuideCatalog.findIndex((guide) => guide.slug === b.slug);
@@ -32,8 +32,10 @@ router.get("/", async (_request, response, next) => {
       sections,
       reflection,
       safetyNote,
+      userId,
     }) => ({
       slug,
+      userOwned: Boolean(userId),
       topic,
       source,
       readTime,
@@ -68,11 +70,11 @@ router.post("/generate", async (request, response, next) => {
     const { guide, flashcards } = buildStudyGuide(generatedText, fileName, text);
     let savedGuide;
     try {
-      savedGuide = await StudyGuide.create(guide);
-      await Flashcard.insertMany(flashcards);
+      savedGuide = await StudyGuide.create({ ...guide, userId: request.userId });
+      await Flashcard.insertMany(flashcards.map((card) => ({ ...card, userId: request.userId })));
     } catch (saveError) {
       await Promise.all([
-        Flashcard.deleteMany({ studyGuideSlug: guide.slug }),
+        Flashcard.deleteMany({ studyGuideSlug: guide.slug, userId: request.userId }),
         savedGuide ? StudyGuide.deleteOne({ _id: savedGuide._id }) : Promise.resolve(),
       ]);
       throw saveError;
@@ -81,6 +83,7 @@ router.post("/generate", async (request, response, next) => {
     response.status(201).json({
       guide: {
         slug: guide.slug,
+        userOwned: true,
         topic: guide.topic,
         source: guide.source,
         readTime: guide.readTime,
@@ -100,7 +103,7 @@ router.post("/generate", async (request, response, next) => {
 
 router.get("/:slug/quiz", async (request, response, next) => {
   try {
-    const guide = await StudyGuide.findOne({ slug: request.params.slug }).lean();
+    const guide = await StudyGuide.findOne({ slug: request.params.slug, $or: [{ userId: request.userId }, { userId: { $exists: false } }] }).lean();
     if (!guide) return response.status(404).json({ error: "Study guide not found." });
     response.json({
       kind: "study-guide",
@@ -120,7 +123,7 @@ router.get("/:slug/quiz", async (request, response, next) => {
 
 router.post("/:slug/attempt", async (request, response, next) => {
   try {
-    const guide = await StudyGuide.findOne({ slug: request.params.slug }).lean();
+    const guide = await StudyGuide.findOne({ slug: request.params.slug, $or: [{ userId: request.userId }, { userId: { $exists: false } }] }).lean();
     if (!guide) return response.status(404).json({ error: "Study guide not found." });
     const answers = request.body?.answers;
     if (
@@ -139,7 +142,7 @@ router.post("/:slug/attempt", async (request, response, next) => {
       0,
     );
     const earnedXp = correct * 10 + (correct === guide.quiz.length ? 10 : 0);
-    const progress = await Progress.findOne({ key: "default" });
+    const progress = await Progress.findOne({ userId: request.userId });
     if (!progress) throw new Error("Study progress is not initialized.");
     const { awardedXp, isFirstCompletion } = await awardProgress(progress, {
       completionField: "completedStudyQuizzes",
@@ -160,4 +163,18 @@ router.post("/:slug/attempt", async (request, response, next) => {
   }
 });
 
+
+router.delete("/:slug", async (request, response, next) => {
+  try {
+    const guide = await StudyGuide.findOneAndDelete({ slug: request.params.slug, userId: request.userId });
+    if (!guide) return response.status(404).json({ error: "Your study guide was not found." });
+    await Promise.all([
+      Flashcard.deleteMany({ studyGuideSlug: guide.slug, userId: request.userId }),
+      Progress.updateOne({ userId: request.userId }, { $pull: { completedStudyQuizzes: guide.slug } }),
+    ]);
+    response.status(204).end();
+  } catch (error) {
+    next(error);
+  }
+});
 export default router;

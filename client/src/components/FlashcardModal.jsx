@@ -8,7 +8,7 @@ import "../styles/FlashcardModal.css";
 const pad = (value) => String(value).padStart(2, "0");
 const melodyImages = [melodyImageOne, melodyImageTwo, melodyImageThree];
 
-export default function FlashcardModal({ cards, loading, error, onClose, initialTopic = "All topics" }) {
+export default function FlashcardModal({ cards, loading, error, onClose, onDeleteCard, initialTopic = "All topics" }) {
   const [topic, setTopic] = useState(initialTopic);
   const [cardIndex, setCardIndex] = useState(0);
   const [flipped, setFlipped] = useState(false);
@@ -26,6 +26,11 @@ export default function FlashcardModal({ cards, loading, error, onClose, initial
   const allRemembered = deck.length > 0 && rememberedCount === deck.length;
   const progress = deck.length ? (rememberedCount / deck.length) * 100 : 0;
   const topicOptions = ["All topics", ...topics];
+
+  useEffect(() => {
+    setCardIndex((index) => Math.min(index, Math.max(deck.length - 1, 0)));
+    setFlipped(false);
+  }, [cards, topic]);
 
   useEffect(() => {
     if (!topicOpen) return undefined;
@@ -220,6 +225,9 @@ export default function FlashcardModal({ cards, loading, error, onClose, initial
               </div>
             )}
           </div>
+          {!loading && !error && card?.userOwned && (
+            <button type="button" className="fc-delete-card" onClick={() => onDeleteCard?.(card)}><Icon name="trash" size={14} /> Delete card</button>
+          )}
           {!loading && !error && (
             <span className={`fc-count ${allRemembered ? "is-complete" : ""}`}>
               {allRemembered ? "All remembered ✓" : `${rememberedCount} of ${deck.length} remembered`}

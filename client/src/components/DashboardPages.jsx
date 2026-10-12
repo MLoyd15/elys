@@ -41,6 +41,7 @@ export default function DashboardPages({
   taskStats,
   reviewStats,
   studyState,
+  user,
   actions,
 }) {
   const { tasks, progress } = dashboard;
@@ -68,7 +69,7 @@ export default function DashboardPages({
             <div>
               <div className="eyebrow">{todayLabel} <span className="tiny-sun"><Icon name="spark" size={13} /></span></div>
               <h1>Your review, at a glance</h1>
-              <p className="welcome-subtitle">Welcome back, Elys. Here’s how your road to topnotcher is going.</p>
+              <p className="welcome-subtitle">Welcome back, {user?.name || "there"}. Here’s how your road to topnotcher is going.</p>
             </div>
             <div className="overview-date-pill"><Icon name="chart" size={17} /> Review statistics</div>
           </section>
@@ -179,6 +180,7 @@ export default function DashboardPages({
                       >
                         {isReviewed ? "Review unit" : "Study unit"} <Icon name="arrow" size={16} />
                       </button>
+                      {guide.userOwned && <button className="study-material-delete" onClick={() => actions.removeStudyGuide(guide.slug)}><Icon name="trash" size={14} /> Delete unit</button>}
                     </div>
                   </article>
                 );
@@ -224,6 +226,7 @@ export default function DashboardPages({
                     >
                       <Icon name="arrow" size={17} />
                     </button>
+                    {guide.userOwned && <button className="study-material-delete" onClick={() => actions.removeStudyGuide(guide.slug)}><Icon name="trash" size={14} /> Delete quiz</button>}
                   </div>
                 </article>
               ))}

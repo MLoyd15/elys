@@ -23,15 +23,15 @@ function serializeFolder(folder) {
   };
 }
 
-async function validFolderId(folderId) {
+async function validFolderId(folderId, userId) {
   if (folderId === null || folderId === "") return true;
   if (typeof folderId !== "string" || !mongoose.isValidObjectId(folderId)) return false;
-  return Boolean(await NoteFolder.exists({ _id: folderId }));
+  return Boolean(await NoteFolder.exists({ _id: folderId, userId }));
 }
 
-router.get("/folders", async (_request, response, next) => {
+router.get("/folders", async (request, response, next) => {
   try {
-    const folders = await NoteFolder.find().sort({ name: 1 }).lean();
+    const folders = await NoteFolder.find({ userId: request.userId }).sort({ name: 1 }).lean();
     response.json(folders.map(serializeFolder));
   } catch (error) {
     next(error);
@@ -44,9 +44,9 @@ router.post("/folders", async (request, response, next) => {
     if (!name || name.length > 60) {
       return response.status(400).json({ error: "A folder name must be 1–60 characters." });
     }
-    const existingFolder = await NoteFolder.findOne({ name }).collation({ locale: "en", strength: 2 });
+    const existingFolder = await NoteFolder.findOne({ name, userId: request.userId }).collation({ locale: "en", strength: 2 });
     if (existingFolder) return response.status(409).json({ error: "A folder with that name already exists." });
-    const folder = await NoteFolder.create({ name });
+    const folder = await NoteFolder.create({ name, userId: request.userId });
     response.status(201).json(serializeFolder(folder));
   } catch (error) {
     if (error.code === 11000) return response.status(409).json({ error: "A folder with that name already exists." });
@@ -54,9 +54,9 @@ router.post("/folders", async (request, response, next) => {
   }
 });
 
-router.get("/", async (_request, response, next) => {
+router.get("/", async (request, response, next) => {
   try {
-    const notes = await Note.find().sort({ updatedAt: -1, createdAt: -1 }).lean();
+    const notes = await Note.find({ userId: request.userId }).sort({ updatedAt: -1, createdAt: -1 }).lean();
     response.json(notes.map(serializeNote));
   } catch (error) {
     next(error);
@@ -66,10 +66,10 @@ router.get("/", async (_request, response, next) => {
 router.post("/", async (request, response, next) => {
   try {
     const folderId = request.body?.folderId ?? null;
-    if (!await validFolderId(folderId)) {
+    if (!await validFolderId(folderId, request.userId)) {
       return response.status(400).json({ error: "Choose a valid folder." });
     }
-    const note = await Note.create({ folderId: folderId || null });
+    const note = await Note.create({ folderId: folderId || null, userId: request.userId });
     response.status(201).json(serializeNote(note));
   } catch (error) {
     next(error);
@@ -87,13 +87,12 @@ router.patch("/:id", async (request, response, next) => {
     if (!mongoose.isValidObjectId(request.params.id)) {
       return response.status(400).json({ error: "Invalid note ID." });
     }
-    if (folderId !== undefined && !await validFolderId(folderId)) {
+    if (folderId !== undefined && !await validFolderId(folderId, request.userId)) {
       return response.status(400).json({ error: "Choose a valid folder." });
     }
     const updates = { title, content };
     if (folderId !== undefined) updates.folderId = folderId || null;
-    const note = await Note.findByIdAndUpdate(
-      request.params.id,
+    const note = await Note.findOneAndUpdate({ _id: request.params.id, userId: request.userId },
       updates,
       { new: true, runValidators: true },
     );
@@ -109,7 +108,7 @@ router.delete("/:id", async (request, response, next) => {
     if (!mongoose.isValidObjectId(request.params.id)) {
       return response.status(400).json({ error: "Invalid note ID." });
     }
-    const note = await Note.findByIdAndDelete(request.params.id);
+    const note = await Note.findOneAndDelete({ _id: request.params.id, userId: request.userId });
     if (!note) return response.status(404).json({ error: "Note not found." });
     response.status(204).end();
   } catch (error) {

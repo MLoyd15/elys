@@ -6,7 +6,7 @@ const router = Router();
 
 router.get("/", async (request, response, next) => {
   try {
-    const filter = {};
+    const filter = { $or: [{ userId: request.userId }, { userId: { $exists: false } }] };
     if (typeof request.query.topic === "string" && request.query.topic !== "All topics") {
       filter.topic = request.query.topic;
     }
@@ -22,14 +22,26 @@ router.get("/", async (request, response, next) => {
       if (indexB >= 0) return 1;
       return new Date(a.createdAt || 0) - new Date(b.createdAt || 0);
     });
-    response.json(cards.map(({ slug, topic, source, question, answer, hint }) => ({
+    response.json(cards.map(({ slug, topic, source, question, answer, hint, userId, studyGuideSlug }) => ({
       slug,
+      studyGuideSlug,
       topic,
       source: source || "General nursing review",
       question,
       answer,
       hint,
+      userOwned: Boolean(userId),
     })));
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.delete("/:slug", async (request, response, next) => {
+  try {
+    const card = await Flashcard.findOneAndDelete({ slug: request.params.slug, userId: request.userId });
+    if (!card) return response.status(404).json({ error: "Your flashcard was not found." });
+    response.status(204).end();
   } catch (error) {
     next(error);
   }

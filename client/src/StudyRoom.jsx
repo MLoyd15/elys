@@ -72,7 +72,7 @@ function formatTimer(seconds) {
   return [hours, minutes, remainingSeconds].map((part) => String(part).padStart(2, "0")).join(":");
 }
 
-export default function StudyRoom({ guides, loading, error, initialSlug, readGuides, onGuideReviewed, onClose, onStartQuiz, onBrowseFlashcards, onSessionsChanged }) {
+export default function StudyRoom({ guides, userName, loading, error, initialSlug, readGuides, onGuideReviewed, onClose, onStartQuiz, onBrowseFlashcards, onSessionsChanged, onDeleteGuide }) {
   const [selectedSlug, setSelectedSlug] = useState(initialSlug || "");
   const [savingMaterials, setSavingMaterials] = useState(false);
   const [saveMessage, setSaveMessage] = useState("");
@@ -194,7 +194,7 @@ export default function StudyRoom({ guides, loading, error, initialSlug, readGui
             <span className="brand-name">nurse<span>lys</span></span>
           </a>
           <div className="study-room-title-block">
-            <span className="section-kicker">ELYS'S STUDY SPACE</span>
+            <span className="section-kicker">{userName ? userName.toUpperCase() + " · STUDY SPACE" : "YOUR STUDY SPACE"}</span>
             <h1 id="study-room-title">Study room</h1>
           </div>
           <span className="study-read-count">{readGuides.length} of {guides.length} reviewed</span>
@@ -263,6 +263,7 @@ export default function StudyRoom({ guides, loading, error, initialSlug, readGui
                   <div className="study-practice-actions">
                     <button className="study-quiz-button" onClick={() => onStartQuiz(guide.slug)}>Take quiz</button>
                     <button className="study-flashcard-button" onClick={() => onBrowseFlashcards(guide.topic, guide.slug)}>Review flashcards</button>
+                    {guide.userOwned && <button className="study-material-delete" onClick={() => onDeleteGuide?.(guide.slug)}><Icon name="trash" size={14} /> Delete unit & quiz</button>}
                     <button className="study-save-button" onClick={saveMaterials} disabled={savingMaterials}>
                       <Icon name="download" size={14} /> {savingMaterials ? "Saving…" : "Save all materials"}
                     </button>

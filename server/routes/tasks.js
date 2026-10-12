@@ -30,7 +30,7 @@ router.post("/", async (request, response, next) => {
     if (!isValidDueDate(dueDate)) {
       return response.status(400).json({ error: "Enter a valid task deadline." });
     }
-    const task = await Task.create({ title, dueDate, dueLabel: dueDate ? "" : "No deadline" });
+    const task = await Task.create({ title, dueDate, dueLabel: dueDate ? "" : "No deadline", userId: request.userId });
     response.status(201).json(serializeTask(task));
   } catch (error) {
     next(error);
@@ -53,8 +53,7 @@ router.patch("/:id", async (request, response, next) => {
       updates.dueDate = request.body.dueDate || "";
       updates.dueLabel = request.body.dueDate ? "" : "No deadline";
     }
-    const task = await Task.findByIdAndUpdate(
-      request.params.id,
+    const task = await Task.findOneAndUpdate({ _id: request.params.id, userId: request.userId },
       updates,
       { new: true, runValidators: true },
     );
@@ -67,7 +66,7 @@ router.patch("/:id", async (request, response, next) => {
 
 router.delete("/:id", async (request, response, next) => {
   try {
-    const task = await Task.findByIdAndDelete(request.params.id);
+    const task = await Task.findOneAndDelete({ _id: request.params.id, userId: request.userId });
     if (!task) return response.status(404).json({ error: "Task not found." });
     response.status(204).end();
   } catch (error) {
