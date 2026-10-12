@@ -30,6 +30,83 @@ function formatElapsedStudyTime(totalSeconds) {
   return [hours, minutes, seconds].map((part) => String(part).padStart(2, "0")).join(":");
 }
 
+function LandingFeatureScreenshot({ featureIndex }) {
+  const feature = landingFeatures[featureIndex];
+  return (
+    <div className="landing-shot-window" role="img" aria-label={`${feature.name} interface preview`}>
+      <div className="landing-shot-toolbar">
+        <span className="landing-shot-dots" aria-hidden="true"><i /><i /><i /></span>
+        <span className="landing-shot-brand"><b>n</b> nurselys</span>
+        <span className="landing-shot-avatar"><img src={melodyStudyImage} alt="" /></span>
+      </div>
+      <div className="landing-shot-workspace">
+        <aside className="landing-shot-sidebar" aria-hidden="true">
+          <span className="landing-shot-side-active">Overview</span>
+          <span>Learning path</span>
+          <span>Quick quizzes</span>
+          <span>Study room</span>
+          <span>Flashcards</span>
+        </aside>
+        <div className="landing-shot-main">
+          <div className="landing-shot-heading">
+            <span>{feature.name.toUpperCase()}</span>
+            <strong>{feature.name === "Study room & timer" ? "00:24:18" : "Your study space"}</strong>
+          </div>
+          {featureIndex === 0 && (
+            <>
+              <h3>Your review, at a glance</h3>
+              <div className="landing-shot-stats"><b>08<small> quizzes</small></b><b>125<small> XP</small></b><b>42<small> min</small></b></div>
+              <div className="landing-shot-panel"><strong>Road to topnotcher</strong><span className="landing-shot-progress"><i /></span><small>8 of 12 study units complete</small></div>
+            </>
+          )}
+          {featureIndex === 1 && (
+            <>
+              <h3>Keep your learning moving</h3>
+              <div className="landing-shot-list"><b className="is-current"><i>01</i> Critical care foundations <small>5 min read</small></b><b><i>02</i> Ethics and legal <small>6 min read</small></b><b><i>03</i> Quality and safety <small>5 min read</small></b></div>
+            </>
+          )}
+          {featureIndex === 2 && (
+            <>
+              <h3>Quick quiz</h3><p className="landing-shot-question">Which action best supports a clear clinical handover?</p>
+              <div className="landing-shot-answers"><span>A. Use SBAR to organize key details</span><span>B. Share only the latest vital sign</span><span>C. Wait until the end of the shift</span></div>
+              <small className="landing-shot-step">QUESTION 3 OF 10</small>
+            </>
+          )}
+          {featureIndex === 3 && (
+            <>
+              <h3>The foundations of critical care</h3><p className="landing-shot-paragraph">Read your nursing guide, review learning goals, and track a real study session.</p>
+              <div className="landing-shot-panel"><strong>After this unit, you can…</strong><small>• Describe the goals of critical care</small><small>• Compare focused and ongoing assessment</small></div>
+            </>
+          )}
+          {featureIndex === 4 && (
+            <div className="landing-shot-flashcard"><small>CRITICAL CARE · 04 OF 18</small><strong>What does a focused assessment help a nurse identify?</strong><span>Tap to reveal answer <i>↻</i></span></div>
+          )}
+          {featureIndex === 5 && (
+            <>
+              <h3>Today’s to-dos <em>2 left</em></h3>
+              <div className="landing-shot-tasks"><span className="is-done"><i>✓</i> Review respiratory assessment</span><span><i /> Complete critical care quiz</span><span><i /> Write three study notes</span></div>
+            </>
+          )}
+          {featureIndex === 6 && (
+            <>
+              <h3>Quick notes</h3><div className="landing-shot-note"><b>Critical care — key reminders</b><span>• Reassess when a patient’s condition changes</span><span>• Use SBAR to structure handover</span><span className="landing-shot-note-line" /></div>
+            </>
+          )}
+          {featureIndex === 7 && (
+            <>
+              <h3>Make a guide from your materials</h3><div className="landing-shot-upload"><span>＋</span><b>Drop a PDF or text file here</b><small>We’ll turn it into a focused study guide</small></div><span className="landing-shot-generate">Generate study guide <i>→</i></span>
+            </>
+          )}
+          {featureIndex === 8 && (
+            <>
+              <h3>Your progress is adding up</h3><div className="landing-shot-progress-row"><div className="landing-shot-ring"><b>67<small>%</small></b></div><div className="landing-shot-bars"><span>Quizzes<i><b style={{ width: "78%" }} /></i></span><span>Study time<i><b style={{ width: "58%" }} /></i></span><span>Study streak<i><b style={{ width: "85%" }} /></i></span></div></div>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
 function App() {
   const [dashboard, setDashboard] = useState(null);
   const [activeNav, setActiveNav] = useState("home");
@@ -362,21 +439,10 @@ function App() {
                     </button>
                   ))}
                 </div>
-                <div className="landing-feature-preview" aria-live="polite" aria-atomic="true">
-                  <span className="landing-feature-preview-icon" aria-hidden="true">{landingFeatures[landingFeature].icon}</span>
-                  <div>
-                    <strong>{landingFeatures[landingFeature].name}</strong>
-                    <p>{landingFeatures[landingFeature].description}</p>
-                  </div>
-                </div>
+                <p className="landing-feature-description" aria-live="polite" aria-atomic="true">{landingFeatures[landingFeature].description}</p>
+                <LandingFeatureScreenshot key={landingFeature} featureIndex={landingFeature} />
               </div>
-              <div className="landing-art" aria-hidden="true">
-                <span className="landing-art-orbit landing-art-orbit-one" />
-                <span className="landing-art-orbit landing-art-orbit-two" />
-                <span className="landing-art-spark landing-art-spark-one">✦</span>
-                <span className="landing-art-spark landing-art-spark-two">✧</span>
-                <img src={melodyStudyImage} alt="" />
-              </div>
+
             </section>
             <div className="landing-footer"><span>✿</span> A calm little corner to learn, grow, and glow.</div>
           </section>
