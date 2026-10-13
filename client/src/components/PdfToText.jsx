@@ -5,6 +5,13 @@ import pdfWorker from "pdfjs-dist/build/pdf.worker.min.mjs?url";
 import { Icon } from "../icons.jsx";
 
 const MAX_STUDY_TEXT_CHARACTERS = 10000;
+const MAX_CUSTOM_PROMPT_CHARACTERS = 500;
+const difficultyOptions = [
+  { value: "beginner", label: "Beginner", detail: "Start with the essentials" },
+  { value: "intermediate", label: "Intermediate", detail: "Build confident understanding" },
+  { value: "advanced", label: "Advanced", detail: "Practice deeper application" },
+  { value: "other", label: "Other", detail: "Write your own instructions" },
+];
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorker;
 
@@ -42,8 +49,19 @@ export default function PdfToText({ onGenerated }) {
   const [error, setError] = useState("");
   const [copyMessage, setCopyMessage] = useState("");
   const [retryAvailable, setRetryAvailable] = useState(false);
+  const [difficulty, setDifficulty] = useState("intermediate");
+  const [customPrompt, setCustomPrompt] = useState("");
+
+  function hasValidGenerationOptions() {
+    if (difficulty === "other" && !customPrompt.trim()) {
+      setError("Add your instructions for the Other difficulty before generating materials.");
+      return false;
+    }
+    return true;
+  }
 
   async function generateStudyMaterials(sourceText, sourceName) {
+    if (!hasValidGenerationOptions()) return;
     setError("");
     setCopyMessage("");
     setRetryAvailable(false);
@@ -52,7 +70,7 @@ export default function PdfToText({ onGenerated }) {
     try {
       const result = await api("/study-guides/generate", {
         method: "POST",
-        body: JSON.stringify({ fileName: sourceName, text: sourceText }),
+        body: JSON.stringify({ fileName: sourceName, text: sourceText, difficulty, customPrompt: difficulty === "other" ? customPrompt.trim() : "" }),
       });
       setCopyMessage("Your study materials are saved. Opening the Study Room…");
       onGenerated(result.guide);
@@ -76,6 +94,7 @@ export default function PdfToText({ onGenerated }) {
     const file = event.target.files?.[0];
     event.target.value = "";
     if (!file) return;
+    if (!hasValidGenerationOptions()) return;
 
     setFileName("");
     setPageCount(0);
@@ -167,6 +186,35 @@ export default function PdfToText({ onGenerated }) {
           <p>Generate a saved study guide, 12 flashcards, and a 10-question quiz. Text is sent to Gemini; generated materials are shared with app users. Don’t include patient identifiers or confidential information.</p>
         </div>
       </div>
+
+      <fieldset className="ai-guide-difficulty" disabled={loading}>
+        <legend>Choose a difficulty</legend>
+        <div className="ai-guide-difficulty-options">
+          {difficultyOptions.map((option) => (
+            <label className={`ai-guide-difficulty-option ${difficulty === option.value ? "selected" : ""}`} key={option.value}>
+              <input type="radio" name="ai-guide-difficulty" value={option.value} checked={difficulty === option.value} onChange={() => { setDifficulty(option.value); setError(""); }} />
+              <span className="ai-guide-difficulty-radio" aria-hidden="true" />
+              <span className="ai-guide-difficulty-copy"><strong>{option.label}</strong><small>{option.detail}</small></span>
+            </label>
+          ))}
+        </div>
+        {difficulty === "other" && (
+          <div className="ai-guide-custom-prompt-wrap">
+            <label htmlFor="ai-guide-custom-prompt">Your instructions for the generated materials</label>
+            <textarea
+              id="ai-guide-custom-prompt"
+              className="ai-guide-custom-prompt"
+              value={customPrompt}
+              onChange={(event) => { setCustomPrompt(event.target.value); setError(""); }}
+              maxLength={MAX_CUSTOM_PROMPT_CHARACTERS}
+              placeholder="For example: Focus on prioritization and explain unfamiliar terms simply."
+              disabled={loading}
+              aria-describedby="ai-guide-custom-prompt-hint"
+            />
+            <small id="ai-guide-custom-prompt-hint">{customPrompt.length} / {MAX_CUSTOM_PROMPT_CHARACTERS} characters. Your instructions guide the style and focus.</small>
+          </div>
+        )}
+      </fieldset>
 
       <div className="ai-guide-input-tabs" role="group" aria-label="Choose study material source">
         <button type="button" className={`ai-guide-input-tab ${inputMode === "pdf" ? "active" : ""}`} aria-pressed={inputMode === "pdf"} onClick={() => switchInputMode("pdf")}>Upload PDF</button>

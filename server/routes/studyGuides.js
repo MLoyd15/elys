@@ -59,6 +59,13 @@ router.post("/generate", async (request, response, next) => {
   try {
     const fileName = typeof request.body?.fileName === "string" ? request.body.fileName.trim() : "";
     const text = typeof request.body?.text === "string" ? request.body.text.trim() : "";
+    const requestedDifficulty = request.body?.difficulty ?? "intermediate";
+    const allowedDifficulties = new Set(["beginner", "intermediate", "advanced", "other"]);
+    const difficulty = allowedDifficulties.has(requestedDifficulty) ? requestedDifficulty : "";
+    const customPrompt = typeof request.body?.customPrompt === "string" ? request.body.customPrompt.trim() : "";
+    if (!difficulty) return response.status(400).json({ error: "Choose a valid study difficulty." });
+    if (customPrompt.length > 500) return response.status(400).json({ error: "Custom instructions must be 500 characters or fewer." });
+    if (difficulty === "other" && !customPrompt) return response.status(400).json({ error: "Add your custom instructions before generating materials." });
     if (!fileName || fileName.length > 180 || !text) {
       return response.status(400).json({ error: "Provide a source name and non-empty text." });
     }
@@ -66,7 +73,7 @@ router.post("/generate", async (request, response, next) => {
       return response.status(413).json({ error: "Study material must be 10,000 characters or fewer. Shorten the text and try again." });
     }
 
-    const generatedText = await generateStudyMaterials({ fileName, text });
+    const generatedText = await generateStudyMaterials({ fileName, text, difficulty, customPrompt });
     const { guide, flashcards } = buildStudyGuide(generatedText, fileName, text);
     let savedGuide;
     try {
