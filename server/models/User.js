@@ -6,6 +6,7 @@ const userSchema = new mongoose.Schema({
   examDate: { type: String, default: "" },
   dailyGoalMinutes: { type: Number, min: 15, max: 600, default: 60 },
   companion: { type: String, enum: ["", "water", "melody", "fox"], default: "" },
+  theme: { type: String, enum: ["water", "melody", "fox"], default: "water" },
   email: { type: String, required: true, trim: true, lowercase: true, unique: true, maxlength: 254 },
   salt: { type: String, required: true },
   passwordHash: { type: String, required: true },

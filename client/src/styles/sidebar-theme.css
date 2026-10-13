@@ -161,14 +161,16 @@
 .companion-choice:focus-visible { outline: 3px solid rgb(183 134 207 / 35%); outline-offset: 3px; }
 .companion-choice.is-selected { border-color: #d590b3; box-shadow: inset 0 0 0 1px #d590b3, 0 10px 24px rgb(169 92 133 / 12%); }
 .companion-choice:disabled { cursor: wait; opacity: .75; }
-.companion-choice-art { display: grid; width: 132px; height: 120px; max-width: 100%; place-items: center; border: 1px solid white; border-radius: 22px; background: radial-gradient(circle at 50% 38%, #f5faff, #e6eeff 68%, #f8eaff); }
+.companion-choice-art { display: grid; width: 132px; height: 120px; max-width: 100%; overflow: hidden; place-items: center; border: 1px solid white; border-radius: 22px; background: radial-gradient(circle at 50% 38%, #f5faff, #e6eeff 68%, #f8eaff); }
 .companion-choice:first-child .companion-choice-art { background: radial-gradient(circle at 50% 38%, #effbff, #d9eaff 68%, #f1e1f8); }
-.companion-choice-art img { width: 100%; height: 100%; padding: 8px; object-fit: contain; image-rendering: pixelated; filter: drop-shadow(0 7px 7px rgb(81 95 159 / 15%)); }
-.companion-choice > strong { color: #4e597d; font-family: var(--serif); font-size: 19px; }
+.companion-choice-art img { display: block; width: 82%; height: 82%; max-width: 100%; max-height: 100%; padding: 0; object-fit: contain; image-rendering: pixelated; filter: drop-shadow(0 7px 7px rgb(81 95 159 / 15%)); }
+.companion-choice > strong { display: block; max-width: 100%; padding: 5px 12px; border: 1px solid rgb(255 255 255 / 94%); border-radius: 999px; color: #4e597d; background: rgb(255 255 255 / 76%); box-shadow: 0 4px 10px rgb(81 75 125 / 6%); font-family: var(--serif); font-size: 16px; line-height: 1.25; overflow-wrap: anywhere; }
 .companion-choice > span { color: #8f8498; font-size: 10px; }
 .companion-choice-evolutions { display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; padding: 7px; border: 1px solid white; border-radius: 12px; background: rgb(255 255 255 / 57%); }
 .companion-choice-evolutions img { width: 54px; height: 47px; object-fit: contain; image-rendering: pixelated; }
 .companion-choice > small { color: #817895; font-size: 8px; font-weight: 800; }
+.profile-settings-form select { min-height: 40px; width: 100%; padding: 0 11px; border: 1px solid #efd5e0; border-radius: 10px; color: #684d5d; background: rgb(255 255 255 / 82%); font: inherit; font-size: 12px; }
+.profile-settings-form select:focus { outline: 3px solid rgb(216 117 148 / 16%); border-color: #d98dab; }
 @media (max-width: 560px) {
   .profile-water-pet { grid-template-columns: 43px minmax(0, 1fr); }
   .profile-water-pet > img { width: 43px; height: 43px; }
@@ -186,6 +188,40 @@
   .companion-picker-backdrop, .companion-picker-dialog { animation: none; }
   .companion-choice { transition: none; }
 }
+
+/* The companion theme is an account preference and applies across every page. */
+html[data-companion-theme="water"] body { background: #eff9ff; }
+html[data-companion-theme="water"] body::before { background: radial-gradient(560px 460px at 10% 6%, rgb(116 194 230 / 27%), transparent 70%), radial-gradient(520px 500px at 90% 12%, rgb(188 224 249 / 46%), transparent 70%), radial-gradient(620px 520px at 72% 94%, rgb(130 194 225 / 30%), transparent 70%), linear-gradient(160deg, #f8fdff, #edf7ff); }
+html[data-companion-theme="water"] .sidebar { border-right-color: rgb(255 255 255 / 80%); background: rgb(226 243 252 / 78%); }
+html[data-companion-theme="water"] .sidebar .nav-item.active { color: #286c91; background: rgb(255 255 255 / 75%); }
+html[data-companion-theme="water"] .topbar { background: rgb(248 253 255 / 78%); }
+html[data-companion-theme="water"] .hero-card { background: linear-gradient(115deg, rgb(226 244 252 / 86%), rgb(235 240 252 / 80%), rgb(248 245 255 / 86%)); }
+html[data-companion-theme="water"] .review-stat-card, html[data-companion-theme="water"] .overview-review-card, html[data-companion-theme="water"] .study-path-card, html[data-companion-theme="water"] .todo-card { border-color: rgb(255 255 255 / 92%); background: rgb(255 255 255 / 72%); }
+html[data-companion-theme="melody"] body { background: #fdf0f5; }
+html[data-companion-theme="melody"] body::before { background: radial-gradient(560px 460px at 10% 6%, rgb(215 127 159 / 40%), transparent 70%), radial-gradient(520px 500px at 90% 12%, rgb(239 170 198 / 46%), transparent 70%), radial-gradient(620px 520px at 72% 94%, rgb(215 127 159 / 32%), transparent 70%), linear-gradient(160deg, #fff7fa, #fdf0f5); }
+html[data-companion-theme="fox"] body { color: #eee8fa; background: #100d18; }
+html[data-companion-theme="fox"] body::before { background: radial-gradient(620px 510px at 8% 5%, rgb(92 48 151 / 38%), transparent 70%), radial-gradient(560px 480px at 92% 18%, rgb(56 39 84 / 56%), transparent 72%), radial-gradient(700px 580px at 65% 96%, rgb(89 35 117 / 30%), transparent 74%), linear-gradient(155deg, #171222, #100d18 70%, #1c1427); }
+html[data-companion-theme="fox"] .app-shell, html[data-companion-theme="fox"] .main-content { color: #eee8fa; }
+html[data-companion-theme="fox"] .sidebar { border-right-color: rgb(198 157 255 / 16%); background: rgb(25 19 36 / 91%); box-shadow: 12px 0 38px rgb(0 0 0 / 25%); }
+html[data-companion-theme="fox"] .sidebar .brand, html[data-companion-theme="fox"] .sidebar .nav-label, html[data-companion-theme="fox"] .sidebar .nav-item, html[data-companion-theme="fox"] .sidebar .profile { color: #e8dcfb; }
+html[data-companion-theme="fox"] .sidebar .brand-mark, html[data-companion-theme="fox"] .sidebar .avatar { color: #f3eaff; background: #37264f; }
+html[data-companion-theme="fox"] .sidebar .nav-item.active { background: #38244e; color: #f3dcff; }
+html[data-companion-theme="fox"] .sidebar .sidebar-note { color: #f1e8ff; border-color: rgb(206 169 255 / 20%); background: #241b31; }
+html[data-companion-theme="fox"] .topbar { color: #eee8fa; border-color: rgb(206 169 255 / 16%); background: rgb(24 18 34 / 88%); }
+html[data-companion-theme="fox"] .topbar :is(a, span, strong, button) { color: inherit; }
+html[data-companion-theme="fox"] .page-title-row h1, html[data-companion-theme="fox"] .overview-welcome h1, html[data-companion-theme="fox"] .hero-card h2 { color: #f2eaff; }
+html[data-companion-theme="fox"] .page-content :is(p, small, .section-kicker, .page-title-row > p) { color: #b9a9ca; }
+html[data-companion-theme="fox"] .hero-card, html[data-companion-theme="fox"] .review-stat-card, html[data-companion-theme="fox"] .overview-review-card, html[data-companion-theme="fox"] .study-path-card, html[data-companion-theme="fox"] .todo-card, html[data-companion-theme="fox"] .lesson-card, html[data-companion-theme="fox"] .notepad-workspace, html[data-companion-theme="fox"] .pdf-text-workspace { color: #eee8fa; border-color: rgb(206 169 255 / 17%); background: rgb(34 26 47 / 83%); box-shadow: 0 12px 35px rgb(0 0 0 / 22%); }
+html[data-companion-theme="fox"] .hero-card h2 span, html[data-companion-theme="fox"] .review-stat-card strong { color: #d3a1ff; }
+html[data-companion-theme="fox"] .page-content button:not(.nav-item) { border-color: rgb(207 171 255 / 24%); }
+html[data-companion-theme="fox"] .profile-menu, html[data-companion-theme="fox"] .learner-profile-dialog, html[data-companion-theme="fox"] .companion-interaction-dialog { color: #eee8fa; border-color: rgb(207 171 255 / 25%); background: linear-gradient(145deg, #21192e, #171220 80%); }
+html[data-companion-theme="fox"] .profile-menu :is(h2, strong, label, input, select), html[data-companion-theme="fox"] .learner-profile-dialog h2 { color: #f0e7ff; }
+html[data-companion-theme="fox"] .profile-menu input, html[data-companion-theme="fox"] .profile-menu select { border-color: #514064; background: #251d31; }
+html[data-companion-theme="fox"] .profile-form-section, html[data-companion-theme="fox"] .profile-menu-stats > div { border-color: #4c3a60; background: rgb(49 37 64 / 76%); }
+html[data-companion-theme="fox"] .profile-water-pet { border-color: #4c3a60; background: linear-gradient(110deg, #281f35, #30233e); }
+html[data-companion-theme="fox"] .companion-choice { color: #eee8fa; border-color: #4b3a60; background: linear-gradient(145deg, #2a2038, #1c1627); }
+html[data-companion-theme="fox"] .companion-choice > strong { color: #f3eaff; background: #30233e; }
+html[data-companion-theme="fox"] .companion-choice > span, html[data-companion-theme="fox"] .companion-choice > small { color: #c5b3dc; }
 @media (prefers-reduced-motion: reduce) {
   .profile-menu-backdrop, .profile-menu, .learner-profile-dialog, .companion-interaction-backdrop, .companion-interaction-dialog { animation: none; }
   .profile-menu-stats > div, .profile-menu-close, .profile-settings-form input, .profile-save-button, .profile-lock-button, .learner-profile-rank-track span { transition: none; }

@@ -23,7 +23,7 @@ const starterTasks = [
 ];
 
 function publicUser(user) {
-  return { id: user._id.toString(), name: user.name, email: user.email, yearLevel: user.yearLevel || "", examDate: user.examDate || "", dailyGoalMinutes: user.dailyGoalMinutes || 60, companion: user.companion || "" };
+  return { id: user._id.toString(), name: user.name, email: user.email, yearLevel: user.yearLevel || "", examDate: user.examDate || "", dailyGoalMinutes: user.dailyGoalMinutes || 60, companion: user.companion || "", theme: user.theme || "water" };
 }
 
 async function passwordDigest(password, salt) {
@@ -163,8 +163,14 @@ router.patch("/profile", async (request, response, next) => {
       updates.dailyGoalMinutes = dailyGoalMinutes;
     }
     if (Object.prototype.hasOwnProperty.call(body, "companion")) {
-      if (!["water", "melody", "fox"].includes(body.companion)) return response.status(400).json({ error: "Choose a valid study companion." });
-      updates.companion = body.companion;
+      const companion = typeof body.companion === "string" ? body.companion.trim().toLowerCase() : "";
+      if (!["water", "melody", "fox"].includes(companion)) return response.status(400).json({ error: "Choose a valid study companion." });
+      updates.companion = companion;
+    }
+    if (Object.prototype.hasOwnProperty.call(body, "theme")) {
+      const theme = typeof body.theme === "string" ? body.theme.trim().toLowerCase() : "";
+      if (!["water", "melody", "fox"].includes(theme)) return response.status(400).json({ error: "Choose a valid companion theme." });
+      updates.theme = theme;
     }
     if (Object.keys(updates).length === 0) return response.status(400).json({ error: "Choose a profile setting to update." });
     let updatedUser;

@@ -109,6 +109,7 @@ function App() {
   const [profileYearLevel, setProfileYearLevel] = useState("");
   const [profileExamDate, setProfileExamDate] = useState("");
   const [profileDailyGoal, setProfileDailyGoal] = useState("60");
+  const [profileTheme, setProfileTheme] = useState("water");
   const [profileSaving, setProfileSaving] = useState(false);
   const [profileSaved, setProfileSaved] = useState(false);
   const [profileError, setProfileError] = useState("");
@@ -139,7 +140,12 @@ function App() {
     setProfileYearLevel(user.yearLevel || "");
     setProfileExamDate(user.examDate || "");
     setProfileDailyGoal(String(user.dailyGoalMinutes || 60));
-  }, [user?.id, user?.name, user?.yearLevel, user?.examDate, user?.dailyGoalMinutes]);
+    setProfileTheme(user.theme || "water");
+  }, [user?.id, user?.name, user?.yearLevel, user?.examDate, user?.dailyGoalMinutes, user?.theme]);
+
+  useEffect(() => {
+    document.documentElement.dataset.companionTheme = user?.theme || "water";
+  }, [user?.theme]);
 
   useEffect(() => {
     if (!profileOpen && !selectedLearner && !companionInteractionOpen && !companionPickerOpen) return undefined;
@@ -405,7 +411,7 @@ function App() {
     try {
       const result = await api("/auth/profile", {
         method: "PATCH",
-        body: JSON.stringify({ name: profileName, yearLevel: profileYearLevel, examDate: profileExamDate, dailyGoalMinutes: Number(profileDailyGoal), ...(user?.companion ? { companion: user.companion } : {}) }),
+        body: JSON.stringify({ name: profileName, yearLevel: profileYearLevel, examDate: profileExamDate, dailyGoalMinutes: Number(profileDailyGoal), theme: profileTheme, ...(user?.companion ? { companion: user.companion } : {}) }),
       });
       setUser(result.user);
       setLeaderboard((current) => current.map((player) => player.id === result.user.id ? { ...player, name: result.user.name } : player));
@@ -625,7 +631,7 @@ function App() {
     chart: "See how your completed study-unit quizzes add up.",
   };
   return (
-    <div className="app-shell" style={{ "--sidebar-width": `${sidebarWidth}px` }}>
+    <div className="app-shell" data-companion-theme={user?.theme || "water"} style={{ "--sidebar-width": `${sidebarWidth}px` }}>
       <aside className="sidebar">
         <a className="brand" href="#" onClick={(event) => event.preventDefault()}>
           <span className="brand-mark">n<span>+</span></span>
@@ -705,6 +711,7 @@ function App() {
                     <label>Year level<input value={profileYearLevel} onChange={(event) => { setProfileYearLevel(event.target.value); setProfileSaved(false); }} maxLength={50} placeholder="e.g. 4th year · Nursing" /></label>
                   </div>
                   <div className="profile-form-section"><span className="section-kicker">STUDY GOALS</span>
+                    <label>Color theme<select value={profileTheme} onChange={(event) => { setProfileTheme(event.target.value); setProfileSaved(false); }}><option value="water">Waterling glass</option><option value="melody">Melody pink</option><option value="fox">Fox purple &amp; black</option></select></label>
                     <label>Exam date<input type="date" value={profileExamDate} onChange={(event) => { setProfileExamDate(event.target.value); setProfileSaved(false); }} /></label>
                     {profileExamDate && <div className="profile-exam-countdown">✿ {daysUntilDate(profileExamDate) < 0 ? "Your exam date has passed" : daysUntilDate(profileExamDate) === 0 ? "Your exam is today" : `${daysUntilDate(profileExamDate)} days to go`}</div>}
                     <label>Daily study goal <span className="profile-input-suffix">minutes / day</span><input type="number" min="15" max="600" step="15" value={profileDailyGoal} onChange={(event) => { setProfileDailyGoal(event.target.value); setProfileSaved(false); }} required /></label>
