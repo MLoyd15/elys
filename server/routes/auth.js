@@ -23,7 +23,7 @@ const starterTasks = [
 ];
 
 function publicUser(user) {
-  return { id: user._id.toString(), name: user.name, email: user.email, yearLevel: user.yearLevel || "", examDate: user.examDate || "", dailyGoalMinutes: user.dailyGoalMinutes || 60 };
+  return { id: user._id.toString(), name: user.name, email: user.email, yearLevel: user.yearLevel || "", examDate: user.examDate || "", dailyGoalMinutes: user.dailyGoalMinutes || 60, companion: user.companion || "" };
 }
 
 async function passwordDigest(password, salt) {
@@ -133,24 +133,43 @@ router.patch("/profile", async (request, response, next) => {
   try {
     const userId = getSessionUserId(request);
     if (!userId) return response.status(401).json({ error: "Log in to update your profile." });
-    const name = typeof request.body?.name === "string" ? request.body.name.trim() : "";
-    const yearLevel = typeof request.body?.yearLevel === "string" ? request.body.yearLevel.trim() : "";
-    const examDate = typeof request.body?.examDate === "string" ? request.body.examDate.trim() : "";
-    const dailyGoalMinutes = Number(request.body?.dailyGoalMinutes);
-    if (name.length < 2 || name.length > 60) return response.status(400).json({ error: "Display name must be between 2 and 60 characters." });
-    if (yearLevel.length > 50) return response.status(400).json({ error: "Year level must be 50 characters or fewer." });
-    if (examDate) {
-      const parsedDate = new Date(`${examDate}T00:00:00.000Z`);
-      if (!/^\d{4}-\d{2}-\d{2}$/.test(examDate) || Number.isNaN(parsedDate.getTime()) || parsedDate.toISOString().slice(0, 10) !== examDate) {
-        return response.status(400).json({ error: "Enter a valid exam date." });
+    const body = request.body || {};
+    const updates = {};
+    if (Object.prototype.hasOwnProperty.call(body, "name")) {
+      const name = typeof body.name === "string" ? body.name.trim() : "";
+      if (name.length < 2 || name.length > 60) return response.status(400).json({ error: "Display name must be between 2 and 60 characters." });
+      updates.name = name;
+    }
+    if (Object.prototype.hasOwnProperty.call(body, "yearLevel")) {
+      const yearLevel = typeof body.yearLevel === "string" ? body.yearLevel.trim() : "";
+      if (yearLevel.length > 50) return response.status(400).json({ error: "Year level must be 50 characters or fewer." });
+      updates.yearLevel = yearLevel;
+    }
+    if (Object.prototype.hasOwnProperty.call(body, "examDate")) {
+      const examDate = typeof body.examDate === "string" ? body.examDate.trim() : "";
+      if (examDate) {
+        const parsedDate = new Date(`${examDate}T00:00:00.000Z`);
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(examDate) || Number.isNaN(parsedDate.getTime()) || parsedDate.toISOString().slice(0, 10) !== examDate) {
+          return response.status(400).json({ error: "Enter a valid exam date." });
+        }
       }
+      updates.examDate = examDate;
     }
-    if (!Number.isInteger(dailyGoalMinutes) || dailyGoalMinutes < 15 || dailyGoalMinutes > 600) {
-      return response.status(400).json({ error: "Daily study goal must be between 15 and 600 minutes." });
+    if (Object.prototype.hasOwnProperty.call(body, "dailyGoalMinutes")) {
+      const dailyGoalMinutes = Number(body.dailyGoalMinutes);
+      if (!Number.isInteger(dailyGoalMinutes) || dailyGoalMinutes < 15 || dailyGoalMinutes > 600) {
+        return response.status(400).json({ error: "Daily study goal must be between 15 and 600 minutes." });
+      }
+      updates.dailyGoalMinutes = dailyGoalMinutes;
     }
+    if (Object.prototype.hasOwnProperty.call(body, "companion")) {
+      if (!["water", "melody"].includes(body.companion)) return response.status(400).json({ error: "Choose a valid study companion." });
+      updates.companion = body.companion;
+    }
+    if (Object.keys(updates).length === 0) return response.status(400).json({ error: "Choose a profile setting to update." });
     const updatedUser = await User.findByIdAndUpdate(
       userId,
-      { $set: { name, yearLevel, examDate, dailyGoalMinutes } },
+      { $set: updates },
       { new: true, runValidators: true },
     );
     if (!updatedUser) return response.status(401).json({ error: "Log in to update your profile." });

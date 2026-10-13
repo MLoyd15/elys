@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { api } from "./api.js";
 import DashboardPages from "./components/DashboardPages.jsx";
 import FlashcardModal from "./components/FlashcardModal.jsx";
@@ -10,6 +11,17 @@ import melodyTimerImage from "../images/melody-3.jpg";
 import StudyRoom from "./StudyRoom.jsx";
 import PageMelodyArt from "./components/PageMelodyArt.jsx";
 import { getWaterPetProgress, WaterPetViewer } from "./components/WaterPet.jsx";
+import waterFormOne from "../images/waterv1.png";
+import waterFormTwo from "../images/waterv2.png";
+import waterFormThree from "../images/waterv3.png";
+import melodyFormOne from "../images/melody1.png";
+import melodyFormTwo from "../images/melody2.png";
+import melodyFormThree from "../images/melody3.png";
+
+const companionChoices = [
+  { id: "water", title: "Waterling", note: "A curious little water friend", images: [waterFormOne, waterFormTwo, waterFormThree] },
+  { id: "melody", title: "Melody", note: "A sweet friend ready to bloom", images: [melodyFormOne, melodyFormTwo, melodyFormThree] },
+];
 
 function formatElapsedStudyTime(totalSeconds) {
   const safeSeconds = Math.max(0, totalSeconds);
@@ -85,6 +97,10 @@ function App() {
   const [profileOpen, setProfileOpen] = useState(false);
   const [selectedLearner, setSelectedLearner] = useState(null);
   const [waterPetViewerOpen, setWaterPetViewerOpen] = useState(false);
+  const [companionPickerOpen, setCompanionPickerOpen] = useState(false);
+  const [companionPickerRequired, setCompanionPickerRequired] = useState(false);
+  const [companionSaving, setCompanionSaving] = useState("");
+  const [companionError, setCompanionError] = useState("");
   const [profileName, setProfileName] = useState("");
   const [profileYearLevel, setProfileYearLevel] = useState("");
   const [profileExamDate, setProfileExamDate] = useState("");
@@ -122,8 +138,11 @@ function App() {
   }, [user?.id, user?.name, user?.yearLevel, user?.examDate, user?.dailyGoalMinutes]);
 
   useEffect(() => {
-    if (!profileOpen && !selectedLearner && !waterPetViewerOpen) return undefined;
+    if (!profileOpen && !selectedLearner && !waterPetViewerOpen && !companionPickerOpen) return undefined;
     function handlePointerDown(event) {
+      if (companionPickerOpen && event.target.closest?.(".companion-picker-dialog")) return;
+      if (companionPickerOpen && companionPickerRequired) return;
+      if (companionPickerOpen) setCompanionPickerOpen(false);
       if (waterPetViewerOpen && event.target.closest?.(".water-pet-viewer-dialog")) return;
       if (!waterPetViewerOpen && (profileMenuRef.current?.contains(event.target) || event.target.closest?.(".profile-menu-trigger, .overview-player-button, .learner-profile-dialog"))) return;
       if (waterPetViewerOpen) setWaterPetViewerOpen(false);
@@ -134,6 +153,11 @@ function App() {
     }
     function handleKeyDown(event) {
       if (event.key !== "Escape") return;
+      if (companionPickerOpen && companionPickerRequired) return;
+      if (companionPickerOpen) {
+        setCompanionPickerOpen(false);
+        return;
+      }
       if (waterPetViewerOpen) {
         setWaterPetViewerOpen(false);
         return;
@@ -148,7 +172,7 @@ function App() {
       document.removeEventListener("pointerdown", handlePointerDown);
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [profileOpen, selectedLearner, waterPetViewerOpen]);
+  }, [profileOpen, selectedLearner, waterPetViewerOpen, companionPickerOpen, companionPickerRequired]);
   const loadDashboard = useCallback(async () => {
     setLoading(true);
     setError("");
@@ -377,7 +401,7 @@ function App() {
     try {
       const result = await api("/auth/profile", {
         method: "PATCH",
-        body: JSON.stringify({ name: profileName, yearLevel: profileYearLevel, examDate: profileExamDate, dailyGoalMinutes: Number(profileDailyGoal) }),
+        body: JSON.stringify({ name: profileName, yearLevel: profileYearLevel, examDate: profileExamDate, dailyGoalMinutes: Number(profileDailyGoal), ...(user?.companion ? { companion: user.companion } : {}) }),
       });
       setUser(result.user);
       setLeaderboard((current) => current.map((player) => player.id === result.user.id ? { ...player, name: result.user.name } : player));
@@ -388,14 +412,29 @@ function App() {
       setProfileSaving(false);
     }
   }
+  async function chooseCompanion(companion) {
+    setCompanionSaving(companion);
+    setCompanionError("");
+    try {
+      const result = await api("/auth/profile", { method: "PATCH", body: JSON.stringify({ companion }) });
+      setUser(result.user);
+      setCompanionPickerOpen(false);
+      setCompanionPickerRequired(false);
+    } catch (selectionError) {
+      setCompanionError(selectionError.message);
+    } finally {
+      setCompanionSaving("");
+    }
+  }
   async function unlockSite(event) {
     event.preventDefault();
     if (!authEmail || !authPassword || (authMode === "register" && !authName)) return;
     setUnlocking(true);
     setAccessError("");
     try {
-      const endpoint = authMode === "register" ? "/auth/register" : "/auth/login";
-      await api(endpoint, {
+      const isRegistering = authMode === "register";
+      const endpoint = isRegistering ? "/auth/register" : "/auth/login";
+      const authResult = await api(endpoint, {
         method: "POST",
         body: JSON.stringify({
           ...(authMode === "register" ? { name: authName } : {}),
@@ -406,6 +445,10 @@ function App() {
       setAccessLocked(false);
       setAuthPassword("");
       await loadDashboard();
+      if (isRegistering || !authResult.user?.companion) {
+        setCompanionPickerRequired(true);
+        setCompanionPickerOpen(true);
+      }
     } catch (authError) {
       setAccessError(authError.message);
     } finally {
@@ -635,7 +678,7 @@ function App() {
             <span className="profile-copy"><strong>{user?.name || "Student"}</strong><small>{user?.yearLevel || "Profile & settings"}</small></span>
             <span className="profile-dots">···</span>
           </button>
-          {profileOpen && (
+          {profileOpen && createPortal((
             <div className="profile-menu-backdrop">
               <section className="profile-menu" ref={profileMenuRef} role="dialog" aria-modal="true" aria-labelledby="profile-menu-title">
                 <div className="profile-menu-heading">
@@ -648,9 +691,9 @@ function App() {
                   <div><strong>{progress.completedCount || 0}</strong><small>quizzes done</small></div>
                 </div>
                 <div className="profile-water-pet">
-                  <img src={getWaterPetProgress(progress.xp).image} alt="" />
-                  <div><span className="section-kicker">EVOLVING COMPANION</span><strong>{getWaterPetProgress(progress.xp).name}</strong><small>{getWaterPetProgress(progress.xp).locked ? `${getWaterPetProgress(progress.xp).xpToNext} XP to first evolution` : `Level ${getWaterPetProgress(progress.xp).level} · ${getWaterPetProgress(progress.xp).nextMilestone ? `evolves at ${getWaterPetProgress(progress.xp).nextMilestone}` : "fully evolved"}`}</small></div>
-                  <button type="button" onClick={() => setWaterPetViewerOpen(true)}>360° view</button>
+                  <img src={getWaterPetProgress(progress.xp, user?.companion || "water").image} alt="" />
+                  <div><span className="section-kicker">EVOLVING COMPANION</span><strong>{getWaterPetProgress(progress.xp, user?.companion || "water").name}</strong><small>{getWaterPetProgress(progress.xp, user?.companion || "water").locked ? `${getWaterPetProgress(progress.xp, user?.companion || "water").xpToNext} XP to first evolution` : `Level ${getWaterPetProgress(progress.xp, user?.companion || "water").level} · ${getWaterPetProgress(progress.xp, user?.companion || "water").nextMilestone ? `evolves at ${getWaterPetProgress(progress.xp, user?.companion || "water").nextMilestone}` : "fully evolved"}`}</small></div>
+                  <div className="profile-companion-actions"><button type="button" onClick={() => setWaterPetViewerOpen(true)}>360° view</button><button type="button" onClick={() => { setCompanionPickerRequired(false); setCompanionPickerOpen(true); }}>Change pet</button></div>
                 </div>
                 <form className="profile-settings-form" onSubmit={saveProfile}>
                   <div className="profile-form-section"><span className="section-kicker">YOUR DETAILS</span>
@@ -673,7 +716,7 @@ function App() {
                 </form>
               </section>
             </div>
-          )}
+          ), document.body)}
         </div>
       </aside>
       <button
@@ -791,7 +834,29 @@ function App() {
           </section>
         </div>
       )}
-      {waterPetViewerOpen && <WaterPetViewer xp={progress.xp} onClose={() => setWaterPetViewerOpen(false)} />}
+      {waterPetViewerOpen && createPortal(<WaterPetViewer xp={progress.xp} companion={user?.companion || "water"} onClose={() => setWaterPetViewerOpen(false)} />, document.body)}
+      {companionPickerOpen && createPortal(
+        <div className="companion-picker-backdrop" onClick={() => { if (!companionPickerRequired) setCompanionPickerOpen(false); }}>
+          <section className="companion-picker-dialog" role="dialog" aria-modal="true" aria-labelledby="companion-picker-title" onClick={(event) => event.stopPropagation()}>
+            {!companionPickerRequired && <button type="button" className="profile-menu-close companion-picker-close" aria-label="Close companion picker" onClick={() => setCompanionPickerOpen(false)}><Icon name="close" size={16} /></button>}
+            <span className="section-kicker">PICK YOUR STUDY BUDDY</span>
+            <h2 id="companion-picker-title">Who will grow with you?</h2>
+            <p>Choose a companion. Your XP unlocks a new look at Levels 5, 10, and 15.</p>
+            {companionError && <p className="companion-picker-error" role="alert">{companionError}</p>}
+            <div className="companion-choice-grid">
+              {companionChoices.map((choice) => (
+                <button type="button" className={`companion-choice ${user?.companion === choice.id ? "is-selected" : ""}`} key={choice.id} onClick={() => chooseCompanion(choice.id)} disabled={Boolean(companionSaving)}>
+                  <div className="companion-choice-art"><img src={choice.images[0]} alt="" /></div>
+                  <strong>{choice.title}</strong><span>{choice.note}</span>
+                  <div className="companion-choice-evolutions">{choice.images.map((image, index) => <img src={image} alt={`Evolution ${index + 1}`} key={image} />)}</div>
+                  <small>{companionSaving === choice.id ? "Saving your choice…" : user?.companion === choice.id ? "Your current companion" : "Evolves at Levels 5 · 10 · 15"}</small>
+                </button>
+              ))}
+            </div>
+          </section>
+        </div>,
+        document.body,
+      )}
       {notice && <div className="toast" role="status">{notice}<button onClick={() => setNotice("")}><Icon name="close" size={16} /></button></div>}
     </div>
   );

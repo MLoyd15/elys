@@ -79,7 +79,7 @@ export default function DashboardPages({
             <div className="overview-date-pill"><Icon name="chart" size={17} /> Review statistics</div>
           </section>
           <MelodyWelcome />
-          <WaterPetCard xp={progress.xp} onOpen={onOpenWaterPetViewer} />
+          <WaterPetCard xp={progress.xp} companion={user?.companion || "water"} onOpen={onOpenWaterPetViewer} />
           <section className="review-stats-grid" aria-label="Review statistics">
             <article className="review-stat-card review-stat-green">
               <span className="review-stat-icon"><Icon name="book" size={20} /></span>
