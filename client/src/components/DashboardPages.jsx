@@ -4,6 +4,7 @@ import Notepad from "./Notepad.jsx";
 import ProgressPage from "./ProgressPage.jsx";
 import { Icon } from "../icons.jsx";
 import MelodyWelcome from "./MelodyWelcome.jsx";
+import { WaterPetCard } from "./WaterPet.jsx";
 
 
 const PdfToText = lazy(() => import("./PdfToText.jsx"));
@@ -39,6 +40,8 @@ export default function DashboardPages({
   dashboard,
   leaderboard = [],
   leaderboardError = "",
+  onSelectLearner = () => {},
+  onOpenWaterPetViewer = () => {},
   studySessions,
   taskStats,
   reviewStats,
@@ -76,6 +79,7 @@ export default function DashboardPages({
             <div className="overview-date-pill"><Icon name="chart" size={17} /> Review statistics</div>
           </section>
           <MelodyWelcome />
+          <WaterPetCard xp={progress.xp} onOpen={onOpenWaterPetViewer} />
           <section className="review-stats-grid" aria-label="Review statistics">
             <article className="review-stat-card review-stat-green">
               <span className="review-stat-icon"><Icon name="book" size={20} /></span>
@@ -111,9 +115,12 @@ export default function DashboardPages({
               <ol className="overview-leaderboard-list">
                 {leaderboard.map((player) => (
                   <li className={`overview-leaderboard-row ${player.id === user?.id ? "is-you" : ""}`} key={player.id}>
-                    <span className={`overview-leaderboard-rank ${player.rank <= 3 ? `rank-${player.rank}` : ""}`}>{player.rank <= 3 ? ["🥇", "🥈", "🥉"][player.rank - 1] : player.rank}</span>
-                    <span className="overview-leaderboard-player"><strong>{player.name}{player.id === user?.id && <small>YOU</small>}</strong><span>{player.completedQuizzes} quizzes · {player.streak} day streak</span></span>
-                    <strong className="overview-leaderboard-xp">{player.xp}<small> XP</small></strong>
+                    <button type="button" className="overview-player-button" aria-label={`View ${player.name}'s learner profile`} onClick={() => onSelectLearner(player)}>
+                      <span className={`overview-leaderboard-rank ${player.rank <= 3 ? `rank-${player.rank}` : ""}`}>{player.rank <= 3 ? ["🥇", "🥈", "🥉"][player.rank - 1] : player.rank}</span>
+                      <span className="overview-leaderboard-player"><strong>{player.name}{player.id === user?.id && <small>YOU</small>}</strong><span>{player.completedQuizzes} quizzes · {player.streak} day streak</span></span>
+                      <strong className="overview-leaderboard-xp">{player.xp}<small> XP</small></strong>
+                      <span className="overview-player-view">View profile <span aria-hidden="true">↗</span></span>
+                    </button>
                   </li>
                 ))}
               </ol>

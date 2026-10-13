@@ -9,6 +9,7 @@ import melodyStudyImage from "../images/melody-study.jpg";
 import melodyTimerImage from "../images/melody-3.jpg";
 import StudyRoom from "./StudyRoom.jsx";
 import PageMelodyArt from "./components/PageMelodyArt.jsx";
+import { getWaterPetProgress, WaterPetViewer } from "./components/WaterPet.jsx";
 
 function formatElapsedStudyTime(totalSeconds) {
   const safeSeconds = Math.max(0, totalSeconds);
@@ -82,6 +83,8 @@ function App() {
   const [leaderboard, setLeaderboard] = useState([]);
   const [leaderboardError, setLeaderboardError] = useState("");
   const [profileOpen, setProfileOpen] = useState(false);
+  const [selectedLearner, setSelectedLearner] = useState(null);
+  const [waterPetViewerOpen, setWaterPetViewerOpen] = useState(false);
   const [profileName, setProfileName] = useState("");
   const [profileYearLevel, setProfileYearLevel] = useState("");
   const [profileExamDate, setProfileExamDate] = useState("");
@@ -119,14 +122,24 @@ function App() {
   }, [user?.id, user?.name, user?.yearLevel, user?.examDate, user?.dailyGoalMinutes]);
 
   useEffect(() => {
-    if (!profileOpen) return undefined;
+    if (!profileOpen && !selectedLearner && !waterPetViewerOpen) return undefined;
     function handlePointerDown(event) {
-      if (profileMenuRef.current?.contains(event.target) || event.target.closest?.(".profile-menu-trigger")) return;
+      if (waterPetViewerOpen && event.target.closest?.(".water-pet-viewer-dialog")) return;
+      if (!waterPetViewerOpen && (profileMenuRef.current?.contains(event.target) || event.target.closest?.(".profile-menu-trigger, .overview-player-button, .learner-profile-dialog"))) return;
+      if (waterPetViewerOpen) setWaterPetViewerOpen(false);
+      if (profileMenuRef.current?.contains(event.target)) return;
+      if (event.target.closest?.(".profile-menu-trigger, .overview-player-button, .learner-profile-dialog")) return;
       setProfileOpen(false);
+      setSelectedLearner(null);
     }
     function handleKeyDown(event) {
       if (event.key !== "Escape") return;
+      if (waterPetViewerOpen) {
+        setWaterPetViewerOpen(false);
+        return;
+      }
       setProfileOpen(false);
+      setSelectedLearner(null);
       profileTriggerRef.current?.focus();
     }
     document.addEventListener("pointerdown", handlePointerDown);
@@ -135,7 +148,7 @@ function App() {
       document.removeEventListener("pointerdown", handlePointerDown);
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [profileOpen]);
+  }, [profileOpen, selectedLearner, waterPetViewerOpen]);
   const loadDashboard = useCallback(async () => {
     setLoading(true);
     setError("");
@@ -610,7 +623,7 @@ function App() {
             </button>
           ))}
         </nav>
-        <div className="sidebar-bottom" ref={profileMenuRef}>
+        <div className="sidebar-bottom">
           <div className="sidebar-note">
             <img className="sidebar-melody" src={melodyPopupImage} alt="" />
             <div className="note-spark"><Icon name="spark" size={17} /></div>
@@ -623,33 +636,43 @@ function App() {
             <span className="profile-dots">···</span>
           </button>
           {profileOpen && (
-            <section className="profile-menu" role="dialog" aria-label="Profile and study settings">
-              <div className="profile-menu-heading">
-                <div><span className="section-kicker">YOUR STUDY SPACE</span><h2>Profile & settings</h2></div>
-                <button type="button" className="profile-menu-close" aria-label="Close profile menu" onClick={() => setProfileOpen(false)}><Icon name="close" size={16} /></button>
-              </div>
-              <div className="profile-menu-stats" aria-label="Your study statistics">
-                <div><strong>{progress.xp}</strong><small>XP</small></div>
-                <div><strong>{progress.streak}</strong><small>day streak</small></div>
-                <div><strong>{progress.completedCount || 0}</strong><small>quizzes</small></div>
-              </div>
-              <form className="profile-settings-form" onSubmit={saveProfile}>
-                <label>Display name<input value={profileName} onChange={(event) => { setProfileName(event.target.value); setProfileSaved(false); }} minLength={2} maxLength={60} required /></label>
-                <label>Year level<input value={profileYearLevel} onChange={(event) => { setProfileYearLevel(event.target.value); setProfileSaved(false); }} maxLength={50} placeholder="e.g. 4th year · Nursing" /></label>
-                <label>Exam date<input type="date" value={profileExamDate} onChange={(event) => { setProfileExamDate(event.target.value); setProfileSaved(false); }} /></label>
-                {profileExamDate && <div className="profile-exam-countdown">{daysUntilDate(profileExamDate) < 0 ? "Your exam date has passed" : daysUntilDate(profileExamDate) === 0 ? "Your exam is today" : `${daysUntilDate(profileExamDate)} days to go`}</div>}
-                <label>Daily study goal <span className="profile-input-suffix">minutes / day</span><input type="number" min="15" max="600" step="15" value={profileDailyGoal} onChange={(event) => { setProfileDailyGoal(event.target.value); setProfileSaved(false); }} required /></label>
-                <div className="profile-weekly-goal">
-                  <div><span>This week</span><strong>{progress.weeklyMinutes || 0} / {Math.max(15, Number(profileDailyGoal) || 60) * 7} min</strong></div>
-                  <div className="profile-goal-track" role="progressbar" aria-label="Weekly study goal progress" aria-valuemin={0} aria-valuemax={Math.max(15, Number(profileDailyGoal) || 60) * 7} aria-valuenow={Math.min(progress.weeklyMinutes || 0, Math.max(15, Number(profileDailyGoal) || 60) * 7)}><span style={{ width: `${Math.min(100, ((progress.weeklyMinutes || 0) / (Math.max(15, Number(profileDailyGoal) || 60) * 7)) * 100)}%` }} /></div>
-                  <small>Weekly target based on your daily goal</small>
+            <div className="profile-menu-backdrop">
+              <section className="profile-menu" ref={profileMenuRef} role="dialog" aria-modal="true" aria-labelledby="profile-menu-title">
+                <div className="profile-menu-heading">
+                  <div><span className="section-kicker">YOUR STUDY SPACE</span><h2 id="profile-menu-title">Profile & settings</h2><p>Shape your study space around your goals.</p></div>
+                  <button type="button" className="profile-menu-close" aria-label="Close profile menu" onClick={() => setProfileOpen(false)}><Icon name="close" size={16} /></button>
                 </div>
-                {profileError && <p className="profile-menu-error" role="alert">{profileError}</p>}
-                {profileSaved && <p className="profile-menu-saved" role="status">Profile settings saved.</p>}
-                <button className="profile-save-button" type="submit" disabled={profileSaving}>{profileSaving ? "Saving…" : "Save settings"}</button>
-              </form>
-              <button type="button" className="profile-lock-button" onClick={lockSite}><Icon name="lock" size={15} /> Lock study space</button>
-            </section>
+                <div className="profile-menu-stats" aria-label="Your study statistics">
+                  <div><strong>{progress.xp}</strong><small>XP earned</small></div>
+                  <div><strong>{progress.streak}</strong><small>day streak</small></div>
+                  <div><strong>{progress.completedCount || 0}</strong><small>quizzes done</small></div>
+                </div>
+                <div className="profile-water-pet">
+                  <img src={getWaterPetProgress(progress.xp).image} alt="" />
+                  <div><span className="section-kicker">EVOLVING COMPANION</span><strong>{getWaterPetProgress(progress.xp).name}</strong><small>{getWaterPetProgress(progress.xp).locked ? `${getWaterPetProgress(progress.xp).xpToNext} XP to first evolution` : `Level ${getWaterPetProgress(progress.xp).level} · ${getWaterPetProgress(progress.xp).nextMilestone ? `evolves at ${getWaterPetProgress(progress.xp).nextMilestone}` : "fully evolved"}`}</small></div>
+                  <button type="button" onClick={() => setWaterPetViewerOpen(true)}>360° view</button>
+                </div>
+                <form className="profile-settings-form" onSubmit={saveProfile}>
+                  <div className="profile-form-section"><span className="section-kicker">YOUR DETAILS</span>
+                    <label>Display name<input value={profileName} onChange={(event) => { setProfileName(event.target.value); setProfileSaved(false); }} minLength={2} maxLength={60} required /></label>
+                    <label>Year level<input value={profileYearLevel} onChange={(event) => { setProfileYearLevel(event.target.value); setProfileSaved(false); }} maxLength={50} placeholder="e.g. 4th year · Nursing" /></label>
+                  </div>
+                  <div className="profile-form-section"><span className="section-kicker">STUDY GOALS</span>
+                    <label>Exam date<input type="date" value={profileExamDate} onChange={(event) => { setProfileExamDate(event.target.value); setProfileSaved(false); }} /></label>
+                    {profileExamDate && <div className="profile-exam-countdown">✿ {daysUntilDate(profileExamDate) < 0 ? "Your exam date has passed" : daysUntilDate(profileExamDate) === 0 ? "Your exam is today" : `${daysUntilDate(profileExamDate)} days to go`}</div>}
+                    <label>Daily study goal <span className="profile-input-suffix">minutes / day</span><input type="number" min="15" max="600" step="15" value={profileDailyGoal} onChange={(event) => { setProfileDailyGoal(event.target.value); setProfileSaved(false); }} required /></label>
+                    <div className="profile-weekly-goal">
+                      <div><span>This week</span><strong>{progress.weeklyMinutes || 0} / {Math.max(15, Number(profileDailyGoal) || 60) * 7} min</strong></div>
+                      <div className="profile-goal-track" role="progressbar" aria-label="Weekly study goal progress" aria-valuemin={0} aria-valuemax={Math.max(15, Number(profileDailyGoal) || 60) * 7} aria-valuenow={Math.min(progress.weeklyMinutes || 0, Math.max(15, Number(profileDailyGoal) || 60) * 7)}><span style={{ width: `${Math.min(100, ((progress.weeklyMinutes || 0) / (Math.max(15, Number(profileDailyGoal) || 60) * 7)) * 100)}%` }} /></div>
+                      <small>Weekly target based on your daily goal</small>
+                    </div>
+                  </div>
+                  {profileError && <p className="profile-menu-error" role="alert">{profileError}</p>}
+                  {profileSaved && <p className="profile-menu-saved" role="status">Saved! Your study space is up to date.</p>}
+                  <div className="profile-menu-actions"><button className="profile-save-button" type="submit" disabled={profileSaving}>{profileSaving ? "Saving…" : profileSaved ? "Saved ✓" : "Save settings"}</button><button type="button" className="profile-lock-button" onClick={lockSite}><Icon name="lock" size={15} /> Lock study space</button></div>
+                </form>
+              </section>
+            </div>
           )}
         </div>
       </aside>
@@ -728,6 +751,8 @@ function App() {
             dashboard={dashboard}
             leaderboard={leaderboard}
             leaderboardError={leaderboardError}
+            onSelectLearner={setSelectedLearner}
+            onOpenWaterPetViewer={() => setWaterPetViewerOpen(true)}
             studySessions={studySessions}
             taskStats={{ unfinishedTasks, completedTasks }}
             reviewStats={{ completedStudyQuizzes, completedReviewCount, reviewPathLength, reviewCompletionPercent }}
@@ -752,6 +777,21 @@ function App() {
           </button>
         </aside>
       )}      {activeLesson && <QuizModal lesson={activeLesson} onClose={() => setActiveLesson(null)} onSubmit={submitLesson} />}
+      {selectedLearner && (
+        <div className="learner-profile-backdrop" onClick={() => setSelectedLearner(null)}>
+          <section className="learner-profile-dialog" role="dialog" aria-modal="true" aria-labelledby="learner-profile-name" onClick={(event) => event.stopPropagation()}>
+            <button type="button" className="profile-menu-close learner-profile-close" aria-label="Close learner profile" onClick={() => setSelectedLearner(null)}><Icon name="close" size={16} /></button>
+            <div className="learner-profile-avatar" aria-hidden="true">{selectedLearner.name.slice(0, 1).toUpperCase()}</div>
+            <span className="section-kicker">LEARNER PROFILE · RANK #{selectedLearner.rank}</span>
+            <h2 id="learner-profile-name">{selectedLearner.name}</h2>
+            <p className="learner-profile-tagline">Every focused session moves you forward.</p>
+            <div className="learner-profile-stats"><div><strong>{selectedLearner.xp}</strong><span>XP earned</span></div><div><strong>{selectedLearner.completedQuizzes}</strong><span>quizzes done</span></div><div><strong>{selectedLearner.streak}</strong><span>day streak</span></div></div>
+            <div className="learner-profile-rank-track"><span style={{ width: `${Math.max(8, 100 - (selectedLearner.rank - 1) * 12)}%` }} /></div>
+            <p className="learner-profile-rank-note">Ranked #{selectedLearner.rank} among {leaderboard.length} learners</p>
+          </section>
+        </div>
+      )}
+      {waterPetViewerOpen && <WaterPetViewer xp={progress.xp} onClose={() => setWaterPetViewerOpen(false)} />}
       {notice && <div className="toast" role="status">{notice}<button onClick={() => setNotice("")}><Icon name="close" size={16} /></button></div>}
     </div>
   );

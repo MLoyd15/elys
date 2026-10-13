@@ -56,3 +56,100 @@
 @media (prefers-reduced-motion: reduce) {
   .profile-menu, .profile-goal-track span { animation: none; transition: none; }
 }
+
+/* Centered, responsive profile dialog */
+.profile-menu-backdrop, .learner-profile-backdrop { position: fixed; inset: 0; z-index: 1000; display: grid; place-items: center; padding: 22px; background: rgb(77 43 60 / 30%); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); animation: profile-backdrop-enter .2s ease both; }
+.profile-menu { position: relative; inset: auto; display: grid; gap: 17px; width: min(610px, 100%); max-height: min(820px, calc(100vh - 44px)); overflow-y: auto; padding: clamp(20px, 4vw, 32px); border: 1px solid rgb(255 255 255 / 94%); border-radius: 26px; background: linear-gradient(145deg, rgb(255 252 254 / 98%), rgb(255 239 246 / 97%)); box-shadow: 0 30px 100px rgb(87 43 63 / 30%), inset 0 1px 0 #fff; animation: profile-dialog-enter .28s cubic-bezier(.2,.8,.2,1) both; }
+.profile-menu-heading { align-items: center; }
+.profile-menu-heading .section-kicker { font-size: 9px; letter-spacing: 1.4px; }
+.profile-menu-heading h2 { font-size: clamp(22px, 4vw, 28px); }
+.profile-menu-heading p { margin: 5px 0 0; color: #947d89; font-size: 12px; }
+.profile-menu-close { cursor: pointer; transition: transform .18s ease, background .18s ease; }
+.profile-menu-close:hover { transform: rotate(90deg); }
+.profile-menu-stats { gap: 10px; }
+.profile-menu-stats > div { padding: 13px 9px; transition: transform .2s ease, box-shadow .2s ease; }
+.profile-menu-stats > div:hover { transform: translateY(-3px); box-shadow: 0 8px 18px rgb(160 82 115 / 10%); }
+.profile-menu-stats strong { font-size: 24px; }
+.profile-menu-stats small { font-size: 10px; }
+.profile-settings-form { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.profile-form-section { display: grid; align-content: start; gap: 11px; padding: 14px; border: 1px solid rgb(255 255 255 / 92%); border-radius: 17px; background: rgb(255 255 255 / 52%); }
+.profile-form-section > .section-kicker { margin-bottom: 1px; color: #af6281; font-size: 8px; letter-spacing: 1.1px; }
+.profile-settings-form > .profile-menu-error, .profile-settings-form > .profile-menu-saved, .profile-menu-actions { grid-column: 1 / -1; }
+.profile-settings-form > label { gap: 6px; font-size: 11px; }
+.profile-settings-form input { min-height: 40px; border-radius: 10px; font-size: 12px; transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease; }
+.profile-settings-form input:hover { border-color: #dfabc0; }
+.profile-settings-form input:focus { box-shadow: 0 0 0 4px rgb(216 117 148 / 13%); transform: translateY(-1px); }
+.profile-menu-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+.profile-save-button, .profile-lock-button { min-height: 42px; border-radius: 11px; cursor: pointer; font-size: 11px; transition: transform .18s ease, box-shadow .18s ease, filter .18s ease; }
+.profile-save-button:hover, .profile-lock-button:hover { transform: translateY(-2px); box-shadow: 0 9px 20px rgb(169 77 112 / 18%); filter: saturate(1.08); }
+.learner-profile-backdrop { z-index: 1010; }
+.learner-profile-dialog { position: relative; display: grid; justify-items: center; gap: 12px; width: min(450px, 100%); padding: 34px clamp(22px, 6vw, 40px) 30px; border: 1px solid rgb(255 255 255 / 95%); border-radius: 26px; color: #604352; background: radial-gradient(circle at 50% 0, #fff 0, transparent 55%), linear-gradient(145deg, #fffafd, #ffedf4); box-shadow: 0 30px 100px rgb(87 43 63 / 30%), inset 0 1px 0 #fff; text-align: center; animation: profile-dialog-enter .28s cubic-bezier(.2,.8,.2,1) both; }
+.learner-profile-close { position: absolute; top: 14px; right: 14px; }
+.learner-profile-avatar { display: grid; width: 76px; height: 76px; place-items: center; border: 3px solid white; border-radius: 26px; color: #fff; background: linear-gradient(145deg, #cb6e91, #e8a9bf); box-shadow: 0 10px 25px rgb(164 84 118 / 22%); font-family: var(--serif); font-size: 34px; font-weight: 800; }
+.learner-profile-dialog > .section-kicker { margin-top: 3px; color: #ad5a7c; font-size: 9px; letter-spacing: 1.1px; }
+.learner-profile-dialog h2 { margin: -5px 0 0; color: #543849; font-family: var(--serif); font-size: 27px; }
+.learner-profile-tagline, .learner-profile-rank-note { margin: 0; color: #917c88; font-size: 11px; }
+.learner-profile-stats { display: grid; width: 100%; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 9px; margin-top: 5px; }
+.learner-profile-stats > div { display: grid; gap: 5px; padding: 14px 6px; border: 1px solid white; border-radius: 15px; background: rgb(255 255 255 / 72%); }
+.learner-profile-stats strong { color: #a84f73; font-family: var(--serif); font-size: 23px; }
+.learner-profile-stats span { color: #917c88; font-size: 9px; }
+.learner-profile-rank-track { width: 100%; height: 8px; overflow: hidden; margin-top: 7px; border-radius: 999px; background: #f1dce5; }
+.learner-profile-rank-track span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #c36589, #eaa3bd); transition: width .6s cubic-bezier(.2,.8,.2,1); }
+.profile-water-pet { display: grid; grid-template-columns: 52px minmax(0, 1fr) auto; align-items: center; gap: 11px; padding: 10px; border: 1px solid rgb(255 255 255 / 94%); border-radius: 15px; background: linear-gradient(110deg, rgb(255 255 255 / 82%), rgb(233 244 255 / 76%), rgb(245 232 252 / 75%)); }
+.profile-water-pet > img { width: 52px; height: 52px; padding: 3px; border-radius: 13px; background: #eaf3ff; object-fit: contain; image-rendering: pixelated; }
+.profile-water-pet > div { display: grid; gap: 3px; min-width: 0; }
+.profile-water-pet .section-kicker { color: #8173a2; font-size: 7px; letter-spacing: .8px; }
+.profile-water-pet strong { overflow: hidden; color: #526783; font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
+.profile-water-pet small { color: #8e94a4; font-size: 8px; }
+.profile-water-pet button { padding: 7px 8px; border: 1px solid white; border-radius: 8px; color: #625e91; background: rgb(255 255 255 / 78%); font-size: 8px; font-weight: 800; cursor: pointer; transition: transform .18s ease, box-shadow .18s ease; }
+.profile-water-pet button:hover { transform: translateY(-2px); box-shadow: 0 5px 12px rgb(94 100 151 / 13%); }
+.water-pet-viewer-backdrop { position: fixed; inset: 0; z-index: 1010; display: grid; place-items: center; padding: 20px; background: rgb(53 59 91 / 38%); -webkit-backdrop-filter: blur(9px); backdrop-filter: blur(9px); animation: profile-backdrop-enter .2s ease both; }
+.water-pet-viewer-dialog { position: relative; display: grid; justify-items: center; gap: 9px; width: min(520px, 100%); max-height: calc(100vh - 40px); overflow: auto; padding: 28px clamp(18px, 5vw, 34px) 24px; border: 1px solid rgb(255 255 255 / 95%); border-radius: 25px; color: #53627b; background: radial-gradient(circle at 50% 18%, #fff 0, transparent 45%), linear-gradient(145deg, #fff, #f0f6ff 62%, #f8efff); box-shadow: 0 30px 100px rgb(41 50 93 / 29%), inset 0 1px 0 #fff; text-align: center; animation: profile-dialog-enter .28s cubic-bezier(.2,.8,.2,1) both; }
+.water-pet-viewer-close { position: absolute; top: 13px; right: 13px; z-index: 2; font-size: 16px; cursor: pointer; }
+.water-pet-viewer-dialog > .section-kicker { color: #7971a4; font-size: 8px; letter-spacing: 1.15px; }
+.water-pet-viewer-dialog h2 { margin: -4px 0 0; color: #485d7c; font-family: var(--serif); font-size: 25px; }
+.water-pet-viewer-dialog > p { max-width: 390px; margin: 0; color: #8792a5; font-size: 10px; line-height: 1.5; }
+.water-pet-turntable { position: relative; display: grid; width: min(270px, 75vw); height: min(230px, 63vw); min-height: 190px; place-items: center; margin: 1px 0; border: 1px solid rgb(255 255 255 / 90%); border-radius: 28px; background: radial-gradient(ellipse at 50% 70%, rgb(137 208 230 / 22%), transparent 62%), linear-gradient(155deg, rgb(255 255 255 / 66%), rgb(225 238 255 / 68%)); box-shadow: inset 0 1px 0 white, 0 10px 25px rgb(87 119 166 / 9%); cursor: grab; perspective: 700px; touch-action: pan-y; user-select: none; }
+.water-pet-turntable.is-dragging { cursor: grabbing; }
+.water-pet-turntable:focus-visible { outline: 3px solid rgb(124 145 218 / 50%); outline-offset: 3px; }
+.water-pet-turntable-rotator { position: relative; width: 84%; height: 84%; transform-style: preserve-3d; transition: transform .08s linear; }
+.water-pet-turntable.is-auto-spinning .water-pet-turntable-rotator { animation: water-pet-spin 4.5s linear infinite; }
+.water-pet-turntable-rotator img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; image-rendering: pixelated; filter: drop-shadow(0 12px 9px rgb(53 97 157 / 18%)); backface-visibility: hidden; }
+.water-pet-turntable-front { transform: translateZ(1px); }
+.water-pet-turntable-back { transform: rotateY(180deg) translateZ(1px) scaleX(-1); }
+.water-pet-spark { position: absolute; color: #85bfe5; animation: water-pet-sparkle 2s ease-in-out infinite; }
+.water-pet-spark-one { top: 22%; left: 18%; font-size: 23px; }
+.water-pet-spark-two { right: 17%; bottom: 25%; color: #ca91d6; font-size: 28px; animation-delay: .6s; }
+.water-pet-viewer-controls { display: flex; align-items: center; gap: 10px; }
+.water-pet-viewer-controls .profile-save-button { min-width: 114px; }
+.water-pet-viewer-controls > span { color: #8d96a8; font-size: 9px; }
+.water-pet-evolution-track { display: grid; width: 100%; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 7px; }
+.water-pet-evolution-track > div { display: grid; justify-items: center; gap: 2px; padding: 7px 4px; border: 1px solid rgb(255 255 255 / 90%); border-radius: 12px; opacity: .56; background: rgb(255 255 255 / 55%); transition: opacity .2s ease, transform .2s ease, box-shadow .2s ease; }
+.water-pet-evolution-track > div.is-unlocked { opacity: 1; transform: translateY(-2px); box-shadow: 0 6px 16px rgb(111 129 171 / 12%); }
+.water-pet-evolution-track > div > span { color: #9382bc; font-size: 12px; }
+.water-pet-evolution-track small { color: #7f8ba1; font-size: 8px; font-weight: 800; }
+.water-pet-evolution-track img { width: 43px; height: 37px; object-fit: contain; image-rendering: pixelated; }
+.water-pet-unlock-note { color: #7b759f; font-size: 9px; }
+@keyframes water-pet-spin { from { transform: perspective(700px) rotateY(0); } to { transform: perspective(700px) rotateY(360deg); } }
+@keyframes water-pet-sparkle { 0%, 100% { opacity: .45; transform: scale(.85) rotate(0); } 50% { opacity: 1; transform: scale(1.15) rotate(18deg); } }
+@keyframes profile-backdrop-enter { from { opacity: 0; } to { opacity: 1; } }
+@keyframes profile-dialog-enter { from { opacity: 0; transform: translateY(12px) scale(.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@media (max-width: 560px) {
+  .profile-menu-backdrop, .learner-profile-backdrop { padding: 12px; }
+  .profile-menu { max-height: calc(100vh - 24px); padding: 18px; border-radius: 20px; }
+  .profile-settings-form { grid-template-columns: 1fr; }
+  .profile-settings-form > .profile-menu-error, .profile-settings-form > .profile-menu-saved, .profile-menu-actions { grid-column: auto; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .profile-menu-backdrop, .profile-menu, .learner-profile-dialog, .water-pet-viewer-backdrop, .water-pet-viewer-dialog { animation: none; }
+  .profile-menu-stats > div, .profile-menu-close, .profile-settings-form input, .profile-save-button, .profile-lock-button, .learner-profile-rank-track span { transition: none; }
+  .water-pet-turntable.is-auto-spinning .water-pet-turntable-rotator, .water-pet-spark { animation: none; }
+  .profile-water-pet button, .water-pet-evolution-track > div { transition: none; }
+}
+@media (max-width: 560px) {
+  .profile-water-pet { grid-template-columns: 43px minmax(0, 1fr); }
+  .profile-water-pet > img { width: 43px; height: 43px; }
+  .profile-water-pet button { grid-column: 2; justify-self: start; }
+  .water-pet-viewer-dialog { padding: 24px 15px 18px; }
+  .water-pet-evolution-track { gap: 5px; }
+}
