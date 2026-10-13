@@ -4,7 +4,7 @@ import Notepad from "./Notepad.jsx";
 import ProgressPage from "./ProgressPage.jsx";
 import { Icon } from "../icons.jsx";
 import MelodyWelcome from "./MelodyWelcome.jsx";
-import { WaterPetCard } from "./WaterPet.jsx";
+import { CompanionCard } from "./WaterPet.jsx";
 
 
 const PdfToText = lazy(() => import("./PdfToText.jsx"));
@@ -41,7 +41,7 @@ export default function DashboardPages({
   leaderboard = [],
   leaderboardError = "",
   onSelectLearner = () => {},
-  onOpenWaterPetViewer = () => {},
+  onOpenCompanion = () => {},
   studySessions,
   taskStats,
   reviewStats,
@@ -79,7 +79,7 @@ export default function DashboardPages({
             <div className="overview-date-pill"><Icon name="chart" size={17} /> Review statistics</div>
           </section>
           <MelodyWelcome />
-          <WaterPetCard xp={progress.xp} companion={user?.companion || "water"} onOpen={onOpenWaterPetViewer} />
+          <CompanionCard xp={progress.xp} companion={user?.companion || "water"} onOpen={onOpenCompanion} />
           <section className="review-stats-grid" aria-label="Review statistics">
             <article className="review-stat-card review-stat-green">
               <span className="review-stat-icon"><Icon name="book" size={20} /></span>

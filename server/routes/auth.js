@@ -163,16 +163,26 @@ router.patch("/profile", async (request, response, next) => {
       updates.dailyGoalMinutes = dailyGoalMinutes;
     }
     if (Object.prototype.hasOwnProperty.call(body, "companion")) {
-      if (!["water", "melody"].includes(body.companion)) return response.status(400).json({ error: "Choose a valid study companion." });
+      if (!["water", "melody", "fox"].includes(body.companion)) return response.status(400).json({ error: "Choose a valid study companion." });
       updates.companion = body.companion;
     }
     if (Object.keys(updates).length === 0) return response.status(400).json({ error: "Choose a profile setting to update." });
-    const updatedUser = await User.findByIdAndUpdate(
-      userId,
-      { $set: updates },
-      { new: true, runValidators: true },
-    );
-    if (!updatedUser) return response.status(401).json({ error: "Log in to update your profile." });
+    let updatedUser;
+    if (updates.companion) {
+      updatedUser = await User.findOneAndUpdate(
+        { _id: userId, $or: [{ companion: "" }, { companion: { $exists: false } }, { companion: updates.companion }] },
+        { $set: updates },
+        { new: true, runValidators: true },
+      );
+      if (!updatedUser) {
+        const existingUser = await User.findById(userId).select("companion").lean();
+        if (!existingUser) return response.status(401).json({ error: "Log in to update your profile." });
+        return response.status(409).json({ error: "Your study companion is a one-time choice and cannot be changed." });
+      }
+    } else {
+      updatedUser = await User.findByIdAndUpdate(userId, { $set: updates }, { new: true, runValidators: true });
+      if (!updatedUser) return response.status(401).json({ error: "Log in to update your profile." });
+    }
     response.json({ user: publicUser(updatedUser) });
   } catch (error) {
     next(error);

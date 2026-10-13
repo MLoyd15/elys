@@ -10,17 +10,21 @@ import melodyStudyImage from "../images/melody-study.jpg";
 import melodyTimerImage from "../images/melody-3.jpg";
 import StudyRoom from "./StudyRoom.jsx";
 import PageMelodyArt from "./components/PageMelodyArt.jsx";
-import { getWaterPetProgress, WaterPetViewer } from "./components/WaterPet.jsx";
+import { getCompanionProgress, CompanionInteraction } from "./components/WaterPet.jsx";
 import waterFormOne from "../images/waterv1.png";
 import waterFormTwo from "../images/waterv2.png";
 import waterFormThree from "../images/waterv3.png";
 import melodyFormOne from "../images/melody1.png";
 import melodyFormTwo from "../images/melody2.png";
 import melodyFormThree from "../images/melody3.png";
+import foxFormOne from "../images/fox1.png";
+import foxFormTwo from "../images/fox2.png";
+import foxFormThree from "../images/fox3.png";
 
 const companionChoices = [
   { id: "water", title: "Waterling", note: "A curious little water friend", images: [waterFormOne, waterFormTwo, waterFormThree] },
   { id: "melody", title: "Melody", note: "A sweet friend ready to bloom", images: [melodyFormOne, melodyFormTwo, melodyFormThree] },
+  { id: "fox", title: "Fox friend", note: "A clever companion with a playful spirit", images: [foxFormOne, foxFormTwo, foxFormThree] },
 ];
 
 function formatElapsedStudyTime(totalSeconds) {
@@ -96,7 +100,7 @@ function App() {
   const [leaderboardError, setLeaderboardError] = useState("");
   const [profileOpen, setProfileOpen] = useState(false);
   const [selectedLearner, setSelectedLearner] = useState(null);
-  const [waterPetViewerOpen, setWaterPetViewerOpen] = useState(false);
+  const [companionInteractionOpen, setCompanionInteractionOpen] = useState(false);
   const [companionPickerOpen, setCompanionPickerOpen] = useState(false);
   const [companionPickerRequired, setCompanionPickerRequired] = useState(false);
   const [companionSaving, setCompanionSaving] = useState("");
@@ -138,14 +142,14 @@ function App() {
   }, [user?.id, user?.name, user?.yearLevel, user?.examDate, user?.dailyGoalMinutes]);
 
   useEffect(() => {
-    if (!profileOpen && !selectedLearner && !waterPetViewerOpen && !companionPickerOpen) return undefined;
+    if (!profileOpen && !selectedLearner && !companionInteractionOpen && !companionPickerOpen) return undefined;
     function handlePointerDown(event) {
       if (companionPickerOpen && event.target.closest?.(".companion-picker-dialog")) return;
       if (companionPickerOpen && companionPickerRequired) return;
       if (companionPickerOpen) setCompanionPickerOpen(false);
-      if (waterPetViewerOpen && event.target.closest?.(".water-pet-viewer-dialog")) return;
-      if (!waterPetViewerOpen && (profileMenuRef.current?.contains(event.target) || event.target.closest?.(".profile-menu-trigger, .overview-player-button, .learner-profile-dialog"))) return;
-      if (waterPetViewerOpen) setWaterPetViewerOpen(false);
+      if (companionInteractionOpen && event.target.closest?.(".companion-interaction-dialog")) return;
+      if (!companionInteractionOpen && (profileMenuRef.current?.contains(event.target) || event.target.closest?.(".profile-menu-trigger, .overview-player-button, .learner-profile-dialog"))) return;
+      if (companionInteractionOpen) setCompanionInteractionOpen(false);
       if (profileMenuRef.current?.contains(event.target)) return;
       if (event.target.closest?.(".profile-menu-trigger, .overview-player-button, .learner-profile-dialog")) return;
       setProfileOpen(false);
@@ -158,8 +162,8 @@ function App() {
         setCompanionPickerOpen(false);
         return;
       }
-      if (waterPetViewerOpen) {
-        setWaterPetViewerOpen(false);
+      if (companionInteractionOpen) {
+        setCompanionInteractionOpen(false);
         return;
       }
       setProfileOpen(false);
@@ -172,7 +176,7 @@ function App() {
       document.removeEventListener("pointerdown", handlePointerDown);
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [profileOpen, selectedLearner, waterPetViewerOpen, companionPickerOpen, companionPickerRequired]);
+  }, [profileOpen, selectedLearner, companionInteractionOpen, companionPickerOpen, companionPickerRequired]);
   const loadDashboard = useCallback(async () => {
     setLoading(true);
     setError("");
@@ -691,9 +695,9 @@ function App() {
                   <div><strong>{progress.completedCount || 0}</strong><small>quizzes done</small></div>
                 </div>
                 <div className="profile-water-pet">
-                  <img src={getWaterPetProgress(progress.xp, user?.companion || "water").image} alt="" />
-                  <div><span className="section-kicker">EVOLVING COMPANION</span><strong>{getWaterPetProgress(progress.xp, user?.companion || "water").name}</strong><small>{getWaterPetProgress(progress.xp, user?.companion || "water").locked ? `${getWaterPetProgress(progress.xp, user?.companion || "water").xpToNext} XP to first evolution` : `Level ${getWaterPetProgress(progress.xp, user?.companion || "water").level} · ${getWaterPetProgress(progress.xp, user?.companion || "water").nextMilestone ? `evolves at ${getWaterPetProgress(progress.xp, user?.companion || "water").nextMilestone}` : "fully evolved"}`}</small></div>
-                  <div className="profile-companion-actions"><button type="button" onClick={() => setWaterPetViewerOpen(true)}>360° view</button><button type="button" onClick={() => { setCompanionPickerRequired(false); setCompanionPickerOpen(true); }}>Change pet</button></div>
+                  <img src={getCompanionProgress(progress.xp, user?.companion || "water").image} alt="" />
+                  <div><span className="section-kicker">YOUR COMPANION</span><strong>{getCompanionProgress(progress.xp, user?.companion || "water").name}</strong><small>{getCompanionProgress(progress.xp, user?.companion || "water").locked ? `${getCompanionProgress(progress.xp, user?.companion || "water").xpToNext} XP to first evolution` : `Level ${getCompanionProgress(progress.xp, user?.companion || "water").level} · ${getCompanionProgress(progress.xp, user?.companion || "water").nextMilestone ? `evolves at ${getCompanionProgress(progress.xp, user?.companion || "water").nextMilestone}` : "fully evolved"}`}</small></div>
+                  <div className="profile-companion-actions"><button type="button" onClick={() => setCompanionInteractionOpen(true)}>Play together</button></div>
                 </div>
                 <form className="profile-settings-form" onSubmit={saveProfile}>
                   <div className="profile-form-section"><span className="section-kicker">YOUR DETAILS</span>
@@ -795,7 +799,7 @@ function App() {
             leaderboard={leaderboard}
             leaderboardError={leaderboardError}
             onSelectLearner={setSelectedLearner}
-            onOpenWaterPetViewer={() => setWaterPetViewerOpen(true)}
+            onOpenCompanion={() => setCompanionInteractionOpen(true)}
             studySessions={studySessions}
             taskStats={{ unfinishedTasks, completedTasks }}
             reviewStats={{ completedStudyQuizzes, completedReviewCount, reviewPathLength, reviewCompletionPercent }}
@@ -834,14 +838,14 @@ function App() {
           </section>
         </div>
       )}
-      {waterPetViewerOpen && createPortal(<WaterPetViewer xp={progress.xp} companion={user?.companion || "water"} onClose={() => setWaterPetViewerOpen(false)} />, document.body)}
+      {companionInteractionOpen && createPortal(<CompanionInteraction xp={progress.xp} companion={user?.companion || "water"} onClose={() => setCompanionInteractionOpen(false)} />, document.body)}
       {companionPickerOpen && createPortal(
         <div className="companion-picker-backdrop" onClick={() => { if (!companionPickerRequired) setCompanionPickerOpen(false); }}>
           <section className="companion-picker-dialog" role="dialog" aria-modal="true" aria-labelledby="companion-picker-title" onClick={(event) => event.stopPropagation()}>
             {!companionPickerRequired && <button type="button" className="profile-menu-close companion-picker-close" aria-label="Close companion picker" onClick={() => setCompanionPickerOpen(false)}><Icon name="close" size={16} /></button>}
             <span className="section-kicker">PICK YOUR STUDY BUDDY</span>
-            <h2 id="companion-picker-title">Who will grow with you?</h2>
-            <p>Choose a companion. Your XP unlocks a new look at Levels 5, 10, and 15.</p>
+            <h2 id="companion-picker-title">Choose your one companion</h2>
+            <p>This is a one-time choice. Your XP helps your buddy evolve at Levels 5, 10, and 15.</p>
             {companionError && <p className="companion-picker-error" role="alert">{companionError}</p>}
             <div className="companion-choice-grid">
               {companionChoices.map((choice) => (

@@ -5,7 +5,7 @@ const userSchema = new mongoose.Schema({
   yearLevel: { type: String, trim: true, maxlength: 50, default: "" },
   examDate: { type: String, default: "" },
   dailyGoalMinutes: { type: Number, min: 15, max: 600, default: 60 },
-  companion: { type: String, enum: ["", "water", "melody"], default: "" },
+  companion: { type: String, enum: ["", "water", "melody", "fox"], default: "" },
   email: { type: String, required: true, trim: true, lowercase: true, unique: true, maxlength: 254 },
   salt: { type: String, required: true },
   passwordHash: { type: String, required: true },
