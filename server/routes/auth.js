@@ -23,7 +23,7 @@ const starterTasks = [
 ];
 
 function publicUser(user) {
-  return { id: user._id.toString(), name: user.name, email: user.email };
+  return { id: user._id.toString(), name: user.name, email: user.email, yearLevel: user.yearLevel || "", examDate: user.examDate || "", dailyGoalMinutes: user.dailyGoalMinutes || 60 };
 }
 
 async function passwordDigest(password, salt) {
@@ -129,6 +129,36 @@ router.get("/me", async (request, response, next) => {
   }
 });
 
+router.patch("/profile", async (request, response, next) => {
+  try {
+    const userId = getSessionUserId(request);
+    if (!userId) return response.status(401).json({ error: "Log in to update your profile." });
+    const name = typeof request.body?.name === "string" ? request.body.name.trim() : "";
+    const yearLevel = typeof request.body?.yearLevel === "string" ? request.body.yearLevel.trim() : "";
+    const examDate = typeof request.body?.examDate === "string" ? request.body.examDate.trim() : "";
+    const dailyGoalMinutes = Number(request.body?.dailyGoalMinutes);
+    if (name.length < 2 || name.length > 60) return response.status(400).json({ error: "Display name must be between 2 and 60 characters." });
+    if (yearLevel.length > 50) return response.status(400).json({ error: "Year level must be 50 characters or fewer." });
+    if (examDate) {
+      const parsedDate = new Date(`${examDate}T00:00:00.000Z`);
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(examDate) || Number.isNaN(parsedDate.getTime()) || parsedDate.toISOString().slice(0, 10) !== examDate) {
+        return response.status(400).json({ error: "Enter a valid exam date." });
+      }
+    }
+    if (!Number.isInteger(dailyGoalMinutes) || dailyGoalMinutes < 15 || dailyGoalMinutes > 600) {
+      return response.status(400).json({ error: "Daily study goal must be between 15 and 600 minutes." });
+    }
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { $set: { name, yearLevel, examDate, dailyGoalMinutes } },
+      { new: true, runValidators: true },
+    );
+    if (!updatedUser) return response.status(401).json({ error: "Log in to update your profile." });
+    response.json({ user: publicUser(updatedUser) });
+  } catch (error) {
+    next(error);
+  }
+});
 router.post("/logout", (_request, response) => {
   clearSessionCookie(response);
   response.status(204).end();

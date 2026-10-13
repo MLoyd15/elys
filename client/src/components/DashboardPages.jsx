@@ -37,6 +37,8 @@ export default function DashboardPages({
   activeNav,
   todayLabel,
   dashboard,
+  leaderboard = [],
+  leaderboardError = "",
   studySessions,
   taskStats,
   reviewStats,
@@ -99,6 +101,25 @@ export default function DashboardPages({
               <strong>{progress.streak}<small> days</small></strong>
               <span className="review-stat-note">keep showing up for yourself</span>
             </article>
+          </section>
+          <section className="overview-leaderboard" aria-labelledby="overview-leaderboard-title">
+            <div className="overview-leaderboard-heading">
+              <div><div className="section-kicker">STUDYING TOGETHER</div><h2 id="overview-leaderboard-title">Learner leaderboard</h2><p>See how everyone’s study progress is adding up.</p></div>
+              <span className="overview-leaderboard-total">{leaderboard.length} {leaderboard.length === 1 ? "learner" : "learners"}</span>
+            </div>
+            {leaderboard.length > 0 ? (
+              <ol className="overview-leaderboard-list">
+                {leaderboard.map((player) => (
+                  <li className={`overview-leaderboard-row ${player.id === user?.id ? "is-you" : ""}`} key={player.id}>
+                    <span className={`overview-leaderboard-rank ${player.rank <= 3 ? `rank-${player.rank}` : ""}`}>{player.rank <= 3 ? ["🥇", "🥈", "🥉"][player.rank - 1] : player.rank}</span>
+                    <span className="overview-leaderboard-player"><strong>{player.name}{player.id === user?.id && <small>YOU</small>}</strong><span>{player.completedQuizzes} quizzes · {player.streak} day streak</span></span>
+                    <strong className="overview-leaderboard-xp">{player.xp}<small> XP</small></strong>
+                  </li>
+                ))}
+              </ol>
+            ) : (
+              <p className="overview-leaderboard-empty">{leaderboardError || "Complete a quiz to start your study ranking."}</p>
+            )}
           </section>
           <section className="overview-review-card">
             <div className="overview-review-heading">

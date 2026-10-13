@@ -54,6 +54,15 @@ function LandingFeatureScreenshot({ kind }) {
     </div>
   );
 }
+function daysUntilDate(dateValue) {
+  if (!dateValue) return null;
+  const [year, month, day] = dateValue.split("-").map(Number);
+  const target = Date.UTC(year, month - 1, day);
+  const today = new Date();
+  const todayStart = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
+  return Math.ceil((target - todayStart) / 86_400_000);
+}
+
 function App() {
   const [dashboard, setDashboard] = useState(null);
   const [activeNav, setActiveNav] = useState("home");
@@ -70,6 +79,16 @@ function App() {
   const [studySessions, setStudySessions] = useState([]);
   const [studyTimerNow, setStudyTimerNow] = useState(Date.now());
   const [showMelodyPopup, setShowMelodyPopup] = useState(true);
+  const [leaderboard, setLeaderboard] = useState([]);
+  const [leaderboardError, setLeaderboardError] = useState("");
+  const [profileOpen, setProfileOpen] = useState(false);
+  const [profileName, setProfileName] = useState("");
+  const [profileYearLevel, setProfileYearLevel] = useState("");
+  const [profileExamDate, setProfileExamDate] = useState("");
+  const [profileDailyGoal, setProfileDailyGoal] = useState("60");
+  const [profileSaving, setProfileSaving] = useState(false);
+  const [profileSaved, setProfileSaved] = useState(false);
+  const [profileError, setProfileError] = useState("");
   const studyGuidesRequestStarted = useRef(false);
   const [notice, setNotice] = useState("");
   const [authMode, setAuthMode] = useState("login");
@@ -88,7 +107,35 @@ function App() {
   });
   const sidebarResizePointer = useRef(null);
   const studySessionsRequestStarted = useRef(false);
+  const profileMenuRef = useRef(null);
+  const profileTriggerRef = useRef(null);
 
+  useEffect(() => {
+    if (!user) return;
+    setProfileName(user.name || "");
+    setProfileYearLevel(user.yearLevel || "");
+    setProfileExamDate(user.examDate || "");
+    setProfileDailyGoal(String(user.dailyGoalMinutes || 60));
+  }, [user?.id, user?.name, user?.yearLevel, user?.examDate, user?.dailyGoalMinutes]);
+
+  useEffect(() => {
+    if (!profileOpen) return undefined;
+    function handlePointerDown(event) {
+      if (profileMenuRef.current?.contains(event.target) || event.target.closest?.(".profile-menu-trigger")) return;
+      setProfileOpen(false);
+    }
+    function handleKeyDown(event) {
+      if (event.key !== "Escape") return;
+      setProfileOpen(false);
+      profileTriggerRef.current?.focus();
+    }
+    document.addEventListener("pointerdown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [profileOpen]);
   const loadDashboard = useCallback(async () => {
     setLoading(true);
     setError("");
@@ -96,6 +143,13 @@ function App() {
       const [session, dashboardData] = await Promise.all([api("/auth/me"), api("/dashboard")]);
       setUser(session.user);
       setDashboard(dashboardData);
+      try {
+        const ranking = await api("/dashboard/leaderboard");
+        setLeaderboard(ranking.players || []);
+        setLeaderboardError("");
+      } catch (rankingError) {
+        setLeaderboardError(rankingError.message);
+      }
     } catch (loadError) {
       if (loadError.status === 401) {
         setAccessLocked(true);
@@ -297,6 +351,30 @@ function App() {
     setActiveNav("study");
   }
 
+  function toggleProfileMenu(event) {
+    profileTriggerRef.current = event.currentTarget;
+    setProfileOpen((open) => !open);
+  }
+
+  async function saveProfile(event) {
+    event.preventDefault();
+    setProfileSaving(true);
+    setProfileError("");
+    setProfileSaved(false);
+    try {
+      const result = await api("/auth/profile", {
+        method: "PATCH",
+        body: JSON.stringify({ name: profileName, yearLevel: profileYearLevel, examDate: profileExamDate, dailyGoalMinutes: Number(profileDailyGoal) }),
+      });
+      setUser(result.user);
+      setLeaderboard((current) => current.map((player) => player.id === result.user.id ? { ...player, name: result.user.name } : player));
+      setProfileSaved(true);
+    } catch (saveError) {
+      setProfileError(saveError.message);
+    } finally {
+      setProfileSaving(false);
+    }
+  }
   async function unlockSite(event) {
     event.preventDefault();
     if (!authEmail || !authPassword || (authMode === "register" && !authName)) return;
@@ -322,6 +400,7 @@ function App() {
     }
   }
   async function lockSite() {
+    setProfileOpen(false);
     try {
       await api("/auth/logout", { method: "POST" });
       setAccessLocked(true);
@@ -531,18 +610,47 @@ function App() {
             </button>
           ))}
         </nav>
-        <div className="sidebar-bottom">
+        <div className="sidebar-bottom" ref={profileMenuRef}>
           <div className="sidebar-note">
             <img className="sidebar-melody" src={melodyPopupImage} alt="" />
             <div className="note-spark"><Icon name="spark" size={17} /></div>
             <p>Road to topnotcher!</p>
             <span>You can do this</span>
           </div>
-          <button className="profile" onClick={lockSite} title="Sign out">
+          <button type="button" className="profile profile-menu-trigger" onClick={toggleProfileMenu} aria-haspopup="dialog" aria-expanded={profileOpen} aria-label="Open profile and study settings">
             <span className="avatar">{(user?.name || "U").slice(0, 1).toUpperCase()}</span>
-            <span className="profile-copy"><strong>{user?.name || "Student"}</strong><small>Sign out</small></span>
+            <span className="profile-copy"><strong>{user?.name || "Student"}</strong><small>{user?.yearLevel || "Profile & settings"}</small></span>
             <span className="profile-dots">···</span>
           </button>
+          {profileOpen && (
+            <section className="profile-menu" role="dialog" aria-label="Profile and study settings">
+              <div className="profile-menu-heading">
+                <div><span className="section-kicker">YOUR STUDY SPACE</span><h2>Profile & settings</h2></div>
+                <button type="button" className="profile-menu-close" aria-label="Close profile menu" onClick={() => setProfileOpen(false)}><Icon name="close" size={16} /></button>
+              </div>
+              <div className="profile-menu-stats" aria-label="Your study statistics">
+                <div><strong>{progress.xp}</strong><small>XP</small></div>
+                <div><strong>{progress.streak}</strong><small>day streak</small></div>
+                <div><strong>{progress.completedCount || 0}</strong><small>quizzes</small></div>
+              </div>
+              <form className="profile-settings-form" onSubmit={saveProfile}>
+                <label>Display name<input value={profileName} onChange={(event) => { setProfileName(event.target.value); setProfileSaved(false); }} minLength={2} maxLength={60} required /></label>
+                <label>Year level<input value={profileYearLevel} onChange={(event) => { setProfileYearLevel(event.target.value); setProfileSaved(false); }} maxLength={50} placeholder="e.g. 4th year · Nursing" /></label>
+                <label>Exam date<input type="date" value={profileExamDate} onChange={(event) => { setProfileExamDate(event.target.value); setProfileSaved(false); }} /></label>
+                {profileExamDate && <div className="profile-exam-countdown">{daysUntilDate(profileExamDate) < 0 ? "Your exam date has passed" : daysUntilDate(profileExamDate) === 0 ? "Your exam is today" : `${daysUntilDate(profileExamDate)} days to go`}</div>}
+                <label>Daily study goal <span className="profile-input-suffix">minutes / day</span><input type="number" min="15" max="600" step="15" value={profileDailyGoal} onChange={(event) => { setProfileDailyGoal(event.target.value); setProfileSaved(false); }} required /></label>
+                <div className="profile-weekly-goal">
+                  <div><span>This week</span><strong>{progress.weeklyMinutes || 0} / {Math.max(15, Number(profileDailyGoal) || 60) * 7} min</strong></div>
+                  <div className="profile-goal-track" role="progressbar" aria-label="Weekly study goal progress" aria-valuemin={0} aria-valuemax={Math.max(15, Number(profileDailyGoal) || 60) * 7} aria-valuenow={Math.min(progress.weeklyMinutes || 0, Math.max(15, Number(profileDailyGoal) || 60) * 7)}><span style={{ width: `${Math.min(100, ((progress.weeklyMinutes || 0) / (Math.max(15, Number(profileDailyGoal) || 60) * 7)) * 100)}%` }} /></div>
+                  <small>Weekly target based on your daily goal</small>
+                </div>
+                {profileError && <p className="profile-menu-error" role="alert">{profileError}</p>}
+                {profileSaved && <p className="profile-menu-saved" role="status">Profile settings saved.</p>}
+                <button className="profile-save-button" type="submit" disabled={profileSaving}>{profileSaving ? "Saving…" : "Save settings"}</button>
+              </form>
+              <button type="button" className="profile-lock-button" onClick={lockSite}><Icon name="lock" size={15} /> Lock study space</button>
+            </section>
+          )}
         </div>
       </aside>
       <button
@@ -586,7 +694,7 @@ function App() {
           <div className="topbar-right">
             <div className="top-stat streak-stat"><span className="flame-icon"><Icon name="flame" size={19} /></span><strong>{progress.streak}</strong><span>day streak</span></div>
             <div className="top-stat xp-stat"><span className="xp-star">✳</span><strong>{progress.xp}</strong><span>XP</span></div>
-            <button className="top-avatar" aria-label="Sign out" title="Sign out" onClick={lockSite}>{(user?.name || "U").slice(0, 1).toUpperCase()}</button>
+            <button type="button" className="top-avatar profile-menu-trigger" aria-label="Open profile and study settings" title="Profile & settings" aria-haspopup="dialog" aria-expanded={profileOpen} onClick={toggleProfileMenu}>{(user?.name || "U").slice(0, 1).toUpperCase()}</button>
           </div>
         </header>
 
@@ -618,6 +726,8 @@ function App() {
             todayLabel={todayLabel}
             user={user}
             dashboard={dashboard}
+            leaderboard={leaderboard}
+            leaderboardError={leaderboardError}
             studySessions={studySessions}
             taskStats={{ unfinishedTasks, completedTasks }}
             reviewStats={{ completedStudyQuizzes, completedReviewCount, reviewPathLength, reviewCompletionPercent }}
