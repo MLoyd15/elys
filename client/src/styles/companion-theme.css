@@ -25,8 +25,8 @@ html[data-companion-theme="melody"] {
   --theme-control: rgb(255 255 255 / 86%);
   --theme-accent: #c75f88;
   --theme-accent-strong: #a8446d;
-  --theme-text: #583f50;
-  --theme-muted: #927b89;
+  --theme-text: #25352d;
+  --theme-muted: #8c978e;
   --theme-border: rgb(255 255 255 / 92%);
   --theme-shadow: 0 12px 32px rgb(153 74 108 / 11%);
 }
@@ -59,15 +59,15 @@ html[data-companion-theme="melody"] body::before {
 html[data-companion-theme="fox"] body::before {
   background: radial-gradient(620px 510px at 8% 5%, rgb(92 48 151 / 38%), transparent 70%), radial-gradient(560px 480px at 92% 18%, rgb(56 39 84 / 56%), transparent 72%), radial-gradient(700px 580px at 65% 96%, rgb(89 35 117 / 30%), transparent 74%), linear-gradient(155deg, #171222, #100d18 70%, #1c1427);
 }
-html[data-companion-theme] .app-shell { color: var(--theme-text); transition: color .25s ease; }
-html[data-companion-theme] :is(.sidebar, .topbar) {
+html:is([data-companion-theme="water"], [data-companion-theme="fox"]) .app-shell { color: var(--theme-text); transition: color .25s ease; }
+html:is([data-companion-theme="water"], [data-companion-theme="fox"]) :is(.sidebar, .topbar) {
   color: var(--theme-text);
   border-color: var(--theme-border);
   background: var(--theme-surface);
   -webkit-backdrop-filter: blur(16px) saturate(135%);
   backdrop-filter: blur(16px) saturate(135%);
 }
-html[data-companion-theme] :is(.lesson-card, .study-path-card, .todo-card, .review-stat-card, .overview-review-card, .notepad-workspace, .pdf-text-workspace, .pg-card, .weekly-pill, .water-pet-card, .notes-list-panel, .pdf-upload-card) {
+html:is([data-companion-theme="water"], [data-companion-theme="fox"]) :is(.lesson-card, .study-path-card, .todo-card, .review-stat-card, .overview-review-card, .notepad-workspace, .pdf-text-workspace, .pg-card, .weekly-pill, .water-pet-card, .notes-list-panel, .pdf-upload-card) {
   color: var(--theme-text);
   border-color: var(--theme-border);
   background: var(--theme-card);
@@ -76,14 +76,13 @@ html[data-companion-theme] :is(.lesson-card, .study-path-card, .todo-card, .revi
   backdrop-filter: blur(10px) saturate(125%);
   transition: color .25s ease, background-color .25s ease, border-color .25s ease, box-shadow .25s ease;
 }
-html[data-companion-theme] :is(.page-title-row h1, .overview-welcome h1, .hero-card h2, .study-path-card h3, .lesson-card h3, .overview-review-card h2) { color: var(--theme-text); }
-html[data-companion-theme] :is(.section-kicker, .page-title-row > p, .study-path-card p, .lesson-card p, .overview-review-card p) { color: var(--theme-muted); }
-html[data-companion-theme] button:not(.sidebar-resize-handle):not(.companion-interaction-sprite) {
+html:is([data-companion-theme="water"], [data-companion-theme="fox"]) :is(.page-title-row h1, .overview-welcome h1, .hero-card h2, .study-path-card h3, .lesson-card h3, .overview-review-card h2) { color: var(--theme-text); }
+html:is([data-companion-theme="water"], [data-companion-theme="fox"]) :is(.section-kicker, .page-title-row > p, .study-path-card p, .lesson-card p, .overview-review-card p) { color: var(--theme-muted); }
+html:is([data-companion-theme="water"], [data-companion-theme="fox"]) button:not(.sidebar-resize-handle):not(.companion-interaction-sprite) {
   border-color: var(--theme-border);
   transition: color .2s ease, background-color .2s ease, border-color .2s ease, box-shadow .2s ease, transform .2s ease;
 }
 html[data-companion-theme="water"] .sidebar .nav-item.active { color: var(--theme-accent-strong); background: var(--theme-control); }
-html[data-companion-theme="melody"] .sidebar .nav-item.active { color: var(--theme-accent-strong); background: var(--theme-control); }
 html[data-companion-theme="fox"] :is(.sidebar, .topbar, .sidebar .sidebar-note) { border-color: var(--theme-border); }
 html[data-companion-theme="fox"] .sidebar .nav-item { color: var(--theme-muted); }
 html[data-companion-theme="fox"] .sidebar .nav-item.active { color: var(--theme-accent-strong); background: #38264c; }
@@ -121,29 +120,29 @@ html[data-companion-theme="fox"] button:not(.sidebar-resize-handle):not(.compani
 html[data-companion-theme="water"] button:not(.sidebar-resize-handle):not(.companion-interaction-sprite):hover,
 html[data-companion-theme="melody"] button:not(.sidebar-resize-handle):not(.companion-interaction-sprite):hover { border-color: var(--theme-accent); }
 @media (prefers-reduced-motion: reduce) {
-  html[data-companion-theme] *,
-  html[data-companion-theme] *::before,
-  html[data-companion-theme] *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
+  html:is([data-companion-theme="water"], [data-companion-theme="fox"]) *,
+  html:is([data-companion-theme="water"], [data-companion-theme="fox"]) *::before,
+  html:is([data-companion-theme="water"], [data-companion-theme="fox"]) *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
 }
 /* Match the learning surfaces and practice dialogs to the selected companion. */
-html[data-companion-theme] :is(.study-room, .fc-page, .quiz-modal, .fc-card, .pg-card, .pdf-upload-card, .notes-list-panel, .study-objectives, .study-reflection, .study-section) {
+html:is([data-companion-theme="water"], [data-companion-theme="fox"]) :is(.study-room, .fc-page, .quiz-modal, .fc-card, .pg-card, .pdf-upload-card, .notes-list-panel, .study-objectives, .study-reflection, .study-section) {
   color: var(--theme-text);
   border-color: var(--theme-border);
   background-color: var(--theme-card);
   box-shadow: var(--theme-shadow);
 }
-html[data-companion-theme] :is(.study-room-header, .study-unit-list, .study-article, .study-objectives, .study-reflection, .fc-toolbar, .fc-controls) {
+html:is([data-companion-theme="water"], [data-companion-theme="fox"]) :is(.study-room-header, .study-unit-list, .study-article, .study-objectives, .study-reflection, .fc-toolbar, .fc-controls) {
   color: var(--theme-text);
   border-color: var(--theme-border);
 }
-html[data-companion-theme] :is(.study-room, .fc-page, .quiz-modal, .pg-card, .study-objectives, .study-reflection) :is(h1, h2, h3, strong) { color: var(--theme-text); }
-html[data-companion-theme] :is(.study-room, .fc-page, .quiz-modal, .pg-card) :is(p, small, .section-kicker) { color: var(--theme-muted); }
-html[data-companion-theme] button:not(.nav-item):not(.sidebar-resize-handle):not(.companion-interaction-sprite) {
+html:is([data-companion-theme="water"], [data-companion-theme="fox"]) :is(.study-room, .fc-page, .quiz-modal, .pg-card, .study-objectives, .study-reflection) :is(h1, h2, h3, strong) { color: var(--theme-text); }
+html:is([data-companion-theme="water"], [data-companion-theme="fox"]) :is(.study-room, .fc-page, .quiz-modal, .pg-card) :is(p, small, .section-kicker) { color: var(--theme-muted); }
+html:is([data-companion-theme="water"], [data-companion-theme="fox"]) button:not(.nav-item):not(.sidebar-resize-handle):not(.companion-interaction-sprite) {
   color: var(--theme-text);
   border-color: var(--theme-border);
   background: var(--theme-control);
 }
-html[data-companion-theme] button:not(.nav-item):not(.sidebar-resize-handle):not(.companion-interaction-sprite):hover {
+html:is([data-companion-theme="water"], [data-companion-theme="fox"]) button:not(.nav-item):not(.sidebar-resize-handle):not(.companion-interaction-sprite):hover {
   border-color: var(--theme-accent);
   box-shadow: var(--theme-shadow);
 }
@@ -160,7 +159,6 @@ html[data-companion-theme="fox"] :is(.study-unit-button, .answer-option, .fc-top
   background: var(--theme-control);
 }
 html[data-companion-theme="water"] :is(.study-room, .fc-page, .quiz-modal, .pg-card) { --theme-accent: #4288a9; }
-html[data-companion-theme="melody"] :is(.study-room, .fc-page, .quiz-modal, .pg-card) { --theme-accent: #c75f88; }
 html[data-companion-theme="fox"] :is(.study-room, .fc-page, .quiz-modal, .pg-card) { --theme-accent: #ba83f1; }
 /* Fox theme final contrast pass: replace legacy mint and blush accents on every app page. */
 html[data-companion-theme="fox"] .app-shell :is(h1, h2, h3, h4, p, span, small, strong, label, li, dt, dd, time, .task-title, .review-stat-label, .review-stat-note, .overview-unit-name, .overview-unit-status, .overview-leaderboard-player, .overview-leaderboard-xp, .pg-stat-label, .pg-stat-note, .pg-unit-copy, .pg-session-copy, .study-article, .study-section, .fc-text, .fc-label, .fc-source, .fc-cue) {
