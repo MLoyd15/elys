@@ -162,3 +162,75 @@ html[data-companion-theme="fox"] :is(.study-unit-button, .answer-option, .fc-top
 html[data-companion-theme="water"] :is(.study-room, .fc-page, .quiz-modal, .pg-card) { --theme-accent: #4288a9; }
 html[data-companion-theme="melody"] :is(.study-room, .fc-page, .quiz-modal, .pg-card) { --theme-accent: #c75f88; }
 html[data-companion-theme="fox"] :is(.study-room, .fc-page, .quiz-modal, .pg-card) { --theme-accent: #ba83f1; }
+/* Fox theme final contrast pass: replace legacy mint and blush accents on every app page. */
+html[data-companion-theme="fox"] .app-shell :is(h1, h2, h3, h4, p, span, small, strong, label, li, dt, dd, time, .task-title, .review-stat-label, .review-stat-note, .overview-unit-name, .overview-unit-status, .overview-leaderboard-player, .overview-leaderboard-xp, .pg-stat-label, .pg-stat-note, .pg-unit-copy, .pg-session-copy, .study-article, .study-section, .fc-text, .fc-label, .fc-source, .fc-cue) {
+  color: var(--theme-text) !important;
+}
+html[data-companion-theme="fox"] .app-shell :is(.section-kicker, .page-title-row > p, .welcome-subtitle, .hero-kicker, .hero-progress-label, .hero-card p, .melody-welcome p, .review-stat-label, .review-stat-note, .overview-leaderboard-heading p, .overview-leaderboard-player > span, .overview-leaderboard-empty, .overview-unit-status, .task-deadline-field, .task-deadline-field small, .task-form-hint, .task-form-count, .empty-tasks, .empty-tasks p, .todo-summary, .pg-stat-note, .pg-unit-copy small, .pg-session-copy small, .pg-state, .pg-session-empty, .study-introduction, .study-article-meta, .study-source, .fc-heading p, .fc-meta, .fc-foot, .fc-hint, .fc-source, .fc-cue) {
+  color: var(--theme-muted) !important;
+}
+html[data-companion-theme="fox"] .app-shell :is(.hero-card h2 span, .hero-kicker, .hero-progress-label strong, .review-stat-card > strong, .review-stat-pink > strong, .overview-review-heading > strong, .overview-leaderboard-xp, .overview-leaderboard-player:hover > strong, .overview-unit-status.is-complete, .pg-stat > strong, .pg-stat > strong small, .pg-unit.is-done .pg-unit-copy small, .pg-session-duration, .water-pet-progress span, .study-article-meta, .study-section-heading > span, .fc-label, .fc-count.is-complete, .fc-topic-chevron) {
+  color: var(--theme-accent-strong) !important;
+}
+html[data-companion-theme="fox"] .app-shell :is(.hero-card, .melody-welcome, .overview-leaderboard, .overview-review-card, .review-stat-card, .study-path-card, .lesson-card, .todo-card, .pg-card, .water-pet-card, .weekly-pill, .notepad-workspace, .pdf-text-workspace, .pdf-upload-card, .notes-list-panel, .path-load-error) {
+  color: var(--theme-text) !important;
+  border-color: var(--theme-border) !important;
+  background: linear-gradient(145deg, rgb(43 33 58 / 96%), rgb(27 21 38 / 96%)) !important;
+  box-shadow: var(--theme-shadow) !important;
+}
+html[data-companion-theme="fox"] .app-shell :is(.study-path-card.is-next, .study-path-card.is-reviewed, .study-quiz-card.mint, .study-quiz-card.peach, .review-stat-green, .review-stat-pink, .pg-stat-green, .pg-stat-pink, .overview-leaderboard-row.is-you, .overview-unit-row, .overview-leaderboard-total, .task-row, .study-objectives, .study-reflection, .study-sidebar-note, .study-unit-list, .study-unit-button.selected, .study-unit-button:hover) {
+  color: var(--theme-text) !important;
+  border-color: var(--theme-border) !important;
+  background: #261d34 !important;
+}
+html[data-companion-theme="fox"] .app-shell :is(.review-stat-icon, .pg-stat-icon, .overview-unit-number, .overview-unit-number.is-complete, .pg-unit-badge, .pg-unit.is-done .pg-unit-badge, .task-check, .task-check.checked, .summary-check, .study-unit-done, .water-pet-card-art, .water-pet-lock-badge) {
+  color: #f1e8ff !important;
+  border-color: #594170 !important;
+  background: #49315f !important;
+  box-shadow: none !important;
+}
+html[data-companion-theme="fox"] .app-shell :is(.task-due, .task-due.soon, .task-due.overdue, .task-due.no-deadline, .overview-date-pill, .overview-leaderboard-player > strong small, .overview-leaderboard-rank, .study-path-status, .study-path-number, .pg-unit-action, .pg-session-icon, .study-timer, .study-read-count) {
+  color: #e2c9ff !important;
+  border-color: #594170 !important;
+  background: #30243f !important;
+}
+html[data-companion-theme="fox"] .app-shell :is(.hero-progress-track, .overview-progress-track, .pg-ring-track, .pg-unit.is-next) {
+  border-color: #594170 !important;
+  background: #30243f !important;
+}
+html[data-companion-theme="fox"] .app-shell :is(.hero-progress-track span, .overview-progress-track span, .pg-ring-value, .pg-unit.is-done .pg-unit-badge) {
+  background: linear-gradient(90deg, #8a5cc0, #c393f2) !important;
+  stroke: #bd8aef;
+}
+html[data-companion-theme="fox"] .app-shell .sidebar .brand-name span,
+html[data-companion-theme="fox"] .app-shell .sidebar .brand-mark span { color: #d4affb !important; }
+html[data-companion-theme="fox"] .app-shell .sidebar :is(.note-spark, .nav-count, .sidebar-note .sidebar-melody) {
+  color: #e7d2ff !important;
+  border-color: var(--theme-border) !important;
+  background-color: #382849 !important;
+}
+html[data-companion-theme="fox"] .app-shell .sidebar .nav-item:hover { color: #f5edff !important; background: #30243f !important; }
+html[data-companion-theme="fox"] .app-shell button:not(.nav-item):not(.sidebar-resize-handle):not(.companion-interaction-sprite),
+html[data-companion-theme="fox"] .app-shell :is(.button, .add-task-button, .task-delete, .task-check, .study-path-action, .lesson-action, .study-unit-action, .overview-player-button, .pg-unit-action) {
+  color: #f0e5ff !important;
+  border-color: #594170 !important;
+  background: #342643 !important;
+}
+html[data-companion-theme="fox"] .app-shell button:not(.nav-item):not(.sidebar-resize-handle):not(.companion-interaction-sprite):hover {
+  color: #fff !important;
+  border-color: #a675d4 !important;
+  background: #49315f !important;
+}
+html[data-companion-theme="fox"] :is(.profile-menu, .learner-profile-dialog, .companion-interaction-dialog, .companion-picker-dialog, .quiz-modal, .fc-page) {
+  color: var(--theme-text) !important;
+  border-color: var(--theme-border) !important;
+  background: linear-gradient(145deg, #261d34, #171220) !important;
+}
+html[data-companion-theme="fox"] :is(.profile-menu, .learner-profile-dialog, .companion-interaction-dialog, .companion-picker-dialog, .quiz-modal, .fc-page, .fc-card) :is(h1, h2, h3, p, span, small, strong, label, .section-kicker, .fc-text, .fc-label) {
+  color: var(--theme-text) !important;
+}
+html[data-companion-theme="fox"] :is(.profile-menu input, .profile-menu select, .profile-menu textarea, .profile-menu button, .companion-picker-dialog button, .quiz-modal button, .fc-page button) {
+  color: #f0e5ff !important;
+  border-color: #594170 !important;
+  background-color: #342643 !important;
+}
