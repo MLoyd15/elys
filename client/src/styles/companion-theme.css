@@ -1,0 +1,164 @@
+@theme inline {
+  --color-theme-page: var(--theme-page);
+  --color-theme-surface: var(--theme-surface);
+  --color-theme-accent: var(--theme-accent);
+  --color-theme-text: var(--theme-text);
+  --color-theme-muted: var(--theme-muted);
+}
+
+html[data-companion-theme="water"] {
+  --theme-page: #eff9ff;
+  --theme-surface: rgb(255 255 255 / 78%);
+  --theme-card: rgb(255 255 255 / 76%);
+  --theme-control: rgb(255 255 255 / 88%);
+  --theme-accent: #4288a9;
+  --theme-accent-strong: #286c91;
+  --theme-text: #35495a;
+  --theme-muted: #75899a;
+  --theme-border: rgb(255 255 255 / 92%);
+  --theme-shadow: 0 12px 32px rgb(63 117 147 / 11%);
+}
+html[data-companion-theme="melody"] {
+  --theme-page: #fdf0f5;
+  --theme-surface: rgb(255 249 252 / 82%);
+  --theme-card: rgb(255 249 252 / 78%);
+  --theme-control: rgb(255 255 255 / 86%);
+  --theme-accent: #c75f88;
+  --theme-accent-strong: #a8446d;
+  --theme-text: #583f50;
+  --theme-muted: #927b89;
+  --theme-border: rgb(255 255 255 / 92%);
+  --theme-shadow: 0 12px 32px rgb(153 74 108 / 11%);
+}
+html[data-companion-theme="fox"] {
+  --theme-page: #120e1b;
+  --theme-surface: rgb(35 27 49 / 92%);
+  --theme-card: rgb(39 30 53 / 90%);
+  --theme-control: #30243e;
+  --theme-accent: #ba83f1;
+  --theme-accent-strong: #d5aaff;
+  --theme-text: #f1e9fc;
+  --theme-muted: #b9a9cc;
+  --theme-border: rgb(207 171 255 / 19%);
+  --theme-shadow: 0 14px 36px rgb(0 0 0 / 25%);
+}
+
+html[data-companion-theme="water"] body,
+html[data-companion-theme="melody"] body,
+html[data-companion-theme="fox"] body {
+  color: var(--theme-text);
+  background: var(--theme-page);
+  transition: color .25s ease, background-color .25s ease;
+}
+html[data-companion-theme="water"] body::before {
+  background: radial-gradient(560px 460px at 10% 6%, rgb(116 194 230 / 27%), transparent 70%), radial-gradient(520px 500px at 90% 12%, rgb(188 224 249 / 46%), transparent 70%), radial-gradient(620px 520px at 72% 94%, rgb(130 194 225 / 30%), transparent 70%), linear-gradient(160deg, #f8fdff, #edf7ff);
+}
+html[data-companion-theme="melody"] body::before {
+  background: radial-gradient(560px 460px at 10% 6%, rgb(215 127 159 / 40%), transparent 70%), radial-gradient(520px 500px at 90% 12%, rgb(239 170 198 / 46%), transparent 70%), radial-gradient(620px 520px at 72% 94%, rgb(215 127 159 / 32%), transparent 70%), linear-gradient(160deg, #fff7fa, #fdf0f5);
+}
+html[data-companion-theme="fox"] body::before {
+  background: radial-gradient(620px 510px at 8% 5%, rgb(92 48 151 / 38%), transparent 70%), radial-gradient(560px 480px at 92% 18%, rgb(56 39 84 / 56%), transparent 72%), radial-gradient(700px 580px at 65% 96%, rgb(89 35 117 / 30%), transparent 74%), linear-gradient(155deg, #171222, #100d18 70%, #1c1427);
+}
+html[data-companion-theme] .app-shell { color: var(--theme-text); transition: color .25s ease; }
+html[data-companion-theme] :is(.sidebar, .topbar) {
+  color: var(--theme-text);
+  border-color: var(--theme-border);
+  background: var(--theme-surface);
+  -webkit-backdrop-filter: blur(16px) saturate(135%);
+  backdrop-filter: blur(16px) saturate(135%);
+}
+html[data-companion-theme] :is(.lesson-card, .study-path-card, .todo-card, .review-stat-card, .overview-review-card, .notepad-workspace, .pdf-text-workspace, .pg-card, .weekly-pill, .water-pet-card, .notes-list-panel, .pdf-upload-card) {
+  color: var(--theme-text);
+  border-color: var(--theme-border);
+  background: var(--theme-card);
+  box-shadow: var(--theme-shadow);
+  -webkit-backdrop-filter: blur(10px) saturate(125%);
+  backdrop-filter: blur(10px) saturate(125%);
+  transition: color .25s ease, background-color .25s ease, border-color .25s ease, box-shadow .25s ease;
+}
+html[data-companion-theme] :is(.page-title-row h1, .overview-welcome h1, .hero-card h2, .study-path-card h3, .lesson-card h3, .overview-review-card h2) { color: var(--theme-text); }
+html[data-companion-theme] :is(.section-kicker, .page-title-row > p, .study-path-card p, .lesson-card p, .overview-review-card p) { color: var(--theme-muted); }
+html[data-companion-theme] button:not(.sidebar-resize-handle):not(.companion-interaction-sprite) {
+  border-color: var(--theme-border);
+  transition: color .2s ease, background-color .2s ease, border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+}
+html[data-companion-theme="water"] .sidebar .nav-item.active { color: var(--theme-accent-strong); background: var(--theme-control); }
+html[data-companion-theme="melody"] .sidebar .nav-item.active { color: var(--theme-accent-strong); background: var(--theme-control); }
+html[data-companion-theme="fox"] :is(.sidebar, .topbar, .sidebar .sidebar-note) { border-color: var(--theme-border); }
+html[data-companion-theme="fox"] .sidebar .nav-item { color: var(--theme-muted); }
+html[data-companion-theme="fox"] .sidebar .nav-item.active { color: var(--theme-accent-strong); background: #38264c; }
+html[data-companion-theme="fox"] .sidebar .brand,
+html[data-companion-theme="fox"] .sidebar .nav-label,
+html[data-companion-theme="fox"] .sidebar .profile,
+html[data-companion-theme="fox"] .topbar,
+html[data-companion-theme="fox"] .topbar :is(a, span, strong, button) { color: var(--theme-text); }
+html[data-companion-theme="fox"] :is(.sidebar, .sidebar .sidebar-note) { background: rgb(25 19 36 / 93%); }
+html[data-companion-theme="fox"] :is(.hero-card, .review-stat-card, .overview-review-card, .study-path-card, .todo-card, .lesson-card, .notepad-workspace, .pdf-text-workspace, .pg-card, .weekly-pill) {
+  color: var(--theme-text);
+  border-color: var(--theme-border);
+  background: var(--theme-card);
+  box-shadow: var(--theme-shadow);
+}
+html[data-companion-theme="fox"] :is(.hero-card h2, .page-title-row h1, .overview-welcome h1, .study-path-card h3, .lesson-card h3, .overview-review-card h2) { color: var(--theme-text); }
+html[data-companion-theme="fox"] :is(.hero-card p, .page-content p, .page-content small, .section-kicker) { color: var(--theme-muted); }
+html[data-companion-theme="fox"] :is(.profile-menu, .learner-profile-dialog, .companion-interaction-dialog, .quiz-modal, .fc-page, .modal-card) {
+  color: var(--theme-text);
+  border-color: var(--theme-border);
+  background: var(--theme-surface);
+  box-shadow: var(--theme-shadow);
+}
+html[data-companion-theme="fox"] :is(.profile-menu, .learner-profile-dialog, .companion-interaction-dialog, .quiz-modal, .fc-page) :is(h1, h2, h3, strong) { color: var(--theme-text); }
+html[data-companion-theme="fox"] :is(.profile-menu input, .profile-menu select, .profile-menu textarea, .quiz-modal input, .quiz-modal select) {
+  color: var(--theme-text);
+  border-color: var(--theme-border);
+  background: var(--theme-control);
+}
+html[data-companion-theme="fox"] button:not(.sidebar-resize-handle):not(.companion-interaction-sprite) {
+  color: var(--theme-text);
+  background-color: var(--theme-control);
+}
+html[data-companion-theme="fox"] button:not(.sidebar-resize-handle):not(.companion-interaction-sprite):hover { border-color: var(--theme-accent); box-shadow: 0 7px 18px rgb(0 0 0 / 24%); }
+html[data-companion-theme="water"] button:not(.sidebar-resize-handle):not(.companion-interaction-sprite):hover,
+html[data-companion-theme="melody"] button:not(.sidebar-resize-handle):not(.companion-interaction-sprite):hover { border-color: var(--theme-accent); }
+@media (prefers-reduced-motion: reduce) {
+  html[data-companion-theme] *,
+  html[data-companion-theme] *::before,
+  html[data-companion-theme] *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
+}
+/* Match the learning surfaces and practice dialogs to the selected companion. */
+html[data-companion-theme] :is(.study-room, .fc-page, .quiz-modal, .fc-card, .pg-card, .pdf-upload-card, .notes-list-panel, .study-objectives, .study-reflection, .study-section) {
+  color: var(--theme-text);
+  border-color: var(--theme-border);
+  background-color: var(--theme-card);
+  box-shadow: var(--theme-shadow);
+}
+html[data-companion-theme] :is(.study-room-header, .study-unit-list, .study-article, .study-objectives, .study-reflection, .fc-toolbar, .fc-controls) {
+  color: var(--theme-text);
+  border-color: var(--theme-border);
+}
+html[data-companion-theme] :is(.study-room, .fc-page, .quiz-modal, .pg-card, .study-objectives, .study-reflection) :is(h1, h2, h3, strong) { color: var(--theme-text); }
+html[data-companion-theme] :is(.study-room, .fc-page, .quiz-modal, .pg-card) :is(p, small, .section-kicker) { color: var(--theme-muted); }
+html[data-companion-theme] button:not(.nav-item):not(.sidebar-resize-handle):not(.companion-interaction-sprite) {
+  color: var(--theme-text);
+  border-color: var(--theme-border);
+  background: var(--theme-control);
+}
+html[data-companion-theme] button:not(.nav-item):not(.sidebar-resize-handle):not(.companion-interaction-sprite):hover {
+  border-color: var(--theme-accent);
+  box-shadow: var(--theme-shadow);
+}
+html[data-companion-theme="fox"] :is(.study-room, .study-unit-list, .study-article, .study-objectives, .study-reflection, .study-section, .fc-page, .quiz-modal, .fc-card, .pg-card) {
+  color: var(--theme-text);
+  border-color: var(--theme-border);
+  background: var(--theme-surface);
+  box-shadow: var(--theme-shadow);
+}
+html[data-companion-theme="fox"] :is(.study-room, .study-unit-list, .study-article, .study-objectives, .study-reflection, .study-section, .fc-page, .quiz-modal, .fc-card, .pg-card) :is(h1, h2, h3, strong, p, small, span, label) { color: inherit; }
+html[data-companion-theme="fox"] :is(.study-unit-button, .answer-option, .fc-topic-trigger, .fc-topic-option, .study-timer-button, .study-back-button) {
+  color: var(--theme-text);
+  border-color: var(--theme-border);
+  background: var(--theme-control);
+}
+html[data-companion-theme="water"] :is(.study-room, .fc-page, .quiz-modal, .pg-card) { --theme-accent: #4288a9; }
+html[data-companion-theme="melody"] :is(.study-room, .fc-page, .quiz-modal, .pg-card) { --theme-accent: #c75f88; }
+html[data-companion-theme="fox"] :is(.study-room, .fc-page, .quiz-modal, .pg-card) { --theme-accent: #ba83f1; }

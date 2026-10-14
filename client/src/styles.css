@@ -1,3 +1,4 @@
+@import "tailwindcss";
 @import "./styles/base-and-shell.css";
 @import "./styles/learning-path.css";
 @import "./styles/tasks-and-progress.css";
@@ -11,3 +12,5 @@
 @import "./styles/responsive-pages.css";
 @import "./styles/sidebar-theme.css";
 @import "./styles/glassmorphism.css";
+
+@import "./styles/companion-theme.css";

@@ -631,7 +631,7 @@ function App() {
     chart: "See how your completed study-unit quizzes add up.",
   };
   return (
-    <div className="app-shell" data-companion-theme={user?.theme || "water"} style={{ "--sidebar-width": `${sidebarWidth}px` }}>
+    <div className="app-shell min-h-screen text-theme-text transition-colors" data-companion-theme={user?.theme || "water"} style={{ "--sidebar-width": `${sidebarWidth}px` }}>
       <aside className="sidebar">
         <a className="brand" href="#" onClick={(event) => event.preventDefault()}>
           <span className="brand-mark">n<span>+</span></span>
