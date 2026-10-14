@@ -101,6 +101,10 @@
 .profile-water-pet .section-kicker { color: #8173a2; font-size: 7px; letter-spacing: .8px; }
 .profile-water-pet strong { overflow: hidden; color: #526783; font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
 .profile-water-pet small { color: #8e94a4; font-size: 8px; }
+.learner-profile-companion { width: 100%; text-align: left; }
+.learner-profile-pet-level { justify-self: end; padding: 5px 7px; border: 1px solid rgb(174 126 195 / 22%); border-radius: 8px; color: #865583; background: rgb(255 255 255 / 76%); font-size: 8px; font-weight: 800; white-space: nowrap; }
+.learner-profile-pet-placeholder { display: grid; width: 52px; height: 52px; place-items: center; border-radius: 13px; color: #a84f73; background: #f8e8f0; font-size: 22px; }
+.learner-profile-companion-empty { grid-template-columns: 52px minmax(0, 1fr); }
 .profile-companion-actions { display: grid; gap: 5px; }
 .profile-water-pet button { padding: 7px 8px; border: 1px solid white; border-radius: 8px; color: #625e91; background: rgb(255 255 255 / 78%); font-size: 8px; font-weight: 800; cursor: pointer; transition: transform .18s ease, box-shadow .18s ease; }
 .profile-water-pet button:hover { transform: translateY(-2px); box-shadow: 0 5px 12px rgb(94 100 151 / 13%); }

@@ -60,14 +60,16 @@ router.get("/leaderboard", async (request, response, next) => {
   try {
     const [progressRecords, users] = await Promise.all([
       Progress.find({ userId: { $exists: true } }).lean(),
-      User.find().select("_id name").lean(),
+      User.find().select("_id name companion").lean(),
     ]);
     const nameById = new Map(users.map((user) => [user._id.toString(), user.name]));
+    const companionById = new Map(users.map((user) => [user._id.toString(), user.companion || ""]));
     const players = progressRecords
       .filter((record) => record.userId && nameById.has(record.userId.toString()))
       .map((record) => ({
         id: record.userId.toString(),
         name: nameById.get(record.userId.toString()),
+        companion: companionById.get(record.userId.toString()) || "",
         xp: record.xp || 0,
         streak: record.streak || 0,
         completedQuizzes: (record.completedStudyQuizzes || []).length,

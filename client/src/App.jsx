@@ -100,6 +100,7 @@ function App() {
   const [leaderboardError, setLeaderboardError] = useState("");
   const [profileOpen, setProfileOpen] = useState(false);
   const [selectedLearner, setSelectedLearner] = useState(null);
+  const selectedLearnerPet = selectedLearner?.companion ? getCompanionProgress(selectedLearner.xp, selectedLearner.companion) : null;
   const [companionInteractionOpen, setCompanionInteractionOpen] = useState(false);
   const [companionPickerOpen, setCompanionPickerOpen] = useState(false);
   const [companionPickerRequired, setCompanionPickerRequired] = useState(false);
@@ -840,6 +841,26 @@ function App() {
             <h2 id="learner-profile-name">{selectedLearner.name}</h2>
             <p className="learner-profile-tagline">Every focused session moves you forward.</p>
             <div className="learner-profile-stats"><div><strong>{selectedLearner.xp}</strong><span>XP earned</span></div><div><strong>{selectedLearner.completedQuizzes}</strong><span>quizzes done</span></div><div><strong>{selectedLearner.streak}</strong><span>day streak</span></div></div>
+            {selectedLearnerPet ? (
+              <div className="profile-water-pet learner-profile-companion">
+                <img src={selectedLearnerPet.image} alt={`${selectedLearner.name}'s ${selectedLearnerPet.name}`} />
+                <div>
+                  <span className="section-kicker">STUDY COMPANION</span>
+                  <strong>{selectedLearnerPet.name}</strong>
+                  <small>Level {selectedLearnerPet.level} · {selectedLearnerPet.nextMilestone ? `Evolves at Level ${selectedLearnerPet.nextMilestone}` : "Final evolution"}</small>
+                </div>
+                <span className="learner-profile-pet-level">LVL {selectedLearnerPet.level}</span>
+              </div>
+            ) : (
+              <div className="profile-water-pet learner-profile-companion learner-profile-companion-empty">
+                <span className="learner-profile-pet-placeholder" aria-hidden="true">✦</span>
+                <div>
+                  <span className="section-kicker">STUDY COMPANION</span>
+                  <strong>No companion chosen yet</strong>
+                  <small>This learner has not picked a study buddy.</small>
+                </div>
+              </div>
+            )}
             <div className="learner-profile-rank-track"><span style={{ width: `${Math.max(8, 100 - (selectedLearner.rank - 1) * 12)}%` }} /></div>
             <p className="learner-profile-rank-note">Ranked #{selectedLearner.rank} among {leaderboard.length} learners</p>
           </section>
