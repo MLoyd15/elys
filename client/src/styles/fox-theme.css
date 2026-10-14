@@ -1,0 +1,480 @@
+/* =====================================================================
+   Fox theme: one cohesive dark purple look.
+
+   Every rule is scoped to html[data-companion-theme="fox"], so the
+   Waterling and Melody themes are not touched.
+
+   Import this LAST in client/src/styles.css (after companion-theme.css).
+
+   Palette
+     bg        #0e0a16   page
+     card      #1c1429   cards and panels
+     card-2    #251a37   inputs, buttons, raised rows
+     card-3    #31224a   hover and selected
+     text      #f4edff   main text   (about 14:1 on card)
+     muted     #bdaed6   secondary   (about 8:1 on card)
+     accent    #b88cf5   highlights
+     solid     #7b48c4 > #9a65e0   primary buttons (white text)
+
+   About !important: companion-theme.css has a shared button rule
+   (html[data-companion-theme] button:not(...)) with very high
+   specificity. It already uses the --theme-* variables below, so most
+   buttons look right with no help. The few !important declarations in
+   this file are only for buttons that must look different (primary,
+   selected, correct/incorrect, quiet text buttons).
+   ===================================================================== */
+
+/* ---------- tokens ---------- */
+html[data-companion-theme="fox"] {
+  color-scheme: dark; /* dark date picker, scrollbars, select menus */
+
+  --fx-bg: #0e0a16;
+  --fx-card: #1c1429;
+  --fx-card-2: #251a37;
+  --fx-card-3: #31224a;
+  --fx-line: rgb(186 148 255 / 18%);
+  --fx-line-strong: rgb(186 148 255 / 42%);
+  --fx-text: #f4edff;
+  --fx-muted: #bdaed6;
+  --fx-faint: #9a8bb8;
+  --fx-accent: #b88cf5;
+  --fx-accent-2: #d6b9ff;
+  --fx-solid-a: #7b48c4;
+  --fx-solid-b: #9a65e0;
+  --fx-ok: #9ad9b4;
+  --fx-bad: #ff9db4;
+  --fx-shadow: 0 12px 32px rgb(0 0 0 / 35%);
+
+  /* remap the shared tokens the other stylesheets read */
+  --ink: var(--fx-text);
+  --pink: var(--fx-accent);
+  --pink-dark: var(--fx-accent-2);
+  --pink-soft: var(--fx-card-3);
+  --green: var(--fx-accent);
+  --green-dark: var(--fx-accent-2);
+  --glass-surface-soft: rgb(32 23 46 / 80%);
+  --glass-surface: rgb(28 20 41 / 90%);
+  --glass-surface-strong: rgb(34 25 50 / 96%);
+  --glass-border: var(--fx-line);
+  --glass-border-strong: var(--fx-line-strong);
+  --glass-edge: inset 0 1px 0 rgb(255 255 255 / 6%);
+  --glass-shadow: var(--fx-shadow);
+  --glass-shadow-hover: 0 16px 38px rgb(0 0 0 / 45%);
+  --glass-muted: var(--fx-muted);
+
+  /* used by the shared button rule in companion-theme.css */
+  --theme-page: var(--fx-bg);
+  --theme-surface: rgb(28 20 41 / 94%);
+  --theme-card: var(--fx-card);
+  --theme-control: var(--fx-card-2);
+  --theme-accent: var(--fx-accent);
+  --theme-accent-strong: var(--fx-accent-2);
+  --theme-text: var(--fx-text);
+  --theme-muted: var(--fx-muted);
+  --theme-border: var(--fx-line);
+  --theme-shadow: var(--fx-shadow);
+}
+
+/* ---------- page ---------- */
+html[data-companion-theme="fox"] body { color: var(--fx-text); background: var(--fx-bg); }
+html[data-companion-theme="fox"] body::before {
+  background:
+    radial-gradient(620px 520px at 8% 4%, rgb(110 60 190 / 32%), transparent 70%),
+    radial-gradient(560px 480px at 92% 14%, rgb(70 40 120 / 40%), transparent 72%),
+    radial-gradient(700px 580px at 65% 96%, rgb(90 40 140 / 24%), transparent 74%),
+    linear-gradient(155deg, #150f22, #0e0a16 70%, #18102a);
+}
+html[data-companion-theme="fox"] ::selection { color: #fff; background: rgb(154 101 224 / 55%); }
+html[data-companion-theme="fox"] .app-shell { color: var(--fx-text); }
+html[data-companion-theme="fox"] ::placeholder { color: var(--fx-faint); opacity: 1; }
+
+/* baseline text: low specificity on purpose so the accents below can win */
+html[data-companion-theme="fox"] .app-shell :where(h1, h2, h3, h4, strong, label, li, dt) { color: var(--fx-text); }
+html[data-companion-theme="fox"] .app-shell :where(p, small, time) { color: var(--fx-muted); }
+
+/* labels, captions, secondary text */
+html[data-companion-theme="fox"] .app-shell :is(
+  .section-kicker, .eyebrow, .nav-label, .breadcrumb, .breadcrumb span, .top-stat > span,
+  .welcome-subtitle, .page-title-row > p, .section-heading p, .page-footer,
+  .review-stat-label, .review-stat-note, .melody-welcome-kicker, .page-melody-design > div span,
+  .overview-unit-status, .overview-leaderboard-player > span, .overview-leaderboard-empty,
+  .task-form-hint, .task-form-count, .task-deadline-field, .task-deadline-field small, .empty-tasks, .todo-summary,
+  .lesson-category, .lesson-status, .lesson-footer > span, .study-path-topic, .study-path-status, .study-path-card-footer > span,
+  .study-read-count, .study-unit-label, .study-unit-number, .study-unit-copy small, .study-sidebar-note, .study-article-meta, .study-source,
+  .study-timer-readout > span, .floating-study-timer-label,
+  .fc-meta, .fc-foot, .fc-hint, .fc-source, .fc-cue, .fc-count, .fc-disclaimer, .fc-heading p,
+  .quiz-encourage, .quiz-progress-heading, .notes-folder-hint, .notes-folder-item > span:last-child, .note-list-item span,
+  .note-save-status, .pdf-upload-copy p, .pdf-result-heading p, .pdf-file-status, .pdf-conversion-status, .pdf-copy-status,
+  .ai-guide-text-footer > span, .ai-guide-difficulty-copy small, .ai-guide-custom-prompt-wrap > small,
+  .pg-stat-label, .pg-stat-note, .pg-units-heading span, .pg-unit-copy small, .pg-session-copy small, .pg-state, .pg-session-empty,
+  .landing-private
+) { color: var(--fx-muted); }
+
+/* ordinary readable spans */
+html[data-companion-theme="fox"] .app-shell :is(
+  .task-title, .overview-unit-name, .study-introduction, .study-section > p, .note-list-item strong,
+  .fc-text, .answer-option, .pg-session-duration
+) { color: var(--fx-text); }
+
+/* headings that old rules colored green or pink */
+html[data-companion-theme="fox"] .app-shell :is(
+  .page-title-row h1, .welcome-row h1, .section-heading h2, .todo-header h2, .melody-welcome h2,
+  .water-pet-card-copy h2, .overview-review-heading h2, .overview-leaderboard-heading h2,
+  .study-path-card h3, .lesson-card h3, .study-room-title-block h1, .study-article-inner > h2,
+  .pdf-upload-copy h2, .pdf-result-heading h2, .notes-list-heading h2, .note-editor-empty h2,
+  .fc-heading h1, .quiz-content h1, .pg-hero-copy h2, .pg-units-heading h3
+) { color: var(--fx-text); }
+
+/* accent text */
+html[data-companion-theme="fox"] .app-shell :is(
+  .section-kicker, .study-article-meta, .study-section-heading > span, .study-unit-number,
+  .review-stat-card > strong, .overview-review-heading > strong, .overview-leaderboard-xp,
+  .overview-unit-status.is-complete, .pg-stat > strong, .pg-stat > strong small, .pg-ring-text strong,
+  .pg-unit.is-done .pg-unit-copy small, .fc-label, .fc-count.is-complete, .study-reflection > span,
+  .melody-welcome-kicker, .page-melody-design > div span, .water-pet-card-copy .section-kicker,
+  .profile-menu-stats strong, .overview-player-view
+) { color: var(--fx-accent-2); }
+
+/* ---------- surfaces: every card and panel ---------- */
+html[data-companion-theme="fox"] .app-shell :is(
+  .hero-card, .melody-welcome, .water-pet-card, .review-stat-card, .overview-leaderboard, .overview-review-card,
+  .lesson-card, .study-path-card, .todo-card, .pg-card, .notepad-workspace, .pdf-text-workspace,
+  .path-load-error, .page-melody-design, .weekly-pill, .fc-page, .quiz-modal, .toast
+) {
+  color: var(--fx-text);
+  border: 1px solid var(--fx-line);
+  background: linear-gradient(145deg, #231936, #1a1228);
+  box-shadow: var(--fx-shadow);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+html[data-companion-theme="fox"] .app-shell :is(.lesson-card, .study-path-card, .pg-card):hover {
+  border-color: var(--fx-line-strong);
+  background: linear-gradient(145deg, #2a1e40, #1e152f);
+  box-shadow: 0 16px 38px rgb(0 0 0 / 45%);
+}
+html[data-companion-theme="fox"] .app-shell .study-path-card.is-next {
+  border-color: var(--fx-line-strong);
+  background: linear-gradient(145deg, #2e2147, #201634);
+}
+html[data-companion-theme="fox"] .app-shell :is(.lesson-card, .study-path-card)::after {
+  background: linear-gradient(115deg, transparent 20%, rgb(214 185 255 / 8%) 48%, transparent 74%);
+}
+html[data-companion-theme="fox"] .app-shell :is(.review-stat-green, .review-stat-pink, .pg-stat-green, .pg-stat-pink) {
+  background: linear-gradient(145deg, #231936, #1a1228);
+}
+
+/* small icon tiles and pills */
+html[data-companion-theme="fox"] .app-shell :is(
+  .review-stat-icon, .pg-stat-icon, .pg-session-icon, .lesson-icon, .study-path-number, .overview-unit-number,
+  .pg-unit-badge, .water-pet-lock-badge, .todo-total, .overview-leaderboard-rank, .overview-leaderboard-total,
+  .overview-leaderboard-player > strong small, .overview-date-pill, .path-progress-pill, .task-due, .study-read-count,
+  .study-timer, .note-spark, .nav-count
+) {
+  color: var(--fx-accent-2);
+  border-color: var(--fx-line);
+  background: var(--fx-card-3);
+  box-shadow: none;
+}
+html[data-companion-theme="fox"] .app-shell :is(.overview-unit-number.is-complete, .pg-unit.is-done .pg-unit-badge, .overview-leaderboard-row .rank-1) {
+  color: #fff;
+  background: var(--fx-solid-a);
+}
+html[data-companion-theme="fox"] .app-shell .task-due.overdue { color: var(--fx-bad); border-color: rgb(255 157 180 / 35%); background: rgb(255 157 180 / 10%); }
+html[data-companion-theme="fox"] .app-shell .task-due.soon { color: #ffd9a0; border-color: rgb(255 217 160 / 30%); background: rgb(255 217 160 / 9%); }
+html[data-companion-theme="fox"] .app-shell .task-due.no-deadline { color: var(--fx-faint); background: transparent; }
+
+/* progress bars */
+html[data-companion-theme="fox"] .app-shell :is(.hero-progress-track, .overview-progress-track, .water-pet-progress, .fc-progress, .quiz-progress-track, .pg-ring-track, .profile-goal-track) {
+  background: rgb(186 148 255 / 16%);
+  box-shadow: none;
+}
+html[data-companion-theme="fox"] .app-shell :is(.hero-progress-track span, .overview-progress-track span, .water-pet-progress span, .fc-progress span, .quiz-progress-track span) {
+  background: linear-gradient(90deg, var(--fx-solid-a), #c393f2);
+}
+html[data-companion-theme="fox"] .app-shell .pg-ring-value { stroke: #bd8aef; }
+html[data-companion-theme="fox"] .app-shell .pg-ring-text span { color: var(--fx-muted); }
+
+/* ---------- app chrome ---------- */
+html[data-companion-theme="fox"] .app-shell .sidebar {
+  color: var(--fx-text);
+  border-right-color: var(--fx-line);
+  background: linear-gradient(170deg, #1a1228, #120d1c);
+  box-shadow: 12px 0 38px rgb(0 0 0 / 30%);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+html[data-companion-theme="fox"] .app-shell .sidebar .brand { color: var(--fx-text); }
+html[data-companion-theme="fox"] .app-shell .sidebar .brand-mark { color: var(--fx-accent-2); background: var(--fx-card-3); }
+html[data-companion-theme="fox"] .app-shell .sidebar :is(.brand-mark span, .brand-name span) { color: var(--fx-accent); }
+html[data-companion-theme="fox"] .app-shell .sidebar .nav-item { color: var(--fx-muted); background: transparent; box-shadow: none; }
+html[data-companion-theme="fox"] .app-shell .sidebar .nav-item:hover { color: #fff; background: var(--fx-card-2); }
+html[data-companion-theme="fox"] .app-shell .sidebar .nav-item.active { color: var(--fx-accent-2); background: var(--fx-card-3); box-shadow: inset 0 0 0 1px var(--fx-line-strong); }
+html[data-companion-theme="fox"] .app-shell .sidebar .nav-count { color: #fff; background: var(--fx-solid-a); }
+html[data-companion-theme="fox"] .app-shell .sidebar .sidebar-note { border-color: var(--fx-line); background: var(--fx-card-2); }
+html[data-companion-theme="fox"] .app-shell .sidebar .sidebar-note > p { color: var(--fx-text); }
+html[data-companion-theme="fox"] .app-shell .sidebar .sidebar-note > span { color: var(--fx-muted); }
+html[data-companion-theme="fox"] .app-shell .sidebar .sidebar-melody { border-color: var(--fx-line-strong); }
+html[data-companion-theme="fox"] .app-shell .sidebar .avatar { color: var(--fx-accent-2); background: var(--fx-card-3); }
+html[data-companion-theme="fox"] .app-shell .sidebar .profile-copy small,
+html[data-companion-theme="fox"] .app-shell .sidebar .profile-dots { color: var(--fx-faint); }
+html[data-companion-theme="fox"] .app-shell .sidebar .profile-copy strong { color: var(--fx-text); }
+html[data-companion-theme="fox"] .app-shell .topbar {
+  border-bottom-color: var(--fx-line);
+  background: rgb(21 15 33 / 88%);
+  box-shadow: none;
+}
+html[data-companion-theme="fox"] .app-shell .topbar .top-stat strong { color: var(--fx-text); }
+html[data-companion-theme="fox"] .app-shell .topbar .breadcrumb strong { color: var(--fx-text); }
+html[data-companion-theme="fox"] .app-shell .xp-star { color: var(--fx-accent); }
+html[data-companion-theme="fox"] .app-shell .flame-icon { color: #ffb86b; }
+html[data-companion-theme="fox"] .app-shell .page-footer { border-top-color: var(--fx-line); }
+html[data-companion-theme="fox"] .app-shell .page-footer span { color: var(--fx-accent); }
+
+/* ---------- overview ---------- */
+html[data-companion-theme="fox"] .app-shell .melody-welcome { background: linear-gradient(112deg, #2a1d42, #1d1430 60%, #261a3c); }
+html[data-companion-theme="fox"] .app-shell .melody-welcome p,
+html[data-companion-theme="fox"] .app-shell .page-melody-design > div p { color: var(--fx-muted); }
+html[data-companion-theme="fox"] .app-shell .melody-orb { border-color: var(--fx-line); background: rgb(186 148 255 / 8%); }
+html[data-companion-theme="fox"] .app-shell .water-pet-card::after { border-color: var(--fx-line); background: rgb(186 148 255 / 5%); }
+html[data-companion-theme="fox"] .app-shell .water-pet-card-art { border-color: var(--fx-line); background: radial-gradient(circle at 50% 35%, #3a2a58, #271b3b 70%); box-shadow: none; }
+html[data-companion-theme="fox"] .app-shell .water-pet-card-copy > small { color: var(--fx-faint); }
+html[data-companion-theme="fox"] .app-shell .overview-leaderboard-row.is-you { background: linear-gradient(90deg, rgb(154 101 224 / 24%), transparent); box-shadow: inset 0 0 0 1px var(--fx-line-strong); }
+html[data-companion-theme="fox"] .app-shell .overview-leaderboard-row { border-bottom-color: var(--fx-line); }
+html[data-companion-theme="fox"] .app-shell .overview-unit-row { border-bottom-color: var(--fx-line); }
+html[data-companion-theme="fox"] .app-shell .overview-leaderboard-player > strong { color: var(--fx-text); }
+html[data-companion-theme="fox"] .app-shell .overview-leaderboard-list { scrollbar-color: #5b4380 transparent; }
+
+/* ---------- to-dos ---------- */
+html[data-companion-theme="fox"] .app-shell .task-row { border-bottom-color: var(--fx-line); }
+html[data-companion-theme="fox"] .app-shell .task-complete .task-title { color: var(--fx-faint); }
+html[data-companion-theme="fox"] .app-shell .summary-check { color: #fff; background: var(--fx-solid-a); }
+html[data-companion-theme="fox"] .app-shell .task-form-error { color: var(--fx-bad); }
+
+/* ---------- inputs ---------- */
+html[data-companion-theme="fox"] :is(input, textarea, select):not([type="radio"]):not([type="checkbox"]) {
+  color: var(--fx-text);
+  border-color: var(--fx-line);
+  background-color: var(--fx-card-2);
+  box-shadow: none;
+}
+html[data-companion-theme="fox"] :is(input, textarea, select):focus {
+  border-color: var(--fx-accent);
+  outline: 3px solid rgb(184 140 245 / 25%);
+  background-color: #2b1f40;
+}
+html[data-companion-theme="fox"] .app-shell :is(.note-title-input, .note-content-input) { background: transparent; border-color: transparent; }
+html[data-companion-theme="fox"] .app-shell .note-title-input:focus { border-bottom-color: var(--fx-line-strong); outline: none; }
+html[data-companion-theme="fox"] .app-shell .note-content-input:focus { outline: none; }
+html[data-companion-theme="fox"] :is(button, a, input, textarea, select):focus-visible { outline-color: rgb(184 140 245 / 60%); }
+
+/* ---------- notepad ---------- */
+html[data-companion-theme="fox"] .app-shell .notes-list-panel { border-color: var(--fx-line); background: rgb(21 15 33 / 70%); }
+html[data-companion-theme="fox"] .app-shell .note-editor-toolbar { border-color: var(--fx-line); }
+html[data-companion-theme="fox"] .app-shell .note-save-status.unsaved { color: #ffd9a0; }
+html[data-companion-theme="fox"] .app-shell .notes-folder-feedback { color: var(--fx-ok); border-color: rgb(154 217 180 / 30%); background: rgb(154 217 180 / 8%); }
+html[data-companion-theme="fox"] .app-shell .notes-folder-feedback.error,
+html[data-companion-theme="fox"] .app-shell .notes-error { color: var(--fx-bad); border-color: rgb(255 157 180 / 30%); background: rgb(255 157 180 / 8%); }
+html[data-companion-theme="fox"] .app-shell .notes-error { background: transparent; border: 0; }
+html[data-companion-theme="fox"] .app-shell .notes-empty-list,
+html[data-companion-theme="fox"] .app-shell .note-editor-empty p { color: var(--fx-muted); }
+
+/* ---------- AI Guide ---------- */
+html[data-companion-theme="fox"] .app-shell .pdf-upload-card { border-color: var(--fx-line-strong); background: var(--fx-card-2); box-shadow: none; }
+html[data-companion-theme="fox"] .app-shell .pdf-upload-icon { color: var(--fx-accent-2); background: var(--fx-card-3); }
+html[data-companion-theme="fox"] .app-shell .ai-guide-input-tabs { border-bottom-color: var(--fx-line); }
+html[data-companion-theme="fox"] .app-shell .ai-guide-difficulty legend,
+html[data-companion-theme="fox"] .app-shell .ai-guide-text-form > label,
+html[data-companion-theme="fox"] .app-shell .ai-guide-custom-prompt-wrap > label { color: var(--fx-text); }
+html[data-companion-theme="fox"] .app-shell .ai-guide-difficulty-option { color: var(--fx-text); border-color: var(--fx-line); background: var(--fx-card-2); }
+html[data-companion-theme="fox"] .app-shell .ai-guide-difficulty-option:hover { background: var(--fx-card-3); }
+html[data-companion-theme="fox"] .app-shell .ai-guide-difficulty-option.selected { border-color: var(--fx-accent); background: var(--fx-card-3); box-shadow: inset 0 0 0 1px rgb(184 140 245 / 35%); }
+html[data-companion-theme="fox"] .app-shell .ai-guide-difficulty-radio { border-color: var(--fx-line-strong); background: var(--fx-card); }
+html[data-companion-theme="fox"] .app-shell .ai-guide-difficulty-option.selected .ai-guide-difficulty-radio { border-color: var(--fx-accent); }
+html[data-companion-theme="fox"] .app-shell .ai-guide-difficulty-option.selected .ai-guide-difficulty-radio::after { background: var(--fx-accent); }
+html[data-companion-theme="fox"] .app-shell .ai-guide-difficulty-copy strong { color: var(--fx-text); }
+html[data-companion-theme="fox"] .app-shell .pdf-conversion-error { color: var(--fx-bad); }
+html[data-companion-theme="fox"] .app-shell .loader { border-color: rgb(184 140 245 / 25%); border-top-color: var(--fx-accent); }
+
+/* ---------- study room ---------- */
+html[data-companion-theme="fox"] .app-shell .study-room-page .study-room-header { border-bottom-color: var(--fx-line); }
+html[data-companion-theme="fox"] .app-shell .study-room-page .study-room-title-block { border-left-color: var(--fx-line); }
+html[data-companion-theme="fox"] .app-shell .study-room-page .study-room-title-block h1 { color: var(--fx-text); }
+html[data-companion-theme="fox"] .app-shell .study-room-page .study-room-title-block .section-kicker { color: var(--fx-accent-2); }
+html[data-companion-theme="fox"] .app-shell .study-room-page .study-unit-list {
+  border-color: var(--fx-line);
+  background: linear-gradient(165deg, #231936, #1a1228);
+  box-shadow: var(--fx-shadow);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+html[data-companion-theme="fox"] .app-shell .study-room-page .study-sidebar-note { border-top-color: var(--fx-line); }
+html[data-companion-theme="fox"] .app-shell .study-room-page .study-unit-copy strong { color: var(--fx-text); }
+html[data-companion-theme="fox"] .app-shell .study-room-page .study-unit-done { color: #fff; background: var(--fx-solid-a); box-shadow: none; }
+html[data-companion-theme="fox"] .app-shell .study-room-page .study-article { background: transparent; }
+html[data-companion-theme="fox"] .app-shell .study-room-page .study-article-meta { border-color: var(--fx-line); background: var(--fx-card-2); box-shadow: none; }
+html[data-companion-theme="fox"] .app-shell .study-room-page .study-article-inner > h2 { color: var(--fx-text); }
+html[data-companion-theme="fox"] .app-shell .study-room-page :is(.study-objectives, .study-safety-note) { border-color: var(--fx-line); background: var(--fx-card); box-shadow: none; }
+html[data-companion-theme="fox"] .app-shell .study-room-page .study-objectives h3,
+html[data-companion-theme="fox"] .app-shell .study-room-page .study-safety-note strong { color: var(--fx-accent-2); }
+html[data-companion-theme="fox"] .app-shell .study-room-page :is(.study-objectives li, .study-section li) { color: var(--fx-text); }
+html[data-companion-theme="fox"] .app-shell .study-room-page :is(.study-objectives li, .study-section li)::marker { color: var(--fx-accent); }
+html[data-companion-theme="fox"] .app-shell .study-room-page .study-safety-note span { color: var(--fx-muted); }
+html[data-companion-theme="fox"] .app-shell .study-room-page .study-section { border-bottom-color: var(--fx-line); }
+html[data-companion-theme="fox"] .app-shell .study-room-page .study-section-heading h3 { color: var(--fx-text); }
+html[data-companion-theme="fox"] .app-shell .study-room-page .study-reflection { border-color: var(--fx-line); border-left: 3px solid var(--fx-accent); background: var(--fx-card); box-shadow: none; }
+html[data-companion-theme="fox"] .app-shell .study-room-page .study-reflection p { color: var(--fx-text); }
+html[data-companion-theme="fox"] .app-shell .study-room-page .study-article-footer { border-color: var(--fx-line); background: rgb(28 20 41 / 94%); box-shadow: 0 -8px 24px rgb(0 0 0 / 25%); }
+html[data-companion-theme="fox"] .app-shell .study-timer.is-running { border-color: var(--fx-line-strong); background: var(--fx-card-3); }
+html[data-companion-theme="fox"] .app-shell .study-timer-readout strong { color: var(--fx-text); }
+html[data-companion-theme="fox"] .app-shell .study-timer-error,
+html[data-companion-theme="fox"] .app-shell .study-room-page .study-load-error { color: var(--fx-bad); }
+html[data-companion-theme="fox"] .app-shell .study-save-message { color: var(--fx-ok); }
+html[data-companion-theme="fox"] .app-shell .study-save-message[role="alert"] { color: var(--fx-bad); }
+html[data-companion-theme="fox"] .app-shell .study-room-page .study-empty { color: var(--fx-muted); }
+
+/* ---------- flashcards ---------- */
+html[data-companion-theme="fox"] .app-shell .fc-page .fc-card-inner { color: var(--fx-text); }
+html[data-companion-theme="fox"] .app-shell .fc-page .fc-side { background: linear-gradient(145deg, #2a1e40, #1e152f); }
+html[data-companion-theme="fox"] .app-shell .fc-page .fc-back { background: linear-gradient(145deg, #35255a, #251a3d); }
+html[data-companion-theme="fox"] .app-shell .fc-page .fc-text { color: var(--fx-text); }
+html[data-companion-theme="fox"] .app-shell .fc-topic-menu { border-color: var(--fx-line-strong); background: #20172f; box-shadow: 0 18px 42px rgb(0 0 0 / 50%); }
+html[data-companion-theme="fox"] .app-shell .fc-melody-thumb { border-color: var(--fx-line-strong); background: var(--fx-card-3); mix-blend-mode: normal; }
+html[data-companion-theme="fox"] .app-shell .quiz-top,
+html[data-companion-theme="fox"] .app-shell .quiz-footer { border-color: var(--fx-line); }
+html[data-companion-theme="fox"] .app-shell .quiz-brand { color: var(--fx-muted); }
+html[data-companion-theme="fox"] .app-shell .quiz-brand span { color: var(--fx-accent); }
+
+/* ---------- quiz modal ---------- */
+html[data-companion-theme="fox"] .modal-backdrop { background: rgb(8 5 14 / 72%); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+html[data-companion-theme="fox"] .app-shell .quiz-modal { background: #1a1228; box-shadow: 0 24px 70px rgb(0 0 0 / 55%); }
+html[data-companion-theme="fox"] .app-shell .quiz-lesson-icon { background: var(--fx-card-3); }
+html[data-companion-theme="fox"] .app-shell .quiz-progress-track { background: rgb(186 148 255 / 16%); }
+html[data-companion-theme="fox"] .app-shell .option-letter { color: var(--fx-accent-2); border-color: var(--fx-line-strong); background: var(--fx-card-3); }
+html[data-companion-theme="fox"] .app-shell .answer-feedback span { color: var(--fx-muted); }
+html[data-companion-theme="fox"] .app-shell .feedback-correct { background: rgb(154 217 180 / 10%); }
+html[data-companion-theme="fox"] .app-shell .feedback-correct strong { color: var(--fx-ok); }
+html[data-companion-theme="fox"] .app-shell .feedback-incorrect { background: rgb(255 157 180 / 10%); }
+html[data-companion-theme="fox"] .app-shell .feedback-incorrect strong { color: var(--fx-bad); }
+html[data-companion-theme="fox"] .app-shell .quiz-error { color: var(--fx-bad); }
+html[data-companion-theme="fox"] .app-shell .quiz-result h2 { color: var(--fx-text); }
+html[data-companion-theme="fox"] .app-shell .quiz-result p { color: var(--fx-muted); }
+html[data-companion-theme="fox"] .app-shell .quiz-result p strong { color: var(--fx-accent-2); }
+html[data-companion-theme="fox"] .app-shell .earned-xp { color: #ffe3a8; background: rgb(255 227 168 / 12%); }
+
+/* ---------- progress page ---------- */
+html[data-companion-theme="fox"] .app-shell .pg-hero { background: linear-gradient(135deg, #2c1f45, #1d1430 60%, #261a3c); }
+html[data-companion-theme="fox"] .app-shell .pg-ring svg { filter: drop-shadow(0 4px 10px rgb(154 101 224 / 30%)); }
+html[data-companion-theme="fox"] .app-shell .pg-unit { border-bottom-color: var(--fx-line); }
+html[data-companion-theme="fox"] .app-shell .pg-unit.is-next { background: linear-gradient(90deg, rgb(154 101 224 / 22%), transparent); box-shadow: inset 0 0 0 1px var(--fx-line-strong); }
+html[data-companion-theme="fox"] .app-shell .pg-unit-copy strong,
+html[data-companion-theme="fox"] .app-shell .pg-session-copy strong { color: var(--fx-text); }
+html[data-companion-theme="fox"] .app-shell .pg-session { border-bottom-color: var(--fx-line); }
+html[data-companion-theme="fox"] .app-shell .pg-state-error { color: var(--fx-bad); }
+
+/* ---------- floating study timer ---------- */
+html[data-companion-theme="fox"] .app-shell .floating-study-timer { border-color: var(--fx-line-strong); background: linear-gradient(135deg, #2a1e40, #1c1429); box-shadow: 0 14px 36px rgb(0 0 0 / 50%); }
+html[data-companion-theme="fox"] .app-shell .floating-study-timer > strong { color: var(--fx-text); }
+html[data-companion-theme="fox"] .app-shell .floating-study-timer-dot { background: var(--fx-accent); box-shadow: 0 0 0 3px rgb(184 140 245 / 20%); }
+html[data-companion-theme="fox"] .app-shell .study-timer > .study-timer-melody,
+html[data-companion-theme="fox"] .app-shell .floating-study-timer > .study-timer-melody { border-color: var(--fx-line-strong); background: var(--fx-card-3); mix-blend-mode: normal; }
+
+/* ---------- buttons that must differ from the shared button rule ---------- */
+/* primary */
+html[data-companion-theme="fox"] :is(.button-primary, .profile-save-button, .app-shell .task-form-fields > button[type="submit"]) {
+  color: #fff !important;
+  border-color: rgb(214 185 255 / 35%) !important;
+  background: linear-gradient(135deg, var(--fx-solid-a), var(--fx-solid-b)) !important;
+  box-shadow: 0 8px 18px rgb(80 40 140 / 35%), inset 0 1px 0 rgb(255 255 255 / 18%);
+}
+html[data-companion-theme="fox"] :is(.button-primary, .profile-save-button, .app-shell .task-form-fields > button[type="submit"]):disabled { opacity: .55; }
+html[data-companion-theme="fox"] .button-remembered { color: var(--fx-accent-2) !important; background: var(--fx-card-3) !important; }
+
+/* quiet text buttons */
+html[data-companion-theme="fox"] .app-shell :is(.text-button, .study-step-button, .study-quiz-button, .study-flashcard-button, .study-save-button, .note-delete-button) {
+  color: var(--fx-accent-2) !important;
+  border-color: transparent !important;
+  background: transparent !important;
+}
+html[data-companion-theme="fox"] .app-shell :is(.text-button, .study-step-button, .study-quiz-button, .study-flashcard-button, .study-save-button, .note-delete-button):hover { background: var(--fx-card-2) !important; }
+html[data-companion-theme="fox"] .app-shell :is(.task-delete, .pg-session-remove) { color: var(--fx-faint) !important; border-color: transparent !important; background: transparent !important; }
+html[data-companion-theme="fox"] .app-shell :is(.task-delete, .pg-session-remove):hover { color: var(--fx-bad) !important; background: var(--fx-card-2) !important; }
+
+/* rows that behave like buttons */
+html[data-companion-theme="fox"] .app-shell :is(.overview-player-button, .profile.profile-menu-trigger, .floating-study-timer button) { border-color: transparent !important; background: transparent !important; }
+html[data-companion-theme="fox"] .app-shell :is(.overview-player-button, .profile.profile-menu-trigger):hover { background: rgb(186 148 255 / 8%) !important; }
+html[data-companion-theme="fox"] .app-shell .floating-study-timer button { color: var(--fx-accent-2) !important; }
+html[data-companion-theme="fox"] .app-shell :is(.study-unit-button, .notes-folder-item, .note-list-item) { background: transparent !important; border-color: transparent !important; color: var(--fx-muted) !important; }
+html[data-companion-theme="fox"] .app-shell :is(.study-unit-button, .notes-folder-item, .note-list-item):hover { background: rgb(186 148 255 / 8%) !important; color: var(--fx-text) !important; }
+html[data-companion-theme="fox"] .app-shell .note-list-item strong { color: var(--fx-text); }
+
+/* selected states */
+html[data-companion-theme="fox"] .app-shell :is(.study-unit-button, .notes-folder-item, .note-list-item).selected,
+html[data-companion-theme="fox"] .app-shell .ai-guide-input-tab.active,
+html[data-companion-theme="fox"] .app-shell .fc-topic-option.selected,
+html[data-companion-theme="fox"] .app-shell .answer-option.selected {
+  color: var(--fx-accent-2) !important;
+  border-color: var(--fx-line-strong) !important;
+  background: var(--fx-card-3) !important;
+}
+html[data-companion-theme="fox"] .app-shell .notes-folder-item.drop-target { border-color: var(--fx-accent) !important; background: var(--fx-card-3) !important; }
+
+/* action chips on cards */
+html[data-companion-theme="fox"] .app-shell :is(.study-path-action, .lesson-action, .pg-unit-action) { color: var(--fx-accent-2) !important; border-color: var(--fx-line-strong) !important; background: var(--fx-card-3) !important; box-shadow: none; }
+html[data-companion-theme="fox"] .app-shell :is(.study-path-action, .lesson-action, .pg-unit-action):hover { color: #fff !important; background: var(--fx-solid-a) !important; }
+
+/* checkboxes, avatar, running timer */
+html[data-companion-theme="fox"] .app-shell .task-check { border-color: var(--fx-line-strong) !important; background: var(--fx-card-2) !important; }
+html[data-companion-theme="fox"] .app-shell .task-check.checked { color: #fff !important; border-color: var(--fx-accent) !important; background: var(--fx-solid-a) !important; }
+html[data-companion-theme="fox"] .app-shell .top-avatar { color: var(--fx-accent-2) !important; background: var(--fx-card-3) !important; }
+html[data-companion-theme="fox"] .app-shell .study-timer.is-running .study-timer-button { color: #fff !important; background: linear-gradient(135deg, var(--fx-solid-a), var(--fx-solid-b)) !important; }
+
+/* flashcard face is a <button>; keep its gradient from being flattened */
+html[data-companion-theme="fox"] .app-shell .fc-page .fc-card { border-color: var(--fx-line-strong) !important; background: #1e152f !important; box-shadow: 0 16px 36px rgb(0 0 0 / 40%); }
+
+/* quiz answers */
+html[data-companion-theme="fox"] .app-shell .answer-option { text-align: left; }
+html[data-companion-theme="fox"] .app-shell .answer-option.answer-correct { color: #c9f2da !important; border-color: #5fbf8d !important; background: rgb(95 191 141 / 16%) !important; }
+html[data-companion-theme="fox"] .app-shell .answer-option.answer-correct .option-letter { color: #fff; border-color: #5fbf8d; background: #3f9d6d; }
+html[data-companion-theme="fox"] .app-shell .answer-option.answer-incorrect { color: #ffd0db !important; border-color: #e0728f !important; background: rgb(224 114 143 / 15%) !important; }
+html[data-companion-theme="fox"] .app-shell .answer-option.answer-incorrect .option-letter { color: #fff; border-color: #e0728f; background: #b8455f; }
+html[data-companion-theme="fox"] .app-shell .quiz-footer .button:disabled { background: var(--fx-card-3) !important; }
+
+/* ---------- profile, learner and companion dialogs (rendered in document.body) ---------- */
+html[data-companion-theme="fox"] .profile-menu-backdrop,
+html[data-companion-theme="fox"] .learner-profile-backdrop,
+html[data-companion-theme="fox"] .companion-interaction-backdrop,
+html[data-companion-theme="fox"] .companion-picker-backdrop { background: rgb(8 5 14 / 72%); }
+html[data-companion-theme="fox"] :is(.profile-menu, .learner-profile-dialog, .companion-interaction-dialog, .companion-picker-dialog) {
+  color: var(--fx-text);
+  border-color: var(--fx-line-strong);
+  background: linear-gradient(145deg, #231936, #161020);
+  box-shadow: 0 30px 100px rgb(0 0 0 / 60%);
+}
+html[data-companion-theme="fox"] :is(.profile-menu, .learner-profile-dialog, .companion-interaction-dialog, .companion-picker-dialog) :is(h2, strong, label) { color: var(--fx-text); }
+html[data-companion-theme="fox"] :is(.profile-menu, .learner-profile-dialog, .companion-interaction-dialog, .companion-picker-dialog) :is(p, small, span) { color: var(--fx-muted); }
+html[data-companion-theme="fox"] :is(.profile-menu, .learner-profile-dialog, .companion-interaction-dialog, .companion-picker-dialog) .section-kicker { color: var(--fx-accent-2); }
+html[data-companion-theme="fox"] :is(.profile-menu-stats > div, .profile-form-section, .profile-weekly-goal, .profile-water-pet, .learner-profile-stats > div, .water-pet-evolution-track > div, .companion-choice, .companion-choice-evolutions) {
+  border-color: var(--fx-line);
+  background: var(--fx-card-2);
+  box-shadow: none;
+}
+html[data-companion-theme="fox"] .profile-menu-stats strong,
+html[data-companion-theme="fox"] .learner-profile-stats strong { color: var(--fx-accent-2); }
+html[data-companion-theme="fox"] .profile-exam-countdown { color: var(--fx-accent-2); border-color: var(--fx-line); background: var(--fx-card-3); }
+html[data-companion-theme="fox"] .profile-goal-track { background: rgb(186 148 255 / 16%); }
+html[data-companion-theme="fox"] .profile-goal-track span,
+html[data-companion-theme="fox"] .learner-profile-rank-track span { background: linear-gradient(90deg, var(--fx-solid-a), #c393f2); }
+html[data-companion-theme="fox"] .learner-profile-rank-track { background: rgb(186 148 255 / 16%); }
+html[data-companion-theme="fox"] .companion-interaction-stage { border-color: var(--fx-line); background: radial-gradient(ellipse at 50% 75%, rgb(154 101 224 / 22%), transparent 62%), #1d1430; box-shadow: none; }
+html[data-companion-theme="fox"] .companion-reaction-bubble { color: var(--fx-text); border-color: var(--fx-line-strong); background: var(--fx-card-3); box-shadow: none; }
+html[data-companion-theme="fox"] .companion-choice-art,
+html[data-companion-theme="fox"] .companion-choice:first-child .companion-choice-art { border-color: var(--fx-line); background: radial-gradient(circle at 50% 38%, #3a2a58, #271b3b 70%); }
+html[data-companion-theme="fox"] .companion-choice > strong { color: var(--fx-text); border-color: var(--fx-line); background: var(--fx-card-3); box-shadow: none; }
+html[data-companion-theme="fox"] .companion-choice.is-selected { border-color: var(--fx-accent); box-shadow: inset 0 0 0 1px var(--fx-accent); }
+html[data-companion-theme="fox"] .learner-profile-avatar { border-color: var(--fx-line-strong); background: linear-gradient(145deg, var(--fx-solid-a), var(--fx-solid-b)); }
+html[data-companion-theme="fox"] .profile-lock-button { color: var(--fx-accent-2) !important; background: var(--fx-card-2) !important; box-shadow: none; }
+html[data-companion-theme="fox"] .profile-menu-error,
+html[data-companion-theme="fox"] .companion-picker-error { color: var(--fx-bad) !important; }
+html[data-companion-theme="fox"] .profile-menu-saved { color: var(--fx-ok) !important; }
+html[data-companion-theme="fox"] .water-pet-evolution-track > div > span { color: var(--fx-accent); }
